@@ -4,8 +4,8 @@ export class User {
     public fullname: string,
     public email: string,
     public password: string,
-    public createdAt: number,
-    public updatedAt: number,
+    public createdAt: Date,
+    public updatedAt: Date,
   ) {}
 
   public static register(
@@ -13,7 +13,7 @@ export class User {
     fullname: string,
     email: string,
     password: string,
-    currentTime: number,
+    currentTime: Date,
   ): User {
     return new User(id, fullname, email, password, currentTime, currentTime);
   }
