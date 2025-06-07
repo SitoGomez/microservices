@@ -2,13 +2,14 @@ import { Module } from '@nestjs/common';
 import { RegisterUserController } from './user/infrastructure/controllers/RegisterUser/RegisterUser.controller';
 import { USER_REPOSITORY } from './user/domain/UserRepository';
 import { InMemoryUserRepository } from './user/infrastructure/InMemoryUserRepository';
-import { InMemoryEventBus } from './shared/eventBus/InMemoryEventBus';
-import { EVENT_BUS } from './shared/eventBus/IEventBus';
-import { DOMAIN_EVENT_MANAGER } from './shared/domainEvent/IDomainEventManager';
-import { DomainEventManager } from './shared/domainEvent/DomainEventHandler';
+import { InMemoryEventBus } from '../shared/eventBus/InMemoryEventBus';
+import { EVENT_BUS } from '../shared/eventBus/IEventBus';
+import { DOMAIN_EVENT_MANAGER } from '../shared/domainEvent/domain/IDomainEventManager';
+import { InMemoryDomainEventManager } from '../shared/domainEvent/infrastructure/InMemoryDomainEventHandler';
+import { SharedModule } from '../shared/shared.module';
 
 @Module({
-  imports: [],
+  imports: [SharedModule],
   controllers: [RegisterUserController],
   providers: [
     {
@@ -21,8 +22,8 @@ import { DomainEventManager } from './shared/domainEvent/DomainEventHandler';
     },
     {
       provide: DOMAIN_EVENT_MANAGER,
-      useClass: DomainEventManager,
+      useClass: InMemoryDomainEventManager,
     },
   ],
 })
-export class AppModule {}
+export class AuthModule {}

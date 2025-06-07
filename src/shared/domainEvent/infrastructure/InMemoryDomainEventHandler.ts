@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { DomainEvent } from './DomainEvent';
-import { IDomainEventManager } from './IDomainEventManager';
+import { DomainEvent } from '../domain/DomainEvent';
+import { IDomainEventManager } from '../domain/IDomainEventManager';
 
 @Injectable()
-export class DomainEventManager implements IDomainEventManager {
+export class InMemoryDomainEventManager implements IDomainEventManager {
   private events: DomainEvent[] = [];
 
   public register(event: DomainEvent): void {

@@ -1,5 +1,6 @@
-import { DomainEventManager } from '../../../shared/domainEvent/DomainEventHandler';
-import { InMemoryEventBus } from '../../../shared/eventBus/InMemoryEventBus';
+import { InMemoryDateTimeService } from '../../../../shared/dateTimeService/infrastructure/doubles/InMemoryDateTimeService';
+import { InMemoryDomainEventManager } from '../../../../shared/domainEvent/infrastructure/InMemoryDomainEventHandler';
+import { InMemoryEventBus } from '../../../../shared/eventBus/InMemoryEventBus';
 import { UserWasRegisteredEvent } from '../../domain/events/UserWasRegistered.event';
 import { InMemoryUserRepository } from '../../infrastructure/InMemoryUserRepository';
 import { RegisterUserCommand } from './RegisterUser.command';
@@ -8,17 +9,21 @@ import { RegisterUserUseCase } from './RegisterUser.usecase';
 describe('RegisterUserUseCase', () => {
   const userRepository = new InMemoryUserRepository();
   const eventBus = new InMemoryEventBus();
-  const domainEventManager = new DomainEventManager();
+  const domainEventManager = new InMemoryDomainEventManager();
+  const dateTimeService = new InMemoryDateTimeService();
+
   const useCase = new RegisterUserUseCase(
     userRepository,
     eventBus,
     domainEventManager,
+    dateTimeService,
   );
 
   const VALID_USER_ID = 'f165cb7c-1d8e-4c5c-9cd2-714305b297f1';
   const VALID_USER_FULLNAME = 'Jose Gomez';
   const VALID_USER_EMAIL = 'jose.test@test.com';
   const VALID_USER_PASSWORD = 'abc123';
+  const VALID_TIMESTAMP_IN_MS = 1749285081000;
 
   const VALID_COMMAND = new RegisterUserCommand(
     VALID_USER_ID,
@@ -30,6 +35,12 @@ describe('RegisterUserUseCase', () => {
   afterEach(() => {
     userRepository.clean();
     eventBus.clean();
+    domainEventManager.clean();
+    dateTimeService.clean();
+  });
+
+  beforeEach(() => {
+    dateTimeService.setTimestamp(VALID_TIMESTAMP_IN_MS);
   });
 
   it('should register a user', async () => {
@@ -37,6 +48,19 @@ describe('RegisterUserUseCase', () => {
 
     expect(userRepository.stored()).toHaveLength(1);
     expect(userRepository.stored()[0].getId()).toEqual(VALID_USER_ID);
+    expect(userRepository.stored()[0].getFullname()).toEqual(
+      VALID_USER_FULLNAME,
+    );
+    expect(userRepository.stored()[0].getEmail()).toEqual(VALID_USER_EMAIL);
+    expect(userRepository.stored()[0].getPassword()).toEqual(
+      VALID_USER_PASSWORD,
+    );
+    expect(userRepository.stored()[0].getCreatedAt()).toEqual(
+      new Date(VALID_TIMESTAMP_IN_MS),
+    );
+    expect(userRepository.stored()[0].getUpdatedAt()).toEqual(
+      new Date(VALID_TIMESTAMP_IN_MS),
+    );
   });
 
   it('should dispatch an UserWasRegisteredEvent', async () => {

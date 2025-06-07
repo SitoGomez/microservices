@@ -1,5 +1,5 @@
-import { IDomainEventManager } from 'src/shared/domainEvent/IDomainEventManager';
-import { DomainEvent } from '../../shared/domainEvent/DomainEvent';
+import { IDomainEventManager } from 'src/shared/domainEvent/domain/IDomainEventManager';
+import { DomainEvent } from '../../../shared/domainEvent/domain/DomainEvent';
 import { UserWasRegisteredEvent } from './events/UserWasRegistered.event';
 
 export class User {
@@ -45,5 +45,25 @@ export class User {
 
   public getId(): string {
     return this.id;
+  }
+
+  public getFullname(): string {
+    return this.fullname;
+  }
+
+  public getEmail(): string {
+    return this.email;
+  }
+
+  public getPassword(): string {
+    return this.password;
+  }
+
+  public getCreatedAt(): Date {
+    return this.createdAt;
+  }
+
+  public getUpdatedAt(): Date {
+    return this.updatedAt;
   }
 }
