@@ -10,3 +10,4 @@
   - Saving queries in a database
 - [ ] Create a queue for using 
 - [ ] Change event name to accomplish something useful
+- [ ] Add eslint diff and pnpm test before pushing and failing if KO
