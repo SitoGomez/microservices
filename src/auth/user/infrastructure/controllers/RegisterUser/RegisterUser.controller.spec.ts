@@ -1,33 +1,12 @@
 import * as request from 'supertest';
-import { Test } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
-import { AuthModule } from '../../../../auth.module';
-import { ICommandHandler } from '../../../../../shared/commandBus/ICommandHandler';
-import { RegisterUserCommand } from '../../../application/RegisterUser/RegisterUser.command';
-import { RegisterUserUseCase } from '../../../application/RegisterUser/RegisterUser.usecase';
-import {
-  COMMAND_BUS,
-  ICommandBus,
-} from '../../../../../shared/commandBus/ICommandBus';
+import { bootstrapTest } from '../../../../../../app/main.testapplication';
 
 describe('RegisterUserController', () => {
   let app: INestApplication;
 
   beforeAll(async () => {
-    const moduleRef = await Test.createTestingModule({
-      imports: [AuthModule],
-    }).compile();
-
-    app = moduleRef.createNestApplication();
-
-    const commandBus = app.get<ICommandBus>(COMMAND_BUS);
-
-    commandBus.register(
-      RegisterUserCommand,
-      app.get<ICommandHandler<RegisterUserCommand>>(RegisterUserUseCase),
-    );
-
-    await app.init();
+    app = await bootstrapTest();
   });
 
   afterAll(async () => {
