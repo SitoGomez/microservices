@@ -23,5 +23,6 @@ import { DATE_TIME_SERVICE } from './dateTimeService/domain/IDateTimeService';
       useClass: SystemDateTimeService,
     },
   ],
+  exports: [EVENT_BUS, DOMAIN_EVENT_MANAGER, DATE_TIME_SERVICE, COMMAND_BUS],
 })
 export class SharedModule {}
