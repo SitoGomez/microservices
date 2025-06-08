@@ -7,6 +7,7 @@ import { EVENT_BUS } from '../shared/eventBus/IEventBus';
 import { DOMAIN_EVENT_MANAGER } from '../shared/domainEvent/domain/IDomainEventManager';
 import { InMemoryDomainEventManager } from '../shared/domainEvent/infrastructure/InMemoryDomainEventHandler';
 import { SharedModule } from '../shared/shared.module';
+import { RegisterUserUseCase } from './user/application/RegisterUser/RegisterUser.usecase';
 
 @Module({
   imports: [SharedModule],
@@ -24,6 +25,7 @@ import { SharedModule } from '../shared/shared.module';
       provide: DOMAIN_EVENT_MANAGER,
       useClass: InMemoryDomainEventManager,
     },
+    RegisterUserUseCase,
   ],
 })
 export class AuthModule {}

@@ -11,9 +11,12 @@ import {
   DATE_TIME_SERVICE,
   IDateTimeService,
 } from '../../../../shared/dateTimeService/domain/IDateTimeService';
+import { ICommandHandler } from '../../../../shared/commandBus/ICommandHandler';
 
 @Injectable()
-export class RegisterUserUseCase {
+export class RegisterUserUseCase
+  implements ICommandHandler<RegisterUserCommand>
+{
   public constructor(
     @Inject(USER_REPOSITORY) private readonly userRepository: IUserRepository,
     @Inject(EVENT_BUS) private readonly eventBus: IEventBus,

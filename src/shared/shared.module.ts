@@ -5,6 +5,8 @@ import { DOMAIN_EVENT_MANAGER } from './domainEvent/domain/IDomainEventManager';
 import { InMemoryDomainEventManager } from './domainEvent/infrastructure/InMemoryDomainEventHandler';
 import { SystemDateTimeService } from './dateTimeService/infrastructure/SystemDateTimeService';
 import { DATE_TIME_SERVICE } from './dateTimeService/domain/IDateTimeService';
+import { COMMAND_BUS } from './commandBus/ICommandBus';
+import { InMemoryCommandBus } from './commandBus/CommandBus';
 
 @Module({
   imports: [],
@@ -21,6 +23,10 @@ import { DATE_TIME_SERVICE } from './dateTimeService/domain/IDateTimeService';
     {
       provide: DATE_TIME_SERVICE,
       useClass: SystemDateTimeService,
+    },
+    {
+      provide: COMMAND_BUS,
+      useClass: InMemoryCommandBus,
     },
   ],
   exports: [EVENT_BUS, DOMAIN_EVENT_MANAGER, DATE_TIME_SERVICE, COMMAND_BUS],
