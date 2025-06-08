@@ -11,5 +11,8 @@
 - [ ] Create a queue for using 
 - [ ] Change event name to accomplish something useful
 - [ ] Add eslint diff and pnpm test before pushing and failing if KO
-- OWASP Top 10
-- Implement CORS
+- [ ] OWASP Top 10
+- [ ] Implement CORS
+- [ ] Improve testing e2e
+- [ ] Add controller input and output validations
+- [ ] Map internal errors to generic external error response
