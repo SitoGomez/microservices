@@ -7,9 +7,10 @@ import { SystemDateTimeService } from './dateTimeService/infrastructure/SystemDa
 import { DATE_TIME_SERVICE } from './dateTimeService/domain/IDateTimeService';
 import { COMMAND_BUS } from './commandBus/ICommandBus';
 import { InMemoryCommandBus } from './commandBus/CommandBus';
+import { PrometheusModule } from '@willsoto/nestjs-prometheus';
 
 @Module({
-  imports: [],
+  imports: [PrometheusModule.register()],
   controllers: [],
   providers: [
     {
@@ -29,6 +30,12 @@ import { InMemoryCommandBus } from './commandBus/CommandBus';
       useClass: InMemoryCommandBus,
     },
   ],
-  exports: [EVENT_BUS, DOMAIN_EVENT_MANAGER, DATE_TIME_SERVICE, COMMAND_BUS],
+  exports: [
+    EVENT_BUS,
+    DOMAIN_EVENT_MANAGER,
+    DATE_TIME_SERVICE,
+    COMMAND_BUS,
+    PrometheusModule,
+  ],
 })
 export class SharedModule {}
