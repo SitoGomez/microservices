@@ -2,13 +2,14 @@
 - [x] Implement datepicker
 - [ ] Implement Given...When...Then in tests
 - [ ] Implement factory to create the user with the domain event manager
-- [ ] Create an command bus using an external system
-  - With implementing traces
-  - Saving commands in a database
-- [ ] Create an query bus using an external system
-  - With implementing traces
-  - Saving queries in a database
-- [ ] Create a queue for using 
+- [x] Create an command bus
+  - [ ] using an external system
+  - [ ] With implementing traces
+  - [ ] Saving commands in a database
+- [ ] Create an query bus using
+  - [ ] using an external system
+  - [ ] With implementing traces
+  - [ ] Saving queries in a database
 - [ ] Change event name to accomplish something useful
 - [ ] Add eslint diff and pnpm test before pushing and failing if KO
 - [ ] OWASP Top 10
@@ -16,3 +17,5 @@
 - [ ] Improve testing e2e
 - [ ] Add controller input and output validations
 - [ ] Map internal errors to generic external error response
+- [ ] Dockerize nest app
+- [ ] Create a postgres db docker container
