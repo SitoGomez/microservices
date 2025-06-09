@@ -3,6 +3,7 @@
 - [ ] Implement Given...When...Then in tests
 - [ ] Implement factory to create the user with the domain event manager
 - [x] Create an command bus
+  - [ ] Meter métrica nueva para contar el número de veces que se ha invocado un command
   - [ ] using an external system
   - [ ] With implementing traces
   - [ ] Saving commands in a database
