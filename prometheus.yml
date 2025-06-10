@@ -1,0 +1,7 @@
+global:
+  scrape_interval: 15s # how often Prometheus scrapes targets
+
+scrape_configs:
+  - job_name: 'personal-microservices'
+    static_configs:
+      - targets: ['personal-microservices:3001']
