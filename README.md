@@ -26,3 +26,4 @@
 - [ ] Add traces for tracking full flow http request
 - [ ] Add password hashing service
 - [ ] Add basic env service
+- [ ] Add mapper from domain to infrastructure
