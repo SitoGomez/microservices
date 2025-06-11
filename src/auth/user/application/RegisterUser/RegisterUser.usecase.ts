@@ -29,19 +29,19 @@ export class RegisterUserUseCase
   public async execute(
     registerUserCommand: RegisterUserCommand,
   ): Promise<void> {
-    const { userId: id, fullname, email, password } = registerUserCommand;
+    const { userId, fullname, email, password } = registerUserCommand;
 
     const registeredUser = User.register(
       this.domainEventManager,
       registerUserCommand.id,
-      id,
+      userId,
       fullname,
       email,
       password,
       new Date(this.dateTimeService.now()),
     );
 
-    this.userRepository.register(registeredUser);
+    await this.userRepository.register(registeredUser);
 
     await this.eventBus.dispatch(registeredUser.releaseEvents());
   }

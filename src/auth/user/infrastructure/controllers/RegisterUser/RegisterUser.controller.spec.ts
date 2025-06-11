@@ -1,6 +1,7 @@
 import * as request from 'supertest';
 import { INestApplication } from '@nestjs/common';
 import { bootstrapTest } from '../../../../../../app/main.testapplication';
+import { randomUUID } from 'node:crypto';
 
 describe('RegisterUserController', () => {
   let app: INestApplication;
@@ -17,9 +18,9 @@ describe('RegisterUserController', () => {
     await request(app.getHttpServer())
       .post('/api/users/register')
       .send({
-        id: 'f165cb7c-1d8e-4c5c-9cd2-714305b297f1',
+        userId: randomUUID(),
         fullname: 'Jose Gomez',
-        email: 'jose.test@test.com',
+        email: randomUUID(),
         password: 'abc123',
       })
       .expect(201);

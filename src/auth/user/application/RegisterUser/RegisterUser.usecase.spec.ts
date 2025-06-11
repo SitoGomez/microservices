@@ -2,12 +2,12 @@ import { InMemoryDateTimeService } from '../../../../shared/dateTimeService/infr
 import { InMemoryDomainEventManager } from '../../../../shared/domainEvent/infrastructure/InMemoryDomainEventHandler';
 import { InMemoryEventBus } from '../../../../shared/eventBus/InMemoryEventBus';
 import { UserWasRegisteredEvent } from '../../domain/events/UserWasRegistered.event';
-import { InMemoryUserRepository } from '../../infrastructure/InMemoryUserRepository';
+import { UserRepositoryMock } from '../../infrastructure/mocks/UserRepositoryMock';
 import { RegisterUserCommand } from './RegisterUser.command';
 import { RegisterUserUseCase } from './RegisterUser.usecase';
 
 describe('RegisterUserUseCase', () => {
-  const userRepository = new InMemoryUserRepository();
+  const userRepository = new UserRepositoryMock();
   const eventBus = new InMemoryEventBus();
   const domainEventManager = new InMemoryDomainEventManager();
   const dateTimeService = new InMemoryDateTimeService();
