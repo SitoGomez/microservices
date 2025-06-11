@@ -10,6 +10,7 @@ import { RegisterUserUseCase } from './user/application/RegisterUser/RegisterUse
 import { MikroOrmUserRepository } from './user/infrastructure/mikroOrm/MikroOrmUserRepository';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { UserEntity } from '../shared/mikroOrm/entities/User.entity';
+import { MikroOrmUserMapper } from './user/infrastructure/mikroOrm/MikroOrmUserMapper';
 
 @Module({
   imports: [SharedModule, MikroOrmModule.forFeature([UserEntity])],
@@ -28,6 +29,7 @@ import { UserEntity } from '../shared/mikroOrm/entities/User.entity';
       useClass: InMemoryDomainEventManager,
     },
     RegisterUserUseCase,
+    MikroOrmUserMapper,
   ],
 })
 export class AuthModule {}
