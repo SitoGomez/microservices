@@ -20,3 +20,9 @@
 - [ ] Map internal errors to generic external error response
 - [ ] Dockerize nest app
 - [ ] Create a postgres db docker container
+- [ ] Add logger (WINSTON)
+- [ ] Add more databases 
+- [ ] Add cors
+- [ ] Add traces for tracking full flow http request
+- [ ] Add password hashing service
+- [ ] Add basic env service
