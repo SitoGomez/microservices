@@ -11,7 +11,7 @@
   - [ ] using an external system
   - [ ] With implementing traces
   - [ ] Saving queries in a database
-- [ ] Change event name to accomplish something useful
+- [x] Change event name to accomplish something useful
 - [ ] Add eslint diff and pnpm test before pushing and failing if KO
 - [ ] OWASP Top 10
 - [ ] Implement CORS
@@ -19,7 +19,8 @@
 - [ ] Add controller input and output validations
 - [ ] Map internal errors to generic external error response
 - [ ] Dockerize nest app
-- [ ] Create a postgres db docker container
+- [ ] Create a postgres TEST db docker container
+- [ ] Add integration tests over repositories
 - [ ] Add logger (WINSTON)
 - [ ] Add more databases 
 - [ ] Add cors
