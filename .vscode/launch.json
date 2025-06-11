@@ -24,7 +24,6 @@
             "address": "localhost",
             "localRoot": "${workspaceFolder}",
             "remoteRoot": "/app",
-            "protocol": "inspector",
             "restart": true,
             "skipFiles": ["<node_internals>/**"]
         }

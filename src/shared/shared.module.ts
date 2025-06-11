@@ -38,7 +38,6 @@ import { migrations } from './mikroOrm/migrations';
       },
     }),
   ],
-  controllers: [],
   providers: [
     {
       provide: EVENT_BUS,

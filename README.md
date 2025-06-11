@@ -27,6 +27,4 @@
 - [ ] Add password hashing service
 - [ ] Add basic env service
 - [x] Add mapper from domain to infrastructure
-- [ ] Extract:
-  - [ ] Controllers
-  - [ ] Usecases
+- [ ] Extract DDBB config to be reused with cli
