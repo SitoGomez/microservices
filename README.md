@@ -29,3 +29,6 @@
 - [ ] Add basic env service
 - [x] Add mapper from domain to infrastructure
 - [ ] Extract DDBB config to be reused with cli
+- [ ] Add database seeder to have proper test data
+- [ ] Add k6 to tests performance
+- [ ] Reestructure project to be a modular monolith
