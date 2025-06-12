@@ -1,12 +1,12 @@
-import { AuthModule } from '../src/auth/auth.module';
 import { Test } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
-import { registerCommands } from './shared/RegisterCommands';
+import { registerCommands } from './utils/RegisterCommands';
 import { MikroORM } from '@mikro-orm/core';
+import { AppModule } from './app.module';
 
 export async function bootstrapTest(): Promise<INestApplication> {
   const moduleRef = await Test.createTestingModule({
-    imports: [AuthModule],
+    imports: [AppModule],
   }).compile();
 
   const app = moduleRef.createNestApplication();

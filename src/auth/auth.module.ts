@@ -9,7 +9,7 @@ import { SharedModule } from '../shared/shared.module';
 import { RegisterUserUseCase } from './user/application/RegisterUser/RegisterUser.usecase';
 import { MikroOrmUserRepository } from './user/infrastructure/mikroOrm/MikroOrmUserRepository';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
-import { UserEntity } from '../shared/mikroOrm/entities/User.entity';
+import { UserEntity } from './user/infrastructure/mikroOrm/entities/User.entity';
 import { MikroOrmUserMapper } from './user/infrastructure/mikroOrm/MikroOrmUserMapper';
 
 @Module({

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { UserEntity } from '../../../../shared/mikroOrm/entities/User.entity';
+import { UserEntity } from './entities/User.entity';
 import { User } from '../../domain/User';
 
 @Injectable()

@@ -1,10 +1,10 @@
 import { NestFactory } from '@nestjs/core';
-import { AuthModule } from '../src/auth/auth.module';
-import { registerCommands } from './shared/RegisterCommands';
+import { registerCommands } from './utils/RegisterCommands';
 import { MikroORM } from '@mikro-orm/core';
+import { AppModule } from './app.module';
 
 async function bootstrap(): Promise<void> {
-  const app = await NestFactory.create(AuthModule);
+  const app = await NestFactory.create(AppModule);
 
   const orm = app.get(MikroORM);
   await orm.getMigrator().up();
