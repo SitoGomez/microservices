@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { PrometheusModule } from '@willsoto/nestjs-prometheus';
 import { PostgreSqlDriver } from '@mikro-orm/postgresql';
 import { MikroOrmModule } from '@mikro-orm/nestjs/mikro-orm.module';
 import { Migrator } from '@mikro-orm/migrations';
@@ -11,7 +10,6 @@ import { AuthModule } from '../src/auth/auth.module';
   imports: [
     SharedModule,
     AuthModule,
-    PrometheusModule.register(),
     MikroOrmModule.forRoot({
       entities: ['dist/src/**/*.entity.js'],
       entitiesTs: ['src/**/*.entity.ts'],
@@ -34,6 +32,5 @@ import { AuthModule } from '../src/auth/auth.module';
       },
     }),
   ],
-  exports: [PrometheusModule],
 })
 export class AppModule {}
