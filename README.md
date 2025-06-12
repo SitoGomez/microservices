@@ -3,7 +3,7 @@
 - [ ] Implement Given...When...Then in tests
 - [ ] Implement factory to create the user with the domain event manager
 - [x] Create an command bus
-  - [ ] Meter métrica nueva para contar el número de veces que se ha invocado un command
+  - [ ] Add metrics
   - [ ] using an external system
   - [ ] With implementing traces
   - [ ] Saving commands in a database
@@ -22,6 +22,7 @@
 - [ ] Create a postgres TEST db docker container
 - [ ] Add integration tests over repositories
 - [ ] Add logger (WINSTON)
+  - [ ] Research how to handle rotative logs
 - [ ] Add more databases 
 - [ ] Add cors
 - [ ] Add traces for tracking full flow http request
@@ -32,3 +33,4 @@
 - [ ] Add database seeder to have proper test data
 - [ ] Add k6 to tests performance
 - [ ] Reestructure project to be a modular monolith
+- [ ] Replace prometheus with OpenTelemetry
