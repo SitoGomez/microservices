@@ -52,3 +52,5 @@
 - [ ] Replace prometheus with OpenTelemetry
 
 - [ ] Add pessimist and optimist locking with redis json
+
+- [ ] Make postman in sync with file in project
