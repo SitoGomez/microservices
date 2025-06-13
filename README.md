@@ -50,3 +50,5 @@
 - [x] Reestructure project to be a modular monolith
 
 - [ ] Replace prometheus with OpenTelemetry
+
+- [ ] Add pessimist and optimist locking with redis json
