@@ -56,3 +56,5 @@
 - [ ] Make postman in sync with file in project
 
 - [ ] Remove unnecesary grafana container at the moment
+
+- [ ] Remove user data from user in auth module
