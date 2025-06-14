@@ -1,4 +1,6 @@
-export class RegisterUserCommand {
+import { ICommand } from '../../../../shared/commandBus/ICommand';
+
+export class RegisterUserCommand implements ICommand {
   public readonly id: string;
 
   public constructor(
