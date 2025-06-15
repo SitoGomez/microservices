@@ -21,14 +21,12 @@ describe('RegisterUserUseCase', () => {
   );
 
   const VALID_USER_ID = 'f165cb7c-1d8e-4c5c-9cd2-714305b297f1';
-  const VALID_USER_FULLNAME = 'Jose Gomez';
   const VALID_USER_EMAIL = 'jose.test@test.com';
   const VALID_USER_PASSWORD = 'abc123';
   const VALID_TIMESTAMP_IN_MS = 1749285081000;
 
   const VALID_COMMAND = new RegisterUserCommand(
     VALID_USER_ID,
-    VALID_USER_FULLNAME,
     VALID_USER_EMAIL,
     VALID_USER_PASSWORD,
   );
@@ -49,9 +47,6 @@ describe('RegisterUserUseCase', () => {
 
     expect(userRepository.stored()).toHaveLength(1);
     expect(userRepository.stored()[0].getId()).toEqual(VALID_USER_ID);
-    expect(userRepository.stored()[0].getFullname()).toEqual(
-      VALID_USER_FULLNAME,
-    );
     expect(userRepository.stored()[0].getEmail()).toEqual(VALID_USER_EMAIL);
     expect(userRepository.stored()[0].getPassword()).toEqual(
       VALID_USER_PASSWORD,

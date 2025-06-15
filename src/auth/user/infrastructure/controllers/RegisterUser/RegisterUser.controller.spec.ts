@@ -38,7 +38,6 @@ describe('RegisterUserController', () => {
       .post('/api/users/register')
       .send({
         userId: randomUUID(),
-        fullname: 'Jose Gomez',
         email: randomUUID(),
         password: 'abc123',
       })

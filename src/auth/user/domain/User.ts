@@ -8,7 +8,6 @@ export class User {
   private constructor(
     private readonly domainEventHandler: IDomainEventManager,
     private id: string,
-    private fullname: string,
     private email: string,
     private password: string,
     private createdAt: Date,
@@ -19,7 +18,6 @@ export class User {
     domainEventHandler: IDomainEventManager,
     causationId: string,
     id: string,
-    fullname: string,
     email: string,
     password: string,
     currentTime: Date,
@@ -27,7 +25,6 @@ export class User {
     const newUser = new User(
       domainEventHandler,
       id,
-      fullname,
       email,
       password,
       currentTime,
@@ -47,10 +44,6 @@ export class User {
 
   public getId(): string {
     return this.id;
-  }
-
-  public getFullname(): string {
-    return this.fullname;
   }
 
   public getEmail(): string {

@@ -31,13 +31,12 @@ export class RegisterUserUseCase
   public async execute(
     registerUserCommand: RegisterUserCommand,
   ): Promise<void> {
-    const { userId, fullname, email, password } = registerUserCommand;
+    const { userId, email, password } = registerUserCommand;
 
     const registeredUser = User.register(
       this.domainEventManager,
       registerUserCommand.id,
       userId,
-      fullname,
       email,
       password,
       new Date(this.dateTimeService.now()),

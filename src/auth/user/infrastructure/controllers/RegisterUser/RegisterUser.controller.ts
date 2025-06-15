@@ -29,7 +29,6 @@ export class RegisterUserController {
   ): Promise<void> {
     const command = new RegisterUserCommand(
       body.userId,
-      body.fullname,
       body.email,
       body.password,
     );
