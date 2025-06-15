@@ -1,14 +1,12 @@
-import { ICommand } from '../../../../shared/commandBus/ICommand';
+import { BaseCommand } from '../../../../shared/commandBus/BaseCommand';
 
-export class RegisterUserCommand implements ICommand {
-  public readonly id: string;
-
+export class RegisterUserCommand extends BaseCommand {
   public constructor(
     public readonly userId: string,
     public readonly fullname: string,
     public readonly email: string,
     public readonly password: string,
   ) {
-    this.id = crypto.randomUUID();
+    super();
   }
 }

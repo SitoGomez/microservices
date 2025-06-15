@@ -3,7 +3,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { ILogger, LOGGER } from '../logger/ILogger';
 
 import { NoHandlerForCommandError } from './errors/NoHandlerForCommand.error';
-import { ICommand } from './ICommand';
+import { BaseCommand } from './BaseCommand';
 import { ICommandBus } from './ICommandBus';
 import { ICommandHandler } from './ICommandHandler';
 
@@ -11,9 +11,9 @@ import { ICommandHandler } from './ICommandHandler';
 export class InMemoryCommandBus implements ICommandBus {
   public constructor(@Inject(LOGGER) private readonly logger: ILogger) {}
 
-  private handlers = new Map<string, ICommandHandler<ICommand>>();
+  private handlers = new Map<string, ICommandHandler<BaseCommand>>();
 
-  public register<T extends ICommand>(
+  public register<T extends BaseCommand>(
     commandType: new (...args: any[]) => T,
     handler: ICommandHandler<T>,
   ): void {
@@ -22,7 +22,7 @@ export class InMemoryCommandBus implements ICommandBus {
     this.handlers.set(commandName, handler);
   }
 
-  public async execute<T extends ICommand>(command: T): Promise<void> {
+  public async execute<T extends BaseCommand>(command: T): Promise<void> {
     const commandName = command.constructor.name;
     const commandId = command.id;
 
