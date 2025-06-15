@@ -36,14 +36,6 @@ services:
     networks:
       - monitor-net
 
-  grafana:
-    image: grafana/grafana
-    container_name: grafana
-    ports:
-      - "3002:3000"
-    networks:
-      - monitor-net
-
 volumes:
   pg_data:
 
