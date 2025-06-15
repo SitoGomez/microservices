@@ -1,16 +1,32 @@
 import { randomUUID } from 'node:crypto';
 
+import { MikroORM } from '@mikro-orm/core';
 import { INestApplication } from '@nestjs/common';
+import { Test } from '@nestjs/testing';
 import * as request from 'supertest';
 import { App } from 'supertest/types';
 
-import { bootstrapTest } from '../../../../../../app/main.testapplication';
+import { AppModule } from '../../../../../../app/app.module';
+import { registerCommands } from '../../../../../../app/utils/RegisterCommands';
 
 describe('RegisterUserController', () => {
   let app: INestApplication<App>;
 
   beforeAll(async () => {
-    app = await bootstrapTest();
+    const moduleRef = await Test.createTestingModule({
+      imports: [AppModule],
+    }).compile();
+
+    const appInstance = moduleRef.createNestApplication();
+
+    const orm = appInstance.get(MikroORM);
+    await orm.getMigrator().up();
+
+    registerCommands(appInstance);
+
+    await appInstance.init();
+
+    app = appInstance as INestApplication<App>;
   });
 
   afterAll(async () => {

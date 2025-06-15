@@ -8,7 +8,11 @@ import { SharedModule } from '../src/shared/shared.module';
   imports: [
     ConfigModule.forRoot({
       envFilePath:
-        process.env.NODE_ENV === 'development' ? '.env.development' : '.env',
+        process.env.NODE_ENV === 'development'
+          ? '.env.development'
+          : process.env.NODE_ENV === 'test'
+            ? '.env.test'
+            : '.env',
       isGlobal: true,
     }),
     SharedModule,

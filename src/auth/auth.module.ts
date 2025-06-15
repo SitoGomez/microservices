@@ -24,6 +24,7 @@ import { MikroOrmUserRepository } from './user/infrastructure/mikroOrm/MikroOrmU
     MikroOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
+      driver: PostgreSqlDriver,
       useFactory: (configService: ConfigService) => ({
         entities: ['dist/src/**/*.entity.js'],
         entitiesTs: ['src/**/*.entity.ts'],
@@ -33,7 +34,9 @@ import { MikroOrmUserRepository } from './user/infrastructure/mikroOrm/MikroOrmU
         host: configService.get<string>('COMMAND_DB_HOST', 'localhost'),
         port: configService.get<number>('COMMAND_DB_PORT', 5430),
         driver: PostgreSqlDriver,
-        debug: configService.get<string>('NODE_ENV') === 'development',
+        debug: ['development', 'test'].includes(
+          configService.get<string>('NODE_ENV', 'otherEnvironment'),
+        ),
         colors: true,
         extensions: [Migrator],
         migrations: {
