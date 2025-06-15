@@ -6,7 +6,12 @@ import eslintPluginImport from 'eslint-plugin-import';
 
 export default tseslint.config(
   {
-    ignores: ['eslint.config.mjs'],
+    ignores: [
+      'eslint.config.mjs',
+      'node_modules',
+      'dist',
+      'coverage',
+      'logs'],
   },
   eslint.configs.recommended,
   ...tseslint.configs.recommendedTypeChecked,
