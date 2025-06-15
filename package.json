@@ -8,7 +8,7 @@
   "scripts": {
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
-    "start": "nest start --entryFile app/main",
+    "start": "NODE_ENV=development nest start --entryFile app/main",
     "start:dev": "nest start --entryFile app/main --watch",
     "start:debug": "nest start --entryFile app/main --debug 0.0.0.0:9229 --watch",
     "start:prod": "node dist/app/main",
@@ -25,6 +25,7 @@
     "@mikro-orm/nestjs": "^6.1.1",
     "@mikro-orm/postgresql": "^6.4.16",
     "@nestjs/common": "^11.0.1",
+    "@nestjs/config": "^4.0.2",
     "@nestjs/core": "^11.0.1",
     "@nestjs/platform-express": "^11.0.1",
     "colorette": "^2.0.20",
