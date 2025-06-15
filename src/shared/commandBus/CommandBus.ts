@@ -30,7 +30,7 @@ export class InMemoryCommandBus implements ICommandBus {
       throw new NoHandlerForCommandError(commandName);
     }
 
-    this.logger.info(`executing command: ${commandName} with id: ${commandId}`);
+    this.logger.info(`Executing command: ${commandName} with id: ${commandId}`);
     await handler.execute(command);
   }
 }
