@@ -33,7 +33,7 @@
 - [x] Dockerize nest app
 
 - [x] Add logger (WINSTON)
-  - [ ] Research how to handle rotative logs
+  - [x] Research how to handle rotative logs
 - [ ] Add more databases
 - [ ] Create a postgres TEST db docker container
 
@@ -53,7 +53,7 @@
 
 - [ ] Add pessimist and optimist locking with redis json
 
-- [ ] Make postman in sync with file in project
+- [x] Make postman in sync with file in project
 
 - [ ] Remove unnecesary grafana container at the moment
 
