@@ -69,5 +69,5 @@
 # 🧹 Cleanup & Optimization
 
 - [ ] Add pessimistic and optimistic locking with Redis JSON
-- [ ] Remove unnecessary Grafana container
+- [x] Remove unnecessary Grafana container
 - [ ] Remove user data from user in auth module
