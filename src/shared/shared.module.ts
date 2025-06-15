@@ -41,6 +41,6 @@ import { WinstonLogger } from './logger/WinstonLogger';
       inject: [LOGGER],
     },
   ],
-  exports: [EVENT_BUS, DOMAIN_EVENT_MANAGER, DATE_TIME_SERVICE, COMMAND_BUS],
+  exports: [EVENT_BUS, DOMAIN_EVENT_MANAGER, DATE_TIME_SERVICE],
 })
 export class SharedModule {}
