@@ -1,0 +1,41 @@
+{
+	"info": {
+		"_postman_id": "5c1b5926-4b79-4e10-8406-92a5b7482681",
+		"name": "Personal-Microservices",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "30909764",
+		"_collection_link": "https://winter-moon-606571.postman.co/workspace/New-Team-Workspace~74a5fdde-6326-4204-8ef2-6b7043e0b8a7/collection/30909764-5c1b5926-4b79-4e10-8406-92a5b7482681?action=share&source=collection_link&creator=30909764"
+	},
+	"item": [
+		{
+			"name": "RegisterUser",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"userId\": \"55b66e5f-eeb9-4410-ab11-a90ae7b530bf\",\n    \"fullname\": \"asdasd\",\n    \"email\": \"lololo@test.com\",\n    \"password\": \"fdfdfd\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3001/api/users/register",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"api",
+						"users",
+						"register"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
