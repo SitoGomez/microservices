@@ -15,10 +15,9 @@
 # 🛠️ Core Infrastructure & Architecture
 
 - [ ] Extract MikroOrm config to be reused with CLI
-- [ ] Add basic env service
+- [x] Add basic env service
 - [ ] Add more databases
 - [ ] Create a Postgres TEST DB Docker container
-- [ ] Replace Prometheus with OpenTelemetry
 - [ ] Add traces for tracking full flow HTTP request - OpenTelemetry
 
 ---
