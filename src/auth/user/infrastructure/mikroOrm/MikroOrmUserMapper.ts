@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { UserEntity } from './entities/User.entity';
+
 import { User } from '../../domain/User';
+
+import { UserEntity } from './entities/User.entity';
 
 @Injectable()
 export class MikroOrmUserMapper {

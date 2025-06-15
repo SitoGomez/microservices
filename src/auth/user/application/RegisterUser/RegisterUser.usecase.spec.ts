@@ -3,6 +3,7 @@ import { InMemoryDomainEventManager } from '../../../../shared/domainEvent/infra
 import { InMemoryEventBus } from '../../../../shared/eventBus/InMemoryEventBus';
 import { UserWasRegisteredEvent } from '../../domain/events/UserWasRegistered.event';
 import { UserRepositoryMock } from '../../infrastructure/mocks/UserRepositoryMock';
+
 import { RegisterUserCommand } from './RegisterUser.command';
 import { RegisterUserUseCase } from './RegisterUser.usecase';
 

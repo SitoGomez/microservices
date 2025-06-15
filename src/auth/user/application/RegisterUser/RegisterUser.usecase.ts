@@ -1,17 +1,19 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { User } from '../../domain/User';
-import { IUserRepository, USER_REPOSITORY } from '../../domain/UserRepository';
-import { RegisterUserCommand } from './RegisterUser.command';
-import { EVENT_BUS, IEventBus } from '../../../../shared/eventBus/IEventBus';
-import {
-  DOMAIN_EVENT_MANAGER,
-  IDomainEventManager,
-} from '../../../../shared/domainEvent/domain/IDomainEventManager';
+
+import { ICommandHandler } from '../../../../shared/commandBus/ICommandHandler';
 import {
   DATE_TIME_SERVICE,
   IDateTimeService,
 } from '../../../../shared/dateTimeService/domain/IDateTimeService';
-import { ICommandHandler } from '../../../../shared/commandBus/ICommandHandler';
+import {
+  DOMAIN_EVENT_MANAGER,
+  IDomainEventManager,
+} from '../../../../shared/domainEvent/domain/IDomainEventManager';
+import { EVENT_BUS, IEventBus } from '../../../../shared/eventBus/IEventBus';
+import { User } from '../../domain/User';
+import { IUserRepository, USER_REPOSITORY } from '../../domain/UserRepository';
+
+import { RegisterUserCommand } from './RegisterUser.command';
 
 @Injectable()
 export class RegisterUserUseCase

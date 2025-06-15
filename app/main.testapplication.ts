@@ -1,10 +1,12 @@
-import { Test } from '@nestjs/testing';
-import { INestApplication } from '@nestjs/common';
-import { registerCommands } from './utils/RegisterCommands';
 import { MikroORM } from '@mikro-orm/core';
-import { AppModule } from './app.module';
+import { INestApplication } from '@nestjs/common';
+import { Test } from '@nestjs/testing';
+import { App } from 'supertest/types';
 
-export async function bootstrapTest(): Promise<INestApplication> {
+import { AppModule } from './app.module';
+import { registerCommands } from './utils/RegisterCommands';
+
+export async function bootstrapTest(): Promise<INestApplication<App>> {
   const moduleRef = await Test.createTestingModule({
     imports: [AppModule],
   }).compile();

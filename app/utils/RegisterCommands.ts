@@ -1,4 +1,5 @@
 import { INestApplication } from '@nestjs/common';
+
 import { RegisterUserCommand } from '../../src/auth/user/application/RegisterUser/RegisterUser.command';
 import { RegisterUserUseCase } from '../../src/auth/user/application/RegisterUser/RegisterUser.usecase';
 import {

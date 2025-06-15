@@ -1,5 +1,7 @@
 import { IDomainEventManager } from 'src/shared/domainEvent/domain/IDomainEventManager';
+
 import { DomainEvent } from '../../../shared/domainEvent/domain/DomainEvent';
+
 import { UserWasRegisteredEvent } from './events/UserWasRegistered.event';
 
 export class User {

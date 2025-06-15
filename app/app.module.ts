@@ -1,10 +1,11 @@
-import { Module } from '@nestjs/common';
-import { PostgreSqlDriver } from '@mikro-orm/postgresql';
-import { MikroOrmModule } from '@mikro-orm/nestjs/mikro-orm.module';
 import { Migrator } from '@mikro-orm/migrations';
+import { MikroOrmModule } from '@mikro-orm/nestjs/mikro-orm.module';
+import { PostgreSqlDriver } from '@mikro-orm/postgresql';
+import { Module } from '@nestjs/common';
+
+import { AuthModule } from '../src/auth/auth.module';
 import { migrations } from '../src/auth/user/infrastructure/mikroOrm/migrations';
 import { SharedModule } from '../src/shared/shared.module';
-import { AuthModule } from '../src/auth/auth.module';
 
 @Module({
   imports: [

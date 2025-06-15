@@ -7,11 +7,13 @@ import {
   Res,
 } from '@nestjs/common';
 import { Response } from 'express';
+
 import {
   COMMAND_BUS,
   ICommandBus,
 } from '../../../../../shared/commandBus/ICommandBus';
 import { RegisterUserCommand } from '../../../application/RegisterUser/RegisterUser.command';
+
 import { RegisterUserControllerDto } from './RegisterUserController.dto';
 
 @Controller()

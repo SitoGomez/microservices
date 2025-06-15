@@ -1,10 +1,13 @@
-import * as request from 'supertest';
-import { INestApplication } from '@nestjs/common';
-import { bootstrapTest } from '../../../../../../app/main.testapplication';
 import { randomUUID } from 'node:crypto';
 
+import { INestApplication } from '@nestjs/common';
+import * as request from 'supertest';
+import { App } from 'supertest/types';
+
+import { bootstrapTest } from '../../../../../../app/main.testapplication';
+
 describe('RegisterUserController', () => {
-  let app: INestApplication;
+  let app: INestApplication<App>;
 
   beforeAll(async () => {
     app = await bootstrapTest();

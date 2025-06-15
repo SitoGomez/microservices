@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+
 import { InMemoryCommandBus } from './commandBus/CommandBus';
 import { COMMAND_BUS, ICommandBus } from './commandBus/ICommandBus';
 import { DATE_TIME_SERVICE } from './dateTimeService/domain/IDateTimeService';

@@ -1,10 +1,12 @@
 import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { Module } from '@nestjs/common';
+
 import { InMemoryCommandBus } from '../shared/commandBus/CommandBus';
 import { COMMAND_BUS } from '../shared/commandBus/ICommandBus';
 import { ILogger, LOGGER } from '../shared/logger/ILogger';
 import { WinstonLogger } from '../shared/logger/WinstonLogger';
 import { SharedModule } from '../shared/shared.module';
+
 import { RegisterUserUseCase } from './user/application/RegisterUser/RegisterUser.usecase';
 import { USER_REPOSITORY } from './user/domain/UserRepository';
 import { RegisterUserController } from './user/infrastructure/controllers/RegisterUser/RegisterUser.controller';

@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+
 import { DomainEvent } from '../domain/DomainEvent';
 import { IDomainEventManager } from '../domain/IDomainEventManager';
 
