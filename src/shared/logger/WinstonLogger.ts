@@ -10,9 +10,11 @@ import {
   format,
   transports,
 } from 'winston';
-import { FileTransportInstance } from 'winston/lib/winston/transports';
+import 'winston-daily-rotate-file';
+import DailyRotateFile from 'winston-daily-rotate-file';
 
 import { ILogger } from './ILogger';
+
 const { combine, timestamp, printf, colorize } = format;
 
 @Injectable()
@@ -37,8 +39,8 @@ export class WinstonLogger implements ILogger {
             }),
           ),
         }),
-        this.logToFile(serviceName, 'info', 'info.log'),
-        this.logToFile(serviceName, 'error', 'error.log'),
+        this.logToFileWithRotation(serviceName, 'info', 'info'),
+        this.logToFileWithRotation(serviceName, 'error', 'error'),
       ],
     });
   }
@@ -49,12 +51,12 @@ export class WinstonLogger implements ILogger {
     }
   }
 
-  private logToFile(
+  private logToFileWithRotation(
     serviceName: string,
     level: LoggerOptions['level'],
     filename: string,
-  ): FileTransportInstance {
-    return new transports.File({
+  ): DailyRotateFile {
+    return new transports.DailyRotateFile({
       level,
       format: combine(
         timestamp({
@@ -64,7 +66,11 @@ export class WinstonLogger implements ILogger {
           return `[ ${serviceName} ]- ${String(info.timestamp)} -[${String(info.level)}]: ${String(info.message)}`;
         }),
       ),
-      filename: path.join(this.LOG_FOLDER, filename),
+      filename: `${path.join(this.LOG_FOLDER, filename)}_%DATE%`,
+      maxSize: '20mb',
+      maxFiles: '3',
+      extension: '.log',
+      datePattern: 'YYYY-ww',
     });
   }
 
