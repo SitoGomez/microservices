@@ -1,9 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common';
+
 import { ILogger, LOGGER } from '../logger/ILogger';
+
+import { NoHandlerForCommandError } from './errors/NoHandlerForCommand.error';
 import { ICommand } from './ICommand';
 import { ICommandBus } from './ICommandBus';
 import { ICommandHandler } from './ICommandHandler';
-import { NoHandlerForCommandError } from './errors/NoHandlerForCommand.error';
 
 @Injectable()
 export class InMemoryCommandBus implements ICommandBus {
