@@ -1,37 +1,18 @@
-import { Migrator } from '@mikro-orm/migrations';
-import { MikroOrmModule } from '@mikro-orm/nestjs/mikro-orm.module';
-import { PostgreSqlDriver } from '@mikro-orm/postgresql';
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 
 import { AuthModule } from '../src/auth/auth.module';
-import { migrations } from '../src/auth/user/infrastructure/mikroOrm/migrations';
 import { SharedModule } from '../src/shared/shared.module';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      envFilePath:
+        process.env.NODE_ENV === 'development' ? '.env.development' : '.env',
+      isGlobal: true,
+    }),
     SharedModule,
     AuthModule,
-    MikroOrmModule.forRoot({
-      entities: ['dist/src/**/*.entity.js'],
-      entitiesTs: ['src/**/*.entity.ts'],
-      dbName: 'personal_db',
-      user: 'postgres',
-      password: 'postgres',
-      host: 'localhost',
-      port: 5433,
-      driver: PostgreSqlDriver,
-      debug: true,
-      colors: true,
-      extensions: [Migrator],
-      migrations: {
-        path: 'dist/src/**/infrastructure/mikroOrm/migrations',
-        pathTs: 'src/**/infrastructure/mikroOrm/migrations',
-        transactional: true,
-        allOrNothing: true,
-        snapshot: true,
-        migrationsList: migrations,
-      },
-    }),
   ],
 })
 export class AppModule {}
