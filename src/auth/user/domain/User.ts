@@ -38,6 +38,24 @@ export class User {
     return newUser;
   }
 
+  public static fromPrimitives(
+    domainEventHandler: IDomainEventManager,
+    id: string,
+    email: string,
+    password: string,
+    createdAt: Date,
+    updatedAt: Date,
+  ): User {
+    return new User(
+      domainEventHandler,
+      id,
+      email,
+      password,
+      createdAt,
+      updatedAt,
+    );
+  }
+
   public releaseEvents(): DomainEvent[] {
     return this.domainEventHandler.getRegisteredEvents();
   }
