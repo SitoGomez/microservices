@@ -19,4 +19,16 @@ export class MikroOrmUserRepository implements IUserRepository {
   public async register(user: User): Promise<void> {
     await this.userRepository.insert(this.userMapper.fromDomain(user));
   }
+
+  public async findByEmail(email: string): Promise<User | null> {
+    const user = await this.userRepository.findOne({
+      email,
+    });
+
+    if (!user) {
+      return null;
+    }
+
+    return this.userMapper.toDomain(user);
+  }
 }

@@ -5,18 +5,29 @@ import { IUserRepository } from '../../domain/UserRepository';
 
 @Injectable()
 export class UserRepositoryMock implements IUserRepository {
-  private users: User[] = [];
+  private toReturn: User[] | null = null;
+  private storedUsers: User[] = [];
 
-  public register(user: User): Promise<void> {
-    this.users.push(user);
-    return Promise.resolve();
+  public setUsers(users: User[]): void {
+    this.toReturn = users;
   }
 
   public stored(): User[] {
-    return this.users;
+    return this.storedUsers;
   }
 
   public clean(): void {
-    this.users = [];
+    this.storedUsers = [];
+  }
+
+  public register(user: User): Promise<void> {
+    this.storedUsers.push(user);
+    return Promise.resolve();
+  }
+
+  public findByEmail(_: string): Promise<User | null> {
+    return this.toReturn
+      ? Promise.resolve(this.toReturn[0])
+      : Promise.resolve(null);
   }
 }
