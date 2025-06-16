@@ -21,15 +21,15 @@ const config: Options = {
   metadataProvider: TsMorphMetadataProvider,
   debug: ['development', 'test'].includes(process.env.NODE_ENV || ''),
   migrations: {
-    path: 'dist/src/**/infrastructure/mikroOrm/migrations',
-    pathTs: 'src/**/infrastructure/mikroOrm/migrations',
+    path: 'dist/src/**/infrastructure/databases/mikroOrm/migrations',
+    pathTs: 'src/**/infrastructure/databases/mikroOrm/migrations',
     transactional: true,
     allOrNothing: true,
     snapshot: true,
   },
   seeder: {
-    path: 'dist/src/**/infrastructure/mikroOrm/seeders',
-    pathTs: 'src/**/infrastructure/mikroOrm/seeders',
+    path: 'dist/src/**/infrastructure/databases/mikroOrm/seeders',
+    pathTs: 'src/**/infrastructure/databases/mikroOrm/seeders',
   },
 };
 

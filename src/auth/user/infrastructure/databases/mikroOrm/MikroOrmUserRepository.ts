@@ -2,8 +2,8 @@ import { InjectRepository } from '@mikro-orm/nestjs';
 import { EntityRepository } from '@mikro-orm/postgresql';
 import { Injectable } from '@nestjs/common';
 
-import { User } from '../../domain/User';
-import { IUserRepository } from '../../domain/UserRepository';
+import { User } from '../../../domain/User';
+import { IUserRepository } from '../../../domain/UserRepository';
 
 import { UserEntity } from './entities/User.entity';
 import { MikroOrmUserMapper } from './MikroOrmUserMapper';

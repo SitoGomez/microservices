@@ -10,6 +10,7 @@ import {
   IDomainEventManager,
 } from '../../../../shared/domainEvent/domain/IDomainEventManager';
 import { EVENT_BUS, IEventBus } from '../../../../shared/eventBus/IEventBus';
+import { IPasswordHasher, PASSWORD_HASHER } from '../../domain/IPasswordHasher';
 import { User } from '../../domain/User';
 import { IUserRepository, USER_REPOSITORY } from '../../domain/UserRepository';
 
@@ -26,6 +27,7 @@ export class RegisterUserUseCase
     private readonly domainEventManager: IDomainEventManager,
     @Inject(DATE_TIME_SERVICE)
     private readonly dateTimeService: IDateTimeService,
+    @Inject(PASSWORD_HASHER) private readonly passwordHasher: IPasswordHasher,
   ) {}
 
   public async execute(
@@ -38,7 +40,7 @@ export class RegisterUserUseCase
       registerUserCommand.id,
       userId,
       email,
-      password,
+      await this.passwordHasher.hash(password),
       new Date(this.dateTimeService.now()),
     );
 

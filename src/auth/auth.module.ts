@@ -11,13 +11,14 @@ import { WinstonLogger } from '../shared/logger/WinstonLogger';
 import { SharedModule } from '../shared/shared.module';
 
 import { RegisterUserUseCase } from './user/application/RegisterUser/RegisterUser.usecase';
+import { PASSWORD_HASHER } from './user/domain/IPasswordHasher';
 import { USER_REPOSITORY } from './user/domain/UserRepository';
 import { RegisterUserController } from './user/infrastructure/controllers/RegisterUser/RegisterUser.controller';
-import { UserEntity } from './user/infrastructure/mikroOrm/entities/User.entity';
-import { authMigrations } from './user/infrastructure/mikroOrm/migrations';
-import { MikroOrmUserMapper } from './user/infrastructure/mikroOrm/MikroOrmUserMapper';
-import { MikroOrmUserRepository } from './user/infrastructure/mikroOrm/MikroOrmUserRepository';
-
+import { UserEntity } from './user/infrastructure/databases/mikroOrm/entities/User.entity';
+import { authMigrations } from './user/infrastructure/databases/mikroOrm/migrations';
+import { MikroOrmUserMapper } from './user/infrastructure/databases/mikroOrm/MikroOrmUserMapper';
+import { MikroOrmUserRepository } from './user/infrastructure/databases/mikroOrm/MikroOrmUserRepository';
+import { BCryptPasswordHasher } from './user/infrastructure/hashers/BCryptPasswordHasher';
 @Module({
   imports: [
     SharedModule,
@@ -69,6 +70,10 @@ import { MikroOrmUserRepository } from './user/infrastructure/mikroOrm/MikroOrmU
     {
       provide: USER_REPOSITORY,
       useClass: MikroOrmUserRepository,
+    },
+    {
+      provide: PASSWORD_HASHER,
+      useClass: BCryptPasswordHasher,
     },
     RegisterUserUseCase,
     MikroOrmUserMapper,
