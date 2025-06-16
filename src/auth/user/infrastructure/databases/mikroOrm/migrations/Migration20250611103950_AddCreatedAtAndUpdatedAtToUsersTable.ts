@@ -4,8 +4,8 @@ export class Migration20250611103950_AddCreatedAtAndUpdatedAtToUsersTable extend
   public override up(): void {
     this.addSql(
       `ALTER TABLE users
-        ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ NOT NULL,
-        ADD COLUMN IF NOT EXISTS modified_at TIMESTAMPTZ NOT NULL;`,
+        ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        ADD COLUMN IF NOT EXISTS modified_at TIMESTAMPTZ NOT NULL DEFAULT NOW();`,
     );
   }
 
