@@ -8,7 +8,7 @@ import { UserRepositoryMock } from '../../infrastructure/mocks/UserRepositoryMoc
 import { RegisterUserCommand } from './RegisterUser.command';
 import { RegisterUserUseCase } from './RegisterUser.usecase';
 
-describe('RegisterUserUseCase', () => {
+describe('Given a RegisterUserCommand', () => {
   const userRepository = new UserRepositoryMock();
   const eventBus = new InMemoryEventBus();
   const domainEventManager = new InMemoryDomainEventManager();
@@ -48,27 +48,29 @@ describe('RegisterUserUseCase', () => {
     passwordHasher.setHash(HASHED_PASSWORD);
   });
 
-  it('should register a user', async () => {
-    await useCase.execute(VALID_COMMAND);
+  describe('when the user is not registered', () => {
+    it('then should register a user', async () => {
+      await useCase.execute(VALID_COMMAND);
 
-    expect(userRepository.stored()).toHaveLength(1);
-    expect(userRepository.stored()[0].getId()).toEqual(VALID_USER_ID);
-    expect(userRepository.stored()[0].getEmail()).toEqual(VALID_USER_EMAIL);
-    expect(userRepository.stored()[0].getPassword()).toEqual(HASHED_PASSWORD);
-    expect(userRepository.stored()[0].getCreatedAt()).toEqual(
-      new Date(VALID_TIMESTAMP_IN_MS),
-    );
-    expect(userRepository.stored()[0].getUpdatedAt()).toEqual(
-      new Date(VALID_TIMESTAMP_IN_MS),
-    );
-  });
+      expect(userRepository.stored()).toHaveLength(1);
+      expect(userRepository.stored()[0].getId()).toEqual(VALID_USER_ID);
+      expect(userRepository.stored()[0].getEmail()).toEqual(VALID_USER_EMAIL);
+      expect(userRepository.stored()[0].getPassword()).toEqual(HASHED_PASSWORD);
+      expect(userRepository.stored()[0].getCreatedAt()).toEqual(
+        new Date(VALID_TIMESTAMP_IN_MS),
+      );
+      expect(userRepository.stored()[0].getUpdatedAt()).toEqual(
+        new Date(VALID_TIMESTAMP_IN_MS),
+      );
+    });
 
-  it('should dispatch an UserWasRegisteredEvent', async () => {
-    await useCase.execute(VALID_COMMAND);
+    it('should dispatch an UserWasRegisteredEvent', async () => {
+      await useCase.execute(VALID_COMMAND);
 
-    expect(eventBus.getDispatchedEvents()).toHaveLength(1);
-    expect(eventBus.getDispatchedEvents()[0]).toBeInstanceOf(
-      UserWasRegisteredEvent,
-    );
+      expect(eventBus.getDispatchedEvents()).toHaveLength(1);
+      expect(eventBus.getDispatchedEvents()[0]).toBeInstanceOf(
+        UserWasRegisteredEvent,
+      );
+    });
   });
 });
