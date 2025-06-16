@@ -17,7 +17,7 @@ export class MikroOrmUserMapper {
 
   public fromDomain(user: User): UserEntity {
     const userEntity = new UserEntity(
-      user.getId(),
+      user.getUserId(),
       user.getEmail(),
       user.getPassword(),
       user.getCreatedAt(),

@@ -7,7 +7,7 @@ import { UserWasRegisteredEvent } from './events/UserWasRegistered.event';
 export class User {
   private constructor(
     private readonly domainEventHandler: IDomainEventManager,
-    private id: string,
+    private userId: string,
     private email: string,
     private password: string,
     private createdAt: Date,
@@ -17,14 +17,14 @@ export class User {
   public static register(
     domainEventHandler: IDomainEventManager,
     causationId: string,
-    id: string,
+    userId: string,
     email: string,
     password: string,
     currentTime: Date,
   ): User {
     const newUser = new User(
       domainEventHandler,
-      id,
+      userId,
       email,
       password,
       currentTime,
@@ -32,7 +32,7 @@ export class User {
     );
 
     newUser.domainEventHandler.register(
-      UserWasRegisteredEvent.create(causationId, id, email, currentTime),
+      UserWasRegisteredEvent.create(causationId, userId, email, currentTime),
     );
 
     return newUser;
@@ -60,8 +60,8 @@ export class User {
     return this.domainEventHandler.getRegisteredEvents();
   }
 
-  public getId(): string {
-    return this.id;
+  public getUserId(): string {
+    return this.userId;
   }
 
   public getEmail(): string {
