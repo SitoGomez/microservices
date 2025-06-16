@@ -45,10 +45,11 @@ export class UserEntity {
   @Property()
   password: string;
 
-  @Property({ type: 'timestampz' })
+  @Property({ fieldName: 'created_at', type: 'timestampz' })
   createdAt: Date;
 
   @Property({
+    fieldName: 'modified_at',
     type: 'timestampz',
   })
   updatedAt: Date;
