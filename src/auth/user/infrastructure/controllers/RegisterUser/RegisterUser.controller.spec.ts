@@ -33,7 +33,7 @@ describe('RegisterUserController', () => {
     await app.close();
   });
 
-  it('should register a user', async () => {
+  it('should register an user', async () => {
     await request(app.getHttpServer())
       .post('/api/users/register')
       .send({

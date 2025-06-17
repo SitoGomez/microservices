@@ -10,9 +10,11 @@ import { ILogger, LOGGER } from '../shared/logger/ILogger';
 import { WinstonLogger } from '../shared/logger/WinstonLogger';
 import { SharedModule } from '../shared/shared.module';
 
+import { LoginUserUseCase } from './user/application/LoginUser/LoginUser.usecase';
 import { RegisterUserUseCase } from './user/application/RegisterUser/RegisterUser.usecase';
 import { PASSWORD_HASHER } from './user/domain/IPasswordHasher';
 import { USER_REPOSITORY } from './user/domain/UserRepository';
+import { LoginUserController } from './user/infrastructure/controllers/LoginUser/LoginUser.controller';
 import { RegisterUserController } from './user/infrastructure/controllers/RegisterUser/RegisterUser.controller';
 import { UserEntity } from './user/infrastructure/databases/mikroOrm/entities/User.entity';
 import { authMigrations } from './user/infrastructure/databases/mikroOrm/migrations';
@@ -52,7 +54,7 @@ import { BCryptPasswordHasher } from './user/infrastructure/hashers/BCryptPasswo
     }),
     MikroOrmModule.forFeature([UserEntity]),
   ],
-  controllers: [RegisterUserController],
+  controllers: [RegisterUserController, LoginUserController],
   providers: [
     {
       provide: LOGGER,
@@ -77,6 +79,7 @@ import { BCryptPasswordHasher } from './user/infrastructure/hashers/BCryptPasswo
     },
     RegisterUserUseCase,
     MikroOrmUserMapper,
+    LoginUserUseCase,
   ],
 })
 export class AuthModule {}

@@ -1,5 +1,7 @@
 import { INestApplication } from '@nestjs/common';
 
+import { LoginUserCommand } from '../../src/auth/user/application/LoginUser/LoginUser.command';
+import { LoginUserUseCase } from '../../src/auth/user/application/LoginUser/LoginUser.usecase';
 import { RegisterUserCommand } from '../../src/auth/user/application/RegisterUser/RegisterUser.command';
 import { RegisterUserUseCase } from '../../src/auth/user/application/RegisterUser/RegisterUser.usecase';
 import {
@@ -14,5 +16,10 @@ export function registerCommands(app: INestApplication<any>): void {
   commandBus.register(
     RegisterUserCommand,
     app.get<ICommandHandler<RegisterUserCommand>>(RegisterUserUseCase),
+  );
+
+  commandBus.register(
+    LoginUserCommand,
+    app.get<ICommandHandler<LoginUserCommand>>(LoginUserUseCase),
   );
 }

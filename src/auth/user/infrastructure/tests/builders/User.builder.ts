@@ -7,7 +7,7 @@ export class UserBuilder {
     '$2b$12$pAGxHo.h70dJblX2kEb1JOvci8Vxi4DTbT3lw3ETUioPNXYCjVPBe';
   private userId: string = '238778b5-e633-4071-8dac-4012cb46ee3e';
   private createdAt: Date = new Date('2023-10-01T00:00:00.000Z');
-  private updatedAt: Date = new Date('2024-06-006T00:00:00.000Z');
+  private updatedAt: Date = new Date('2024-06-06T00:00:00.000Z');
 
   private constructor() {}
 
@@ -46,8 +46,8 @@ export class UserBuilder {
       this.userId,
       this.email,
       this.password,
-      new Date(this.createdAt),
-      new Date(this.updatedAt),
+      this.createdAt,
+      this.updatedAt,
     );
   }
 }
