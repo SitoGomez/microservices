@@ -12,13 +12,14 @@ import {
 } from '../../../domain/IPasswordHasher';
 
 describe('Given a request to login', () => {
+  let app: INestApplication<App>;
+
+  let passwordHasher: IPasswordHasher;
+  let entityManager: MikroORM['em'];
+
   const VALID_USER_ID = '9f62c518-08fc-4f6f-86e0-8db845cc9c2d';
   const VALID_EMAIL = `test@test.com`;
   const VALID_PASSWORD = 'abc123';
-
-  let app: INestApplication<App>;
-  let passwordHasher: IPasswordHasher;
-  let entityManager: MikroORM['em'];
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
