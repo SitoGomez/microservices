@@ -12,8 +12,8 @@ describe('RegisterUserController', () => {
 
   let entityManager: MikroORM['em'];
 
-  const VALID_USER_ID = '9f62c518-08fc-4f6f-86e0-8db845cc9c2d';
-  const VALID_EMAIL = `test@test.com`;
+  const VALID_USER_ID = '8f62c518-08fc-4f6f-86e0-8db845cc9c2d';
+  const VALID_EMAIL = `test1@test.com`;
   const VALID_PASSWORD = 'abc123';
 
   beforeAll(async () => {
