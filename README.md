@@ -29,7 +29,7 @@
 - [ ] Improve testing E2E
 - [ ] Add integration tests over repositories
 - [ ] Add database seeder to have proper test data
-- [ ] Implement Given...When...Then in tests
+- [x] Implement Given...When...Then in tests
 - [ ] Add K6 to test performance
 - [ ] Add ESLint diff and pnpm test before pushing and failing if KO
 
