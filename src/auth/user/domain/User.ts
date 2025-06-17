@@ -39,7 +39,7 @@ export class User {
   }
 
   public static fromPrimitives(
-    domainEventHandler: IDomainEventManager,
+    domainEventManager: IDomainEventManager,
     id: string,
     email: string,
     password: string,
@@ -47,7 +47,7 @@ export class User {
     updatedAt: Date,
   ): User {
     return new User(
-      domainEventHandler,
+      domainEventManager,
       id,
       email,
       password,

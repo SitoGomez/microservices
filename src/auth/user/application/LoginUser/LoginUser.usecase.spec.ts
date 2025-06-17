@@ -1,8 +1,10 @@
 import { InMemoryDateTimeService } from '../../../../shared/dateTimeService/infrastructure/doubles/InMemoryDateTimeService';
 import { InMemoryEventBus } from '../../../../shared/eventBus/InMemoryEventBus';
 import { UserByEmailNotFoundError } from '../../domain/errors/UserByEmailNotFound.error';
-import { PasswordHasherMock } from '../../infrastructure/mocks/PasswordHasherMock';
-import { UserRepositoryMock } from '../../infrastructure/mocks/UserRepositoryMock';
+import { WrongUserCredentialsError } from '../../domain/errors/WrongUserCredentials.error';
+import { UserBuilder } from '../../infrastructure/tests/builders/User.builder';
+import { PasswordHasherMock } from '../../infrastructure/tests/mocks/PasswordHasherMock';
+import { UserRepositoryMock } from '../../infrastructure/tests/mocks/UserRepositoryMock';
 
 import { LoginUserCommand } from './LoginUser.command';
 import { LoginUserUseCase } from './LoginUser.usecase';
@@ -42,9 +44,25 @@ describe('Given an LoginUserCommand', () => {
   });
 
   describe('when the user is not found', () => {
-    it('then should authenticate the user', async () => {
+    it('then should throw an error', async () => {
       await expect(useCase.execute(VALID_COMMAND)).rejects.toThrow(
         UserByEmailNotFoundError,
+      );
+    });
+  });
+
+  describe('when the password is not valid', () => {
+    beforeEach(() => {
+      const user = UserBuilder.anUser().build();
+
+      userRepository.setUsers([user]);
+
+      passwordHasher.setMatch(false);
+    });
+
+    it('then should throw an error', async () => {
+      await expect(useCase.execute(VALID_COMMAND)).rejects.toThrow(
+        WrongUserCredentialsError,
       );
     });
   });

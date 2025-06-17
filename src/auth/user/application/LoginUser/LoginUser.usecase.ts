@@ -3,6 +3,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { ICommandHandler } from '../../../../shared/commandBus/ICommandHandler';
 import { EVENT_BUS, IEventBus } from '../../../../shared/eventBus/IEventBus';
 import { UserByEmailNotFoundError } from '../../domain/errors/UserByEmailNotFound.error';
+import { WrongUserCredentialsError } from '../../domain/errors/WrongUserCredentials.error';
 import { IPasswordHasher, PASSWORD_HASHER } from '../../domain/IPasswordHasher';
 import { IUserRepository, USER_REPOSITORY } from '../../domain/UserRepository';
 
@@ -17,12 +18,21 @@ export class LoginUserUseCase implements ICommandHandler<LoginUserCommand> {
   ) {}
 
   public async execute(loginUserCommand: LoginUserCommand): Promise<void> {
-    const { email } = loginUserCommand;
+    const { email, password } = loginUserCommand;
 
     const user = await this.userRepository.findByEmail(email);
 
     if (!user) {
       throw new UserByEmailNotFoundError(email);
+    }
+
+    const isPasswordValid = await this.passwordHasher.match(
+      password,
+      user.getPassword(),
+    );
+
+    if (!isPasswordValid) {
+      throw new WrongUserCredentialsError(email);
     }
   }
 }
