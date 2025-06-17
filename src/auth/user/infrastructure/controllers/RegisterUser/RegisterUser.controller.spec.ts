@@ -7,7 +7,7 @@ import { App } from 'supertest/types';
 import { AppModule } from '../../../../../../app/app.module';
 import { registerCommands } from '../../../../../../app/utils/RegisterCommands';
 
-describe('RegisterUserController', () => {
+describe('Given a request to register an user', () => {
   let app: INestApplication<App>;
 
   let entityManager: MikroORM['em'];
@@ -23,10 +23,10 @@ describe('RegisterUserController', () => {
 
     const appInstance = moduleRef.createNestApplication();
 
-    entityManager = moduleRef.get(MikroORM).em.fork();
-
-    const orm = appInstance.get(MikroORM);
+    const orm = moduleRef.get(MikroORM);
     await orm.getMigrator().up();
+
+    entityManager = orm.em.fork();
 
     registerCommands(appInstance);
 
@@ -45,14 +45,16 @@ describe('RegisterUserController', () => {
       .execute(`DELETE FROM users WHERE email = '${VALID_EMAIL}';`);
   });
 
-  it('should register an user', async () => {
-    await request(app.getHttpServer())
-      .post('/api/users/register')
-      .send({
-        userId: VALID_USER_ID,
-        email: VALID_EMAIL,
-        password: VALID_PASSWORD,
-      })
-      .expect(201);
+  describe('when the user is not registered yet', () => {
+    it('then it should get registered', async () => {
+      await request(app.getHttpServer())
+        .post('/api/users/register')
+        .send({
+          userId: VALID_USER_ID,
+          email: VALID_EMAIL,
+          password: VALID_PASSWORD,
+        })
+        .expect(201);
+    });
   });
 });

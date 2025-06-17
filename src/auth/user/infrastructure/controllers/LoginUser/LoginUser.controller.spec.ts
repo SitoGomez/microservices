@@ -11,7 +11,7 @@ import {
   PASSWORD_HASHER,
 } from '../../../domain/IPasswordHasher';
 
-describe('Given a request to login', () => {
+describe('Given a request to login from an user', () => {
   let app: INestApplication<App>;
 
   let passwordHasher: IPasswordHasher;
@@ -26,13 +26,14 @@ describe('Given a request to login', () => {
       imports: [AppModule],
     }).compile();
 
-    entityManager = moduleRef.get(MikroORM).em.fork();
     passwordHasher = moduleRef.get(PASSWORD_HASHER);
 
-    const appInstance = moduleRef.createNestApplication();
-
-    const orm = appInstance.get(MikroORM);
+    const orm = moduleRef.get(MikroORM);
     await orm.getMigrator().up();
+
+    entityManager = orm.em.fork();
+
+    const appInstance = moduleRef.createNestApplication();
 
     registerCommands(appInstance);
 
