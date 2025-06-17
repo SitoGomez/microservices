@@ -2,8 +2,8 @@ import { InMemoryDateTimeService } from '../../../../shared/dateTimeService/infr
 import { InMemoryDomainEventManager } from '../../../../shared/domainEvent/infrastructure/InMemoryDomainEventHandler';
 import { InMemoryEventBus } from '../../../../shared/eventBus/InMemoryEventBus';
 import { UserWasRegisteredEvent } from '../../domain/events/UserWasRegistered.event';
-import { PasswordHasherMock } from '../../infrastructure/mocks/PasswordHasherMock';
-import { UserRepositoryMock } from '../../infrastructure/mocks/UserRepositoryMock';
+import { PasswordHasherMock } from '../../infrastructure/tests/mocks/PasswordHasherMock';
+import { UserRepositoryMock } from '../../infrastructure/tests/mocks/UserRepositoryMock';
 
 import { RegisterUserCommand } from './RegisterUser.command';
 import { RegisterUserUseCase } from './RegisterUser.usecase';
