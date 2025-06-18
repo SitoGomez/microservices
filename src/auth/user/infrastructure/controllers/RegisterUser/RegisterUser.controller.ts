@@ -22,7 +22,7 @@ export class RegisterUserController {
     @Inject(COMMAND_BUS) private readonly commandBus: ICommandBus,
   ) {}
 
-  @Post('/api/users/register')
+  @Post('/users/register')
   public async handle(
     @Body() body: RegisterUserControllerDto,
     @Res() res: Response,

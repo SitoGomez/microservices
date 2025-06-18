@@ -22,7 +22,7 @@ export class LoginUserController {
     @Inject(COMMAND_BUS) private readonly commandBus: ICommandBus,
   ) {}
 
-  @Post('/api/users/login')
+  @Post('/users/login')
   public async handle(
     @Body() body: LoginUserControllerDto,
     @Res() res: Response,

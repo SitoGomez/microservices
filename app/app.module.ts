@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { RouterModule } from '@nestjs/core';
 
 import { AuthModule } from '../src/auth/auth.module';
 import { SharedModule } from '../src/shared/shared.module';
@@ -17,6 +18,12 @@ import { SharedModule } from '../src/shared/shared.module';
     }),
     SharedModule,
     AuthModule,
+    RouterModule.register([
+      {
+        path: 'auth',
+        module: AuthModule,
+      },
+    ]),
   ],
 })
 export class AppModule {}

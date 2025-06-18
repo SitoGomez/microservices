@@ -15,6 +15,7 @@ async function bootstrap(): Promise<void> {
 
   registerCommands(app);
 
+  app.setGlobalPrefix('api');
   await app.listen(process.env.HTTP_SERVER_PORT ?? 3000);
 }
 
