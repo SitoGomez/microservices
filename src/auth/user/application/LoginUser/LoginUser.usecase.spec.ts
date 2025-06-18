@@ -82,4 +82,22 @@ describe('Given an LoginUserCommand', () => {
       );
     });
   });
+
+  describe('when the user is registered already', () => {
+    beforeEach(() => {
+      const user = UserBuilder.anUser().build();
+
+      userRepository.setUsers([user]);
+
+      passwordHasher.setMatch(true);
+    });
+
+    it('then should return an access token', async () => {
+      const result = await useCase.execute(VALID_COMMAND);
+
+      expect(result).toEqual({
+        access_token: VALID_ACCESS_TOKEN,
+      });
+    });
+  });
 });
