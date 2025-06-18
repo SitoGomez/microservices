@@ -83,7 +83,7 @@ describe('Given a request to login from an user', () => {
         })
         .expect(200);
 
-      expect(response.body).toHaveProperty('accessToken');
+      expect(response.body).toHaveProperty('access_token');
     });
   });
 });
