@@ -8,34 +8,71 @@
 	},
 	"item": [
 		{
-			"name": "RegisterUser",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"userId\": \"55b66e5f-eeb9-4410-ab11-a90ae7b530bf\",\n    \"email\": \"lololo@test.com\",\n    \"password\": \"fdfdfd\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
+			"name": "Auth",
+			"item": [
+				{
+					"name": "RegisterUser",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userId\": \"55b66e5f-eeb9-4410-ab11-a90ae7b530bf\",\n    \"email\": \"lololo@test.com\",\n    \"password\": \"fdfdf21312d\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3001/api/auth/users/register",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"auth",
+								"users",
+								"register"
+							]
 						}
-					}
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "http://localhost:3001/api/users/register",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "3001",
-					"path": [
-						"api",
-						"users",
-						"register"
-					]
+				{
+					"name": "LoginUser",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"lololo@test.com\",\n    \"password\": \"fdfdf21312d\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3001/api/auth/users/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"auth",
+								"users",
+								"login"
+							]
+						}
+					},
+					"response": []
 				}
-			},
-			"response": []
+			]
 		}
 	]
 }
