@@ -1,19 +1,12 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
-import {
-  DOMAIN_EVENT_MANAGER,
-  IDomainEventManager,
-} from '../../../../../shared/domainEvent/domain/IDomainEventManager';
 import { User } from '../../../domain/User';
 
 import { UserEntity } from './entities/User.entity';
 
 @Injectable()
 export class MikroOrmUserMapper {
-  public constructor(
-    @Inject(DOMAIN_EVENT_MANAGER)
-    private readonly domainEventManager: IDomainEventManager,
-  ) {}
+  public constructor() {}
 
   public fromDomain(user: User): UserEntity {
     const userEntity = new UserEntity(
@@ -29,7 +22,6 @@ export class MikroOrmUserMapper {
 
   public toDomain(userEntity: UserEntity): User {
     return User.fromPrimitives(
-      this.domainEventManager,
       userEntity.getUserId(),
       userEntity.getEmail(),
       userEntity.getPassword(),

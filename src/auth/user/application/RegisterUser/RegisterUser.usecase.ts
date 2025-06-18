@@ -5,10 +5,6 @@ import {
   DATE_TIME_SERVICE,
   IDateTimeService,
 } from '../../../../shared/dateTimeService/domain/IDateTimeService';
-import {
-  DOMAIN_EVENT_MANAGER,
-  IDomainEventManager,
-} from '../../../../shared/domainEvent/domain/IDomainEventManager';
 import { EVENT_BUS, IEventBus } from '../../../../shared/eventBus/IEventBus';
 import { IPasswordHasher, PASSWORD_HASHER } from '../../domain/IPasswordHasher';
 import { User } from '../../domain/User';
@@ -23,8 +19,6 @@ export class RegisterUserUseCase
   public constructor(
     @Inject(USER_REPOSITORY) private readonly userRepository: IUserRepository,
     @Inject(EVENT_BUS) private readonly eventBus: IEventBus,
-    @Inject(DOMAIN_EVENT_MANAGER)
-    private readonly domainEventManager: IDomainEventManager,
     @Inject(DATE_TIME_SERVICE)
     private readonly dateTimeService: IDateTimeService,
     @Inject(PASSWORD_HASHER) private readonly passwordHasher: IPasswordHasher,
@@ -36,7 +30,6 @@ export class RegisterUserUseCase
     const { userId, email, password } = registerUserCommand;
 
     const registeredUser = User.register(
-      this.domainEventManager,
       registerUserCommand.id,
       userId,
       email,

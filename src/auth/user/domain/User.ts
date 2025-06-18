@@ -1,37 +1,29 @@
-import { IDomainEventManager } from 'src/shared/domainEvent/domain/IDomainEventManager';
-
+import { BaseAggregateRoot } from '../../../shared/aggregateRoot/domain/BaseAggregateRoot';
 import { DomainEvent } from '../../../shared/domainEvent/domain/DomainEvent';
 
 import { UserWasRegisteredEvent } from './events/UserWasRegistered.event';
 
-export class User {
+export class User extends BaseAggregateRoot {
   private constructor(
-    private readonly domainEventHandler: IDomainEventManager,
     private userId: string,
     private email: string,
     private password: string,
     private createdAt: Date,
     private updatedAt: Date,
-  ) {}
+  ) {
+    super();
+  }
 
   public static register(
-    domainEventHandler: IDomainEventManager,
     causationId: string,
     userId: string,
     email: string,
     password: string,
     currentTime: Date,
   ): User {
-    const newUser = new User(
-      domainEventHandler,
-      userId,
-      email,
-      password,
-      currentTime,
-      currentTime,
-    );
+    const newUser = new User(userId, email, password, currentTime, currentTime);
 
-    newUser.domainEventHandler.register(
+    newUser.registerEvent(
       UserWasRegisteredEvent.create(causationId, userId, email, currentTime),
     );
 
@@ -39,25 +31,17 @@ export class User {
   }
 
   public static fromPrimitives(
-    domainEventManager: IDomainEventManager,
     id: string,
     email: string,
     password: string,
     createdAt: Date,
     updatedAt: Date,
   ): User {
-    return new User(
-      domainEventManager,
-      id,
-      email,
-      password,
-      createdAt,
-      updatedAt,
-    );
+    return new User(id, email, password, createdAt, updatedAt);
   }
 
   public releaseEvents(): DomainEvent[] {
-    return this.domainEventHandler.getRegisteredEvents();
+    return this.getRegisteredEvents();
   }
 
   public getUserId(): string {

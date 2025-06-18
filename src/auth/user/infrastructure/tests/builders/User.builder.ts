@@ -1,4 +1,3 @@
-import { InMemoryDomainEventManager } from '../../../../../shared/domainEvent/infrastructure/InMemoryDomainEventHandler';
 import { User } from '../../../domain/User';
 
 export class UserBuilder {
@@ -42,7 +41,6 @@ export class UserBuilder {
 
   public build(): User {
     return User.fromPrimitives(
-      new InMemoryDomainEventManager(),
       this.userId,
       this.email,
       this.password,

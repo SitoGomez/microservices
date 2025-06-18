@@ -1,5 +1,4 @@
 import { InMemoryDateTimeService } from '../../../../shared/dateTimeService/infrastructure/doubles/InMemoryDateTimeService';
-import { InMemoryDomainEventManager } from '../../../../shared/domainEvent/infrastructure/InMemoryDomainEventHandler';
 import { InMemoryEventBus } from '../../../../shared/eventBus/InMemoryEventBus';
 import { UserWasRegisteredEvent } from '../../domain/events/UserWasRegistered.event';
 import { PasswordHasherMock } from '../../infrastructure/tests/mocks/PasswordHasherMock';
@@ -11,14 +10,12 @@ import { RegisterUserUseCase } from './RegisterUser.usecase';
 describe('Given a RegisterUserCommand', () => {
   const userRepository = new UserRepositoryMock();
   const eventBus = new InMemoryEventBus();
-  const domainEventManager = new InMemoryDomainEventManager();
   const dateTimeService = new InMemoryDateTimeService();
   const passwordHasher = new PasswordHasherMock();
 
   const useCase = new RegisterUserUseCase(
     userRepository,
     eventBus,
-    domainEventManager,
     dateTimeService,
     passwordHasher,
   );
@@ -38,7 +35,6 @@ describe('Given a RegisterUserCommand', () => {
   afterEach(() => {
     userRepository.clean();
     eventBus.clean();
-    domainEventManager.clean();
     dateTimeService.clean();
     passwordHasher.clean();
   });
