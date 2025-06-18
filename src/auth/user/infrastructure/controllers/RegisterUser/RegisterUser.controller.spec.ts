@@ -48,7 +48,7 @@ describe('Given a request to register an user', () => {
   describe('when the user is not registered yet', () => {
     it('then it should get registered', async () => {
       await request(app.getHttpServer())
-        .post('/api/users/register')
+        .post('/auth/users/register')
         .send({
           userId: VALID_USER_ID,
           email: VALID_EMAIL,

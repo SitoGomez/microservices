@@ -1,5 +1,11 @@
-import { Body, Controller, Inject, Post } from '@nestjs/common';
-import { Response } from 'express';
+import {
+  Body,
+  Controller,
+  HttpCode,
+  HttpStatus,
+  Inject,
+  Post,
+} from '@nestjs/common';
 
 import {
   COMMAND_BUS,
@@ -16,6 +22,7 @@ export class LoginUserController {
   ) {}
 
   @Post('/users/login')
+  @HttpCode(HttpStatus.OK)
   public async handle(
     @Body() body: LoginUserControllerDto,
   ): Promise<{ access_token: string }> {

@@ -76,7 +76,7 @@ describe('Given a request to login from an user', () => {
 
     it('then should login an user', async () => {
       const response = await request(app.getHttpServer())
-        .post('/api/users/login')
+        .post('/auth/users/login')
         .send({
           email: VALID_EMAIL,
           password: VALID_PASSWORD,

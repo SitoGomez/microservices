@@ -1,12 +1,11 @@
 import {
   Body,
   Controller,
+  HttpCode,
   HttpStatus,
   Inject,
   Post,
-  Res,
 } from '@nestjs/common';
-import { Response } from 'express';
 
 import {
   COMMAND_BUS,
@@ -23,18 +22,14 @@ export class RegisterUserController {
   ) {}
 
   @Post('/users/register')
-  public async handle(
-    @Body() body: RegisterUserControllerDto,
-    @Res() res: Response,
-  ): Promise<void> {
+  @HttpCode(HttpStatus.CREATED)
+  public async handle(@Body() body: RegisterUserControllerDto): Promise<void> {
     const command = new RegisterUserCommand(
       body.userId,
       body.email,
       body.password,
     );
 
-    await this.commandBus.execute(command);
-
-    res.status(HttpStatus.CREATED).send();
+    return this.commandBus.execute(command);
   }
 }
