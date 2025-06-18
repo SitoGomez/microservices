@@ -7,7 +7,7 @@ export interface ICommandBus {
     handler: ICommandHandler<T>,
   ): void;
 
-  execute<T extends BaseCommand>(command: T): Promise<void>;
+  execute<T extends BaseCommand, TResult = void>(command: T): Promise<TResult>;
 }
 
 export const COMMAND_BUS = Symbol('CommandBus');

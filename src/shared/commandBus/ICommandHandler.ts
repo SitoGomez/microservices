@@ -1,3 +1,3 @@
-export interface ICommandHandler<TCommand> {
-  execute(command: TCommand): Promise<void>;
+export interface ICommandHandler<TCommand, TResult = void> {
+  execute(command: TCommand): Promise<TResult>;
 }

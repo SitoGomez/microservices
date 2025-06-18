@@ -3,6 +3,7 @@ import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { PostgreSqlDriver } from '@mikro-orm/postgresql';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { JwtModule } from '@nestjs/jwt';
 
 import { InMemoryCommandBus } from '../shared/commandBus/CommandBus';
 import { COMMAND_BUS } from '../shared/commandBus/ICommandBus';
@@ -12,8 +13,10 @@ import { SharedModule } from '../shared/shared.module';
 
 import { LoginUserUseCase } from './user/application/LoginUser/LoginUser.usecase';
 import { RegisterUserUseCase } from './user/application/RegisterUser/RegisterUser.usecase';
+import { ACCESS_TOKEN_MANAGER } from './user/domain/IAccessTokenManager';
 import { PASSWORD_HASHER } from './user/domain/IPasswordHasher';
 import { USER_REPOSITORY } from './user/domain/UserRepository';
+import { JWTAccessTokenManager } from './user/infrastructure/accessTokenManager/JWTAccessTokenManager';
 import { LoginUserController } from './user/infrastructure/controllers/LoginUser/LoginUser.controller';
 import { RegisterUserController } from './user/infrastructure/controllers/RegisterUser/RegisterUser.controller';
 import { UserEntity } from './user/infrastructure/databases/mikroOrm/entities/User.entity';
@@ -53,6 +56,14 @@ import { BCryptPasswordHasher } from './user/infrastructure/hashers/BCryptPasswo
       }),
     }),
     MikroOrmModule.forFeature([UserEntity]),
+    JwtModule.registerAsync({
+      global: true,
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        secret: configService.get<string>('JWT_SECRET'),
+      }),
+    }),
   ],
   controllers: [RegisterUserController, LoginUserController],
   providers: [
@@ -76,6 +87,10 @@ import { BCryptPasswordHasher } from './user/infrastructure/hashers/BCryptPasswo
     {
       provide: PASSWORD_HASHER,
       useClass: BCryptPasswordHasher,
+    },
+    {
+      provide: ACCESS_TOKEN_MANAGER,
+      useClass: JWTAccessTokenManager,
     },
     RegisterUserUseCase,
     MikroOrmUserMapper,

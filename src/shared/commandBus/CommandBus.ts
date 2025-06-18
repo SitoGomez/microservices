@@ -2,8 +2,8 @@ import { Inject, Injectable } from '@nestjs/common';
 
 import { ILogger, LOGGER } from '../logger/ILogger';
 
-import { NoHandlerForCommandError } from './errors/NoHandlerForCommand.error';
 import { BaseCommand } from './BaseCommand';
+import { NoHandlerForCommandError } from './errors/NoHandlerForCommand.error';
 import { ICommandBus } from './ICommandBus';
 import { ICommandHandler } from './ICommandHandler';
 
@@ -22,17 +22,21 @@ export class InMemoryCommandBus implements ICommandBus {
     this.handlers.set(commandName, handler);
   }
 
-  public async execute<T extends BaseCommand>(command: T): Promise<void> {
+  public async execute<T extends BaseCommand, TResult = void>(
+    command: T,
+  ): Promise<TResult> {
     const commandName = command.constructor.name;
     const commandId = command.id;
 
-    const handler = this.handlers.get(commandName);
+    const handler = this.handlers.get(commandName) as
+      | ICommandHandler<T, TResult>
+      | undefined;
 
     if (!handler) {
       throw new NoHandlerForCommandError(commandName);
     }
 
     this.logger.info(`Executing command: ${commandName} with id: ${commandId}`);
-    await handler.execute(command);
+    return await handler.execute(command);
   }
 }
