@@ -16,7 +16,7 @@ export class UserEntity {
     this.updatedAt = updatedAt;
   }
 
-  @PrimaryKey({ fieldName: 'userId', type: 'uuid' })
+  @PrimaryKey({ fieldName: 'user_id', type: 'uuid' })
   public userId: string;
 
   @Property({
