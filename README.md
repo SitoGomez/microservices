@@ -26,7 +26,7 @@
 
 # 🧪 Testing & Validation
 
-- [ ] Improve testing E2E
+- [ ] Add testing e2e
 - [ ] Add integration tests over repositories
 - [ ] Add database seeder to have proper test data
 - [x] Implement Given...When...Then in tests
