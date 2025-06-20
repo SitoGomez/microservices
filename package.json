@@ -18,7 +18,7 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "auth:db:commands:users:seed": "pnpm run build && pnpm mikro-orm seeder:run --config src/auth/user/infrastructure/databases/mikroOrm/MikroOrmWriteDBCLI.config.ts --class=MikroOrmUserSeeder"
+    "auth:db:commands:users:seed": "pnpm run build && pnpm mikro-orm seeder:run --config src/auth/user/infrastructure/databases/mikroOrm/MikroOrmCommandsDB.cli.config.ts --class=MikroOrmUserSeeder"
   },
   "dependencies": {
     "@mikro-orm/core": "^6.4.16",
