@@ -7,7 +7,7 @@ export interface IUserWasRegisteredEventData {
 }
 
 export class UserWasRegisteredEvent extends DomainEvent<IUserWasRegisteredEventData> {
-  private static readonly eventType = 'auth.UserWasRegistered';
+  private static readonly eventType = 'UserRegistered';
 
   private constructor(
     public readonly causationId: string,
