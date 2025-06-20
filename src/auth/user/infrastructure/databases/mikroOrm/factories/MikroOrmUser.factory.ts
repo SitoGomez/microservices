@@ -11,6 +11,8 @@ export class MikroOrmUserFactory extends Factory<UserEntity> {
       user_id: crypto.randomUUID(),
       email: `${faker.person.firstName().toLowerCase()}${Number(faker.string.numeric(5))}@${faker.internet.domainName()}`,
       password: faker.internet.password(),
+      createdAt: faker.date.past(),
+      updatedAt: faker.date.recent(),
     };
   }
 }
