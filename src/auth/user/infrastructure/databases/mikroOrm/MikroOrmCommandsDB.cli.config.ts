@@ -25,9 +25,8 @@ const config: Options = {
   metadataProvider: TsMorphMetadataProvider,
   debug: ['development', 'test'].includes(process.env.NODE_ENV || ''),
   migrations: {
-    path: 'dist/src/auth/**/infrastructure/databases/mikroOrm/entities/*.entity.js',
-    pathTs:
-      'src/auth/**/infrastructure/databases/mikroOrm/entities/*.entity.ts',
+    path: 'dist/src/auth/**/infrastructure/databases/mikroOrm/migrations',
+    pathTs: 'src/auth/**/infrastructure/databases/mikroOrm/migrations',
     transactional: true,
     allOrNothing: true,
     snapshot: true,
