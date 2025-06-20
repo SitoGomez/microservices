@@ -16,8 +16,12 @@ const config: Options = {
   port: +(process.env.AUTH_COMMANDS_DB_PORT || 5430),
   user: process.env.AUTH_COMMANDS_DB_USER || 'postgres',
   password: process.env.AUTH_COMMANDS_DB_PASSWORD || 'postgres',
-  entities: ['dist/src/**/*.entity.js'],
-  entitiesTs: ['src/**/*.entity.ts'],
+  entities: [
+    'dist/src/auth/**/infrastructure/databases/mikroOrm/entities/*.entity.js',
+  ],
+  entitiesTs: [
+    'src/auth/**/infrastructure/databases/mikroOrm/entities/*.entity.ts',
+  ],
   metadataProvider: TsMorphMetadataProvider,
   debug: ['development', 'test'].includes(process.env.NODE_ENV || ''),
   migrations: {
