@@ -11,25 +11,26 @@ import { config as loadEnv } from 'dotenv';
 
 const config: Options = {
   driver: PostgreSqlDriver,
-  dbName: process.env.COMMAND_DB_NAME || 'postgres',
-  host: process.env.COMMAND_DB_HOST || 'localhost',
-  port: +(process.env.COMMAND_DB_PORT || 5430),
-  user: process.env.COMMAND_DB_USER || 'postgres',
-  password: process.env.COMMAND_DB_PASSWORD || 'postgres',
+  dbName: process.env.AUTH_COMMANDS_DB_NAME || 'postgres',
+  host: process.env.AUTH_COMMANDS_DB_HOST || 'localhost',
+  port: +(process.env.AUTH_COMMANDS_DB_PORT || 5430),
+  user: process.env.AUTH_COMMANDS_DB_USER || 'postgres',
+  password: process.env.AUTH_COMMANDS_DB_PASSWORD || 'postgres',
   entities: ['dist/src/**/*.entity.js'],
   entitiesTs: ['src/**/*.entity.ts'],
   metadataProvider: TsMorphMetadataProvider,
   debug: ['development', 'test'].includes(process.env.NODE_ENV || ''),
   migrations: {
-    path: 'dist/src/**/infrastructure/databases/mikroOrm/migrations',
-    pathTs: 'src/**/infrastructure/databases/mikroOrm/migrations',
+    path: 'dist/src/auth/**/infrastructure/databases/mikroOrm/entities/*.entity.js',
+    pathTs:
+      'src/auth/**/infrastructure/databases/mikroOrm/entities/*.entity.ts',
     transactional: true,
     allOrNothing: true,
     snapshot: true,
   },
   seeder: {
-    path: 'dist/src/**/infrastructure/databases/mikroOrm/seeders',
-    pathTs: 'src/**/infrastructure/databases/mikroOrm/seeders',
+    path: 'dist/src/auth/**/infrastructure/databases/mikroOrm/seeders',
+    pathTs: 'src/auth/**/infrastructure/databases/mikroOrm/seeders',
   },
 };
 

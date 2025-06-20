@@ -32,13 +32,20 @@ import { BCryptPasswordHasher } from './user/infrastructure/hashers/BCryptPasswo
       inject: [ConfigService],
       driver: PostgreSqlDriver,
       useFactory: (configService: ConfigService) => ({
-        entities: ['dist/src/**/*.entity.js'],
-        entitiesTs: ['src/**/*.entity.ts'],
-        dbName: configService.get<string>('COMMAND_DB_NAME', 'postgres'),
-        user: configService.get<string>('COMMAND_DB_USER', 'postgres'),
-        password: configService.get<string>('COMMAND_DB_PASSWORD', 'postgres'),
-        host: configService.get<string>('COMMAND_DB_HOST', 'localhost'),
-        port: configService.get<number>('COMMAND_DB_PORT', 5430),
+        entities: [
+          'dist/src/auth/**/infrastructure/databases/mikroOrm/entities/*.entity.js',
+        ],
+        entitiesTs: [
+          'src/auth/**/infrastructure/databases/mikroOrm/entities/*.entity.ts',
+        ],
+        dbName: configService.get<string>('AUTH_COMMANDS_DB_NAME', 'postgres'),
+        user: configService.get<string>('AUTH_COMMANDS_DB_USER', 'postgres'),
+        password: configService.get<string>(
+          'AUTH_COMMANDS_DB_PASSWORD',
+          'postgres',
+        ),
+        host: configService.get<string>('AUTH_COMMANDS_DB_HOST', 'localhost'),
+        port: configService.get<number>('AUTH_COMMANDS_DB_PORT', 5430),
         driver: PostgreSqlDriver,
         debug: ['development', 'test'].includes(
           configService.get<string>('NODE_ENV', 'otherEnvironment'),
@@ -46,8 +53,8 @@ import { BCryptPasswordHasher } from './user/infrastructure/hashers/BCryptPasswo
         colors: true,
         extensions: [Migrator],
         migrations: {
-          path: 'dist/src/**/infrastructure/mikroOrm/migrations',
-          pathTs: 'src/**/infrastructure/mikroOrm/migrations',
+          path: 'dist/src/auth/**/infrastructure/databases/mikroOrm/migrations',
+          pathTs: 'src/auth/**/infrastructure/databases/mikroOrm/migrations',
           transactional: true,
           allOrNothing: true,
           snapshot: true,
@@ -61,7 +68,7 @@ import { BCryptPasswordHasher } from './user/infrastructure/hashers/BCryptPasswo
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
-        secret: configService.get<string>('JWT_SECRET'),
+        secret: configService.get<string>('AUTH_JWT_SECRET'),
       }),
     }),
   ],

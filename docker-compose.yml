@@ -1,43 +1,21 @@
-version: '3.8'
-
 services:
-  nest-app:
-    build: .
-    container_name: personal-microservices
-    ports:
-      - "3001:3001"
-    expose:
-      - "3001"
-    depends_on:
-      - postgres
-    environment:
-      POSTGRES_HOST: postgres
-      POSTGRES_PORT: 5432
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: personal_db
-    networks:
-      - monitor-net
-
-  postgres:
+  auth_commands_db:
     image: postgres:17-alpine
-    container_name: postgres
+    container_name: auth_commands_db
     restart: unless-stopped
     ports:
-      - "5433:5432"
-    expose:
-      - "5432"
+      - '5433:5432'
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: personal_db
+      POSTGRES_DB: auth_commands_db
     volumes:
-      - pg_data:/var/lib/postgresql/data
+      - auth_commands_db_pg_data:/var/lib/postgresql/data
     networks:
       - monitor-net
 
 volumes:
-  pg_data:
+  auth_commands_db_pg_data:
 
 networks:
   monitor-net:
