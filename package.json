@@ -19,6 +19,7 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "mikroorm:auth:db:commands:create-migration": "pnpm run build && pnpm mikro-orm migration:create --blank --config src/auth/user/infrastructure/databases/mikroOrm/MikroOrmCommandsDB.cli.config.ts",
+    "mikroorm:analytics:db:queries:create-migration": "pnpm run build && pnpm mikro-orm migration:create --blank --config src/analytics/user-activity/infrastructure/databases/mikroOrm/MikroOrmQueriesDB.cli.config.ts",
     "mikroorm:auth:db:commands:users:seed": "pnpm run build && pnpm mikro-orm seeder:run --config src/auth/user/infrastructure/databases/mikroOrm/MikroOrmCommandsDB.cli.config.ts --class=MikroOrmUserSeeder"
   },
   "dependencies": {

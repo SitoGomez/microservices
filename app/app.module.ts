@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { RouterModule } from '@nestjs/core';
 
+import { AnalyticsModule } from '../src/analytics/analytics.module';
 import { AuthModule } from '../src/auth/auth.module';
 import { SharedModule } from '../src/shared/shared.module';
 
@@ -24,6 +25,7 @@ import { SharedModule } from '../src/shared/shared.module';
         module: AuthModule,
       },
     ]),
+    AnalyticsModule,
   ],
 })
 export class AppModule {}
