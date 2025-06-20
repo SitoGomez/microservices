@@ -22,11 +22,11 @@ export class MikroOrmUserMapper {
 
   public toDomain(userEntity: UserEntity): User {
     return User.fromPrimitives(
-      userEntity.getUserId(),
-      userEntity.getEmail(),
-      userEntity.getPassword(),
-      userEntity.getCreatedAt(),
-      userEntity.getUpdatedAt(),
+      userEntity.userId,
+      userEntity.email,
+      userEntity.password,
+      userEntity.createdAt,
+      userEntity.updatedAt,
     );
   }
 }

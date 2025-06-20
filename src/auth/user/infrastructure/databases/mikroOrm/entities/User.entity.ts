@@ -3,54 +3,39 @@ import { Entity, PrimaryKey, Property } from '@mikro-orm/core';
 @Entity({ tableName: 'users' })
 export class UserEntity {
   public constructor(
-    user_id: string,
+    userId: string,
     email: string,
     password: string,
     createdAt: Date,
     updatedAt: Date,
   ) {
-    this.user_id = user_id;
+    this.userId = userId;
     this.email = email;
     this.password = password;
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;
   }
 
-  public getUserId(): string {
-    return this.user_id;
-  }
+  @PrimaryKey({ fieldName: 'userId', type: 'uuid' })
+  public userId: string;
 
-  public getEmail(): string {
-    return this.email;
-  }
+  @Property({
+    fieldName: 'email',
+    type: 'varchar',
+    unique: true,
+    nullable: false,
+  })
+  public email: string;
 
-  public getPassword(): string {
-    return this.password;
-  }
-
-  public getCreatedAt(): Date {
-    return this.createdAt;
-  }
-
-  public getUpdatedAt(): Date {
-    return this.updatedAt;
-  }
-
-  @PrimaryKey()
-  user_id: string;
-
-  @Property()
-  email: string;
-
-  @Property()
-  password: string;
+  @Property({ fieldName: 'password', type: 'varchar', nullable: false })
+  public password: string;
 
   @Property({ fieldName: 'created_at', type: 'timestampz' })
-  createdAt: Date;
+  public createdAt: Date;
 
   @Property({
     fieldName: 'modified_at',
     type: 'timestampz',
   })
-  updatedAt: Date;
+  public updatedAt: Date;
 }
