@@ -37,8 +37,8 @@
 
 # 🧱 Domain & Application Layer
 
-- [ ] Implement factory to create the user with the domain event manager
-- [ ] Add password hashing service
+- [x] Implement factory to create the user with the domain event manager
+- [x] Add password hashing service
 - [ ] Add controller input and output validations
 - [ ] Map internal errors to generic external error response
 - [ ] Add job process to get last 100 users registered in the platform at interval using a job
