@@ -29,6 +29,19 @@ services:
     networks:
       - monitor-net
 
+  rabbitmq:
+    image: rabbitmq:4.1.1-management-alpine
+    container_name: rabbitmq
+    restart: unless-stopped
+    ports:
+      - '5673:5672' # RabbitMQ server
+      - '15673:15672' # RabbitMQ UI
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin
+    networks:
+      - monitor-net
+
 volumes:
   auth_commands_db_pg_data:
   analytics_queries_db_pg_data:
