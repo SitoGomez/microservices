@@ -4,6 +4,7 @@ import { ICommandHandler } from '../../../../shared/commandBus/ICommandHandler';
 import { EVENT_BUS, IEventBus } from '../../../../shared/eventBus/IEventBus';
 import { UserByEmailNotFoundError } from '../../domain/errors/UserByEmailNotFound.error';
 import { WrongUserCredentialsError } from '../../domain/errors/WrongUserCredentials.error';
+import { UserLogged } from '../../domain/events/UserLogged.event';
 import {
   ACCESS_TOKEN_MANAGER,
   IAccessTokenManager,
@@ -44,6 +45,10 @@ export class LoginUserUseCase
     if (!isPasswordValid) {
       throw new WrongUserCredentialsError(email);
     }
+
+    await this.eventBus.dispatch([
+      UserLogged.create(loginUserCommand.id, user.getUserId(), email),
+    ]);
 
     return {
       access_token:

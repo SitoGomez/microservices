@@ -2,6 +2,7 @@ import { InMemoryDateTimeService } from '../../../../shared/dateTimeService/infr
 import { InMemoryEventBus } from '../../../../shared/eventBus/InMemoryEventBus';
 import { UserByEmailNotFoundError } from '../../domain/errors/UserByEmailNotFound.error';
 import { WrongUserCredentialsError } from '../../domain/errors/WrongUserCredentials.error';
+import { UserLogged } from '../../domain/events/UserLogged.event';
 import { UserBuilder } from '../../infrastructure/tests/builders/User.builder';
 import { AccessTokenManagerMock } from '../../infrastructure/tests/mocks/AccessTokenManagerMock';
 import { PasswordHasherMock } from '../../infrastructure/tests/mocks/PasswordHasherMock';
@@ -98,6 +99,13 @@ describe('Given an LoginUserCommand', () => {
       expect(result).toEqual({
         access_token: VALID_ACCESS_TOKEN,
       });
+    });
+
+    it('then an event should be dispatched', async () => {
+      await useCase.execute(VALID_COMMAND);
+
+      expect(eventBus.getDispatchedEvents()).toHaveLength(1);
+      expect(eventBus.getDispatchedEvents()[0]).toBeInstanceOf(UserLogged);
     });
   });
 });
