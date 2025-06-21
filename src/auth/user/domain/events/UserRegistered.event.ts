@@ -6,7 +6,7 @@ export interface IUserWasRegisteredEventData {
   createdAt: Date;
 }
 
-export class UserWasRegisteredEvent extends DomainEvent<IUserWasRegisteredEventData> {
+export class UserRegistered extends DomainEvent<IUserWasRegisteredEventData> {
   private static readonly eventType = 'UserRegistered';
 
   private constructor(
@@ -16,7 +16,7 @@ export class UserWasRegisteredEvent extends DomainEvent<IUserWasRegisteredEventD
     public readonly createdAt: Date,
   ) {
     super({
-      eventType: UserWasRegisteredEvent.eventType,
+      eventType: UserRegistered.eventType,
       data: {
         userId,
         email,
@@ -32,7 +32,7 @@ export class UserWasRegisteredEvent extends DomainEvent<IUserWasRegisteredEventD
     userId: string,
     email: string,
     createdAt: Date,
-  ): UserWasRegisteredEvent {
-    return new UserWasRegisteredEvent(causationId, userId, email, createdAt);
+  ): UserRegistered {
+    return new UserRegistered(causationId, userId, email, createdAt);
   }
 }

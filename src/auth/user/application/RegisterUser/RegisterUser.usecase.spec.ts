@@ -1,6 +1,6 @@
 import { InMemoryDateTimeService } from '../../../../shared/dateTimeService/infrastructure/doubles/InMemoryDateTimeService';
 import { InMemoryEventBus } from '../../../../shared/eventBus/InMemoryEventBus';
-import { UserWasRegisteredEvent } from '../../domain/events/UserWasRegistered.event';
+import { UserRegistered } from '../../domain/events/UserRegistered.event';
 import { PasswordHasherMock } from '../../infrastructure/tests/mocks/PasswordHasherMock';
 import { UserRepositoryMock } from '../../infrastructure/tests/mocks/UserRepositoryMock';
 
@@ -65,7 +65,7 @@ describe('Given a RegisterUserCommand', () => {
 
       expect(eventBus.getDispatchedEvents()).toHaveLength(1);
       expect(eventBus.getDispatchedEvents()[0]).toBeInstanceOf(
-        UserWasRegisteredEvent,
+        UserRegistered,
       );
     });
   });

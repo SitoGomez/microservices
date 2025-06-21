@@ -1,7 +1,7 @@
 import { BaseAggregateRoot } from '../../../shared/aggregateRoot/domain/BaseAggregateRoot';
 import { DomainEvent } from '../../../shared/domainEvent/domain/DomainEvent';
 
-import { UserWasRegisteredEvent } from './events/UserWasRegistered.event';
+import { UserRegistered } from './events/UserRegistered.event';
 
 export class User extends BaseAggregateRoot {
   private constructor(
@@ -24,7 +24,7 @@ export class User extends BaseAggregateRoot {
     const newUser = new User(userId, email, password, currentTime, currentTime);
 
     newUser.registerEvent(
-      UserWasRegisteredEvent.create(causationId, userId, email, currentTime),
+      UserRegistered.create(causationId, userId, email, currentTime),
     );
 
     return newUser;
