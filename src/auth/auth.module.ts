@@ -92,6 +92,22 @@ import { BCryptPasswordHasher } from './user/infrastructure/hashers/BCryptPasswo
       inject: [LOGGER],
     },
     {
+      provide: RabbitMQConnection,
+      useFactory: (
+        configService: ConfigService,
+        logger: ILogger,
+      ): RabbitMQConnection => {
+        return new RabbitMQConnection(configService, logger);
+      },
+      inject: [ConfigService, LOGGER],
+    },
+    {
+      provide: FromDomainToRabbitMQIntegrationEventMapper,
+      useFactory: (): FromDomainToRabbitMQIntegrationEventMapper => {
+        return new FromDomainToRabbitMQIntegrationEventMapper('auth');
+      },
+    },
+    {
       provide: EVENT_BUS,
       useFactory: (
         rabbitMQConnection: RabbitMQConnection,
