@@ -5,7 +5,10 @@ import {
   DATE_TIME_SERVICE,
   IDateTimeService,
 } from '../../../../shared/dateTimeService/domain/IDateTimeService';
-import { EVENT_BUS, IEventBus } from '../../../../shared/events/eventBus/domain/IEventBus';
+import {
+  EVENT_BUS,
+  IEventBus,
+} from '../../../../shared/events/eventBus/domain/IEventBus';
 import { IPasswordHasher, PASSWORD_HASHER } from '../../domain/IPasswordHasher';
 import { User } from '../../domain/User';
 import { IUserRepository, USER_REPOSITORY } from '../../domain/UserRepository';
