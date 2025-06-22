@@ -15,9 +15,18 @@ import { WinstonLogger } from './logger/WinstonLogger';
   providers: [
     {
       provide: EVENT_BUS,
-      useClass: RabbitMQPublisherEventBus,
+      useFactory: (
+        rabbitMQConnection: RabbitMQConnection,
+        fromDomainToIntegrationEventMapper: FromDomainToIntegrationEventMapper,
+      ): RabbitMQPublisherEventBus => {
+        return new RabbitMQPublisherEventBus(
+          '⚠️ BOUNDED CONTEXT NAME NOT CONFIGURED, you should configure this in each module and avoid using this ⚠️',
+          rabbitMQConnection,
+          fromDomainToIntegrationEventMapper,
+        );
+      },
+      inject: [RabbitMQConnection, FromDomainToIntegrationEventMapper],
     },
-
     {
       provide: DATE_TIME_SERVICE,
       useClass: SystemDateTimeService,

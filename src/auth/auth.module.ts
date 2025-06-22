@@ -9,6 +9,7 @@ import { InMemoryCommandBus } from '../shared/commandBus/CommandBus';
 import { COMMAND_BUS } from '../shared/commandBus/ICommandBus';
 import { EVENT_BUS } from '../shared/events/eventBus/domain/IEventBus';
 import { FromDomainToIntegrationEventMapper } from '../shared/events/eventBus/infrastructure/FromDomainToIntegrationEventMapper';
+import { RabbitMQConnection } from '../shared/events/eventBus/infrastructure/rabbitMQ/RabbitMQConnection';
 import { RabbitMQPublisherEventBus } from '../shared/events/eventBus/infrastructure/rabbitMQ/RabbitMQPublisherEventBus';
 import { ILogger, LOGGER } from '../shared/logger/ILogger';
 import { WinstonLogger } from '../shared/logger/WinstonLogger';
@@ -92,7 +93,17 @@ import { BCryptPasswordHasher } from './user/infrastructure/hashers/BCryptPasswo
     },
     {
       provide: EVENT_BUS,
-      useClass: RabbitMQPublisherEventBus,
+      useFactory: (
+        rabbitMQConnection: RabbitMQConnection,
+        fromDomainToIntegrationEventMapper: FromDomainToIntegrationEventMapper,
+      ): RabbitMQPublisherEventBus => {
+        return new RabbitMQPublisherEventBus(
+          'auth.events',
+          rabbitMQConnection,
+          fromDomainToIntegrationEventMapper,
+        );
+      },
+      inject: [RabbitMQConnection, FromDomainToIntegrationEventMapper],
     },
     {
       provide: USER_REPOSITORY,

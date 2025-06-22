@@ -12,6 +12,7 @@ export class RabbitMQPublisherEventBus implements IEventBus, OnModuleDestroy {
   private publisher: Publisher | null = null;
 
   public constructor(
+    private readonly boundedContextExchange: string,
     private readonly connection: RabbitMQConnection,
     private readonly fromDomainToIntegrationEventMapper: FromDomainToIntegrationEventMapper,
   ) {}
@@ -30,7 +31,7 @@ export class RabbitMQPublisherEventBus implements IEventBus, OnModuleDestroy {
             contentType: 'application/json',
             persistent: true,
             durable: true,
-            exchange: 'auth.events',
+            exchange: this.boundedContextExchange,
             routingKey: event.eventType,
             timestamp: event.occurredAtTimestamp,
           } as Envelope,
