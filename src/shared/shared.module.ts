@@ -56,6 +56,6 @@ import { WinstonLogger } from './logger/WinstonLogger';
       },
     },
   ],
-  exports: [DATE_TIME_SERVICE, RabbitMQConnection],
+  exports: [DATE_TIME_SERVICE],
 })
 export class SharedModule {}
