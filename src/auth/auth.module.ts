@@ -7,6 +7,9 @@ import { JwtModule } from '@nestjs/jwt';
 
 import { InMemoryCommandBus } from '../shared/commandBus/CommandBus';
 import { COMMAND_BUS } from '../shared/commandBus/ICommandBus';
+import { EVENT_BUS } from '../shared/events/eventBus/domain/IEventBus';
+import { FromDomainToIntegrationEventMapper } from '../shared/events/eventBus/infrastructure/FromDomainToIntegrationEventMapper';
+import { RabbitMQPublisherEventBus } from '../shared/events/eventBus/infrastructure/rabbitMQ/RabbitMQPublisherEventBus';
 import { ILogger, LOGGER } from '../shared/logger/ILogger';
 import { WinstonLogger } from '../shared/logger/WinstonLogger';
 import { SharedModule } from '../shared/shared.module';
@@ -54,7 +57,7 @@ import { BCryptPasswordHasher } from './user/infrastructure/hashers/BCryptPasswo
         extensions: [Migrator],
         migrations: {
           path: 'dist/src/auth/**/infrastructure/databases/mikroOrm/migrations',
-          pathTs: 'src/auth/**/infrastructure/databases/mikroOrm/migrations',
+          pathTs: '/src/auth/**/infrastructure/databases/mikroOrm/migrations',
           transactional: true,
           allOrNothing: true,
           snapshot: true,
@@ -88,6 +91,10 @@ import { BCryptPasswordHasher } from './user/infrastructure/hashers/BCryptPasswo
       inject: [LOGGER],
     },
     {
+      provide: EVENT_BUS,
+      useClass: RabbitMQPublisherEventBus,
+    },
+    {
       provide: USER_REPOSITORY,
       useClass: MikroOrmUserRepository,
     },
@@ -102,6 +109,12 @@ import { BCryptPasswordHasher } from './user/infrastructure/hashers/BCryptPasswo
     RegisterUserUseCase,
     MikroOrmUserMapper,
     LoginUserUseCase,
+    {
+      provide: FromDomainToIntegrationEventMapper,
+      useFactory: (): FromDomainToIntegrationEventMapper => {
+        return new FromDomainToIntegrationEventMapper('auth');
+      },
+    },
   ],
 })
 export class AuthModule {}

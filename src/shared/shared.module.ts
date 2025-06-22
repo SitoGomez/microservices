@@ -5,7 +5,9 @@ import { COMMAND_BUS, ICommandBus } from './commandBus/ICommandBus';
 import { DATE_TIME_SERVICE } from './dateTimeService/domain/IDateTimeService';
 import { SystemDateTimeService } from './dateTimeService/infrastructure/SystemDateTimeService';
 import { EVENT_BUS } from './events/eventBus/domain/IEventBus';
-import { InMemoryEventBus } from './events/eventBus/infrastructure/InMemoryEventBus';
+import { FromDomainToIntegrationEventMapper } from './events/eventBus/infrastructure/FromDomainToIntegrationEventMapper';
+import { RabbitMQConnection } from './events/eventBus/infrastructure/rabbitMQ/RabbitMQConnection';
+import { RabbitMQPublisherEventBus } from './events/eventBus/infrastructure/rabbitMQ/RabbitMQPublisherEventBus';
 import { ILogger, LOGGER } from './logger/ILogger';
 import { WinstonLogger } from './logger/WinstonLogger';
 
@@ -13,7 +15,7 @@ import { WinstonLogger } from './logger/WinstonLogger';
   providers: [
     {
       provide: EVENT_BUS,
-      useClass: InMemoryEventBus,
+      useClass: RabbitMQPublisherEventBus,
     },
 
     {
@@ -35,7 +37,16 @@ import { WinstonLogger } from './logger/WinstonLogger';
       },
       inject: [LOGGER],
     },
+    RabbitMQConnection,
+    {
+      provide: FromDomainToIntegrationEventMapper,
+      useFactory: (): FromDomainToIntegrationEventMapper => {
+        return new FromDomainToIntegrationEventMapper(
+          '⚠️ BOUNDED CONTEXT NAME NOT CONFIGURED, you should configure this in each module and avoid using this ⚠️',
+        );
+      },
+    },
   ],
-  exports: [EVENT_BUS, DATE_TIME_SERVICE],
+  exports: [DATE_TIME_SERVICE, RabbitMQConnection],
 })
 export class SharedModule {}
