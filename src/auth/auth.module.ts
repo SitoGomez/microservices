@@ -110,16 +110,21 @@ import { BCryptPasswordHasher } from './user/infrastructure/hashers/BCryptPasswo
     {
       provide: EVENT_BUS,
       useFactory: (
+        configService: ConfigService,
         rabbitMQConnection: RabbitMQConnection,
         fromDomainToIntegrationEventMapper: FromDomainToRabbitMQIntegrationEventMapper,
       ): RabbitMQPublisherEventBus => {
         return new RabbitMQPublisherEventBus(
-          'auth.events',
+          configService.get<string>('AUTH_RABBITMQ_EXCHANGE', ''),
           rabbitMQConnection,
           fromDomainToIntegrationEventMapper,
         );
       },
-      inject: [RabbitMQConnection, FromDomainToRabbitMQIntegrationEventMapper],
+      inject: [
+        ConfigService,
+        RabbitMQConnection,
+        FromDomainToRabbitMQIntegrationEventMapper,
+      ],
     },
     {
       provide: USER_REPOSITORY,
@@ -136,12 +141,6 @@ import { BCryptPasswordHasher } from './user/infrastructure/hashers/BCryptPasswo
     RegisterUserUseCase,
     MikroOrmUserMapper,
     LoginUserUseCase,
-    {
-      provide: FromDomainToRabbitMQIntegrationEventMapper,
-      useFactory: (): FromDomainToRabbitMQIntegrationEventMapper => {
-        return new FromDomainToRabbitMQIntegrationEventMapper('auth');
-      },
-    },
   ],
 })
 export class AuthModule {}
