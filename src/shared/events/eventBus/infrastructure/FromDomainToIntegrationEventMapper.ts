@@ -12,11 +12,15 @@ export class FromDomainToRabbitMQIntegrationEventMapper {
     return {
       eventId: event.eventId,
       eventType: `${this.boundedContext}.${event.eventType}`,
-      eventVersion: 'v1',
+      eventVersion: event.eventVersion,
       occurredAtTimestamp: new Date(event.occurredAt).getTime(),
       entityId: event.entityId,
       causationId: event.causationId,
       data: event.data,
+      metadata: {
+        integrationEventVersion: 'v1',
+        boundedContext: this.boundedContext,
+      },
     };
   }
 }

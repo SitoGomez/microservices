@@ -6,4 +6,8 @@ export type RabbitMQIntegrationEvent<T = any> = {
   entityId: string;
   causationId: string;
   data: T;
+  metadata: {
+    integrationEventVersion: string;
+    boundedContext: string;
+  };
 };
