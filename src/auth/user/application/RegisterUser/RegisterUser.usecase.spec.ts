@@ -1,5 +1,5 @@
 import { InMemoryDateTimeService } from '../../../../shared/dateTimeService/infrastructure/doubles/InMemoryDateTimeService';
-import { InMemoryEventBus } from '../../../../shared/eventBus/InMemoryEventBus';
+import { InMemoryEventBus } from '../../../../shared/events/eventBus/infrastructure/InMemoryEventBus';
 import { UserRegistered } from '../../domain/events/UserRegistered.event';
 import { PasswordHasherMock } from '../../infrastructure/tests/mocks/PasswordHasherMock';
 import { UserRepositoryMock } from '../../infrastructure/tests/mocks/UserRepositoryMock';

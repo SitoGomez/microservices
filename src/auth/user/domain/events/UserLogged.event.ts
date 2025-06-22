@@ -1,4 +1,4 @@
-import { DomainEvent } from '../../../../shared/domainEvent/domain/DomainEvent';
+import { DomainEvent } from '../../../../shared/events/DomainEvent';
 
 export interface IUserLoggedData {
   userId: string;

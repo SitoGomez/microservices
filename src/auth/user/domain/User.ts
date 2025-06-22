@@ -1,5 +1,5 @@
 import { BaseAggregateRoot } from '../../../shared/aggregateRoot/domain/BaseAggregateRoot';
-import { DomainEvent } from '../../../shared/domainEvent/domain/DomainEvent';
+import { DomainEvent } from '../../../shared/events/DomainEvent';
 
 import { UserRegistered } from './events/UserRegistered.event';
 

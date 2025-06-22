@@ -1,5 +1,5 @@
 import { InMemoryDateTimeService } from '../../../../shared/dateTimeService/infrastructure/doubles/InMemoryDateTimeService';
-import { InMemoryEventBus } from '../../../../shared/eventBus/InMemoryEventBus';
+import { InMemoryEventBus } from '../../../../shared/events/eventBus/infrastructure/InMemoryEventBus';
 import { UserByEmailNotFoundError } from '../../domain/errors/UserByEmailNotFound.error';
 import { WrongUserCredentialsError } from '../../domain/errors/WrongUserCredentials.error';
 import { UserLogged } from '../../domain/events/UserLogged.event';
