@@ -77,4 +77,8 @@ export class WinstonLogger implements ILogger {
   public info(message: string, ...args: unknown[]): void {
     this.winstonLogger.info(message, ...args);
   }
+
+  public error(message: string, ...args: unknown[]): void {
+    this.winstonLogger.error(message, ...args);
+  }
 }
