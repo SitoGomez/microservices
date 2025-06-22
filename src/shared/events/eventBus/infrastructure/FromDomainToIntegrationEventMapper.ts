@@ -2,17 +2,17 @@ import { Injectable } from '@nestjs/common';
 
 import { DomainEvent } from '../../DomainEvent';
 
-import { IntegrationEvent } from './IntegrationEvent.type';
+import { RabbitMQIntegrationEvent } from './IntegrationEvent.type';
 
 @Injectable()
-export class FromDomainToIntegrationEventMapper {
+export class FromDomainToRabbitMQIntegrationEventMapper {
   public constructor(private readonly boundedContext: string) {}
 
-  public map<T>(event: DomainEvent<T>): IntegrationEvent<T> {
+  public map<T>(event: DomainEvent<T>): RabbitMQIntegrationEvent<T> {
     return {
       eventId: event.eventId,
       eventType: `${this.boundedContext}.${event.eventType}`,
-      eventVersion: event.eventVersion,
+      eventVersion: 'v1',
       occurredAtTimestamp: new Date(event.occurredAt).getTime(),
       entityId: event.entityId,
       causationId: event.causationId,

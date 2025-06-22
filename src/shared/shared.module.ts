@@ -5,7 +5,7 @@ import { COMMAND_BUS, ICommandBus } from './commandBus/ICommandBus';
 import { DATE_TIME_SERVICE } from './dateTimeService/domain/IDateTimeService';
 import { SystemDateTimeService } from './dateTimeService/infrastructure/SystemDateTimeService';
 import { EVENT_BUS } from './events/eventBus/domain/IEventBus';
-import { FromDomainToIntegrationEventMapper } from './events/eventBus/infrastructure/FromDomainToIntegrationEventMapper';
+import { FromDomainToRabbitMQIntegrationEventMapper } from './events/eventBus/infrastructure/FromDomainToIntegrationEventMapper';
 import { RabbitMQConnection } from './events/eventBus/infrastructure/rabbitMQ/RabbitMQConnection';
 import { RabbitMQPublisherEventBus } from './events/eventBus/infrastructure/rabbitMQ/RabbitMQPublisherEventBus';
 import { ILogger, LOGGER } from './logger/ILogger';
@@ -17,7 +17,7 @@ import { WinstonLogger } from './logger/WinstonLogger';
       provide: EVENT_BUS,
       useFactory: (
         rabbitMQConnection: RabbitMQConnection,
-        fromDomainToIntegrationEventMapper: FromDomainToIntegrationEventMapper,
+        fromDomainToIntegrationEventMapper: FromDomainToRabbitMQIntegrationEventMapper,
       ): RabbitMQPublisherEventBus => {
         return new RabbitMQPublisherEventBus(
           '⚠️ BOUNDED CONTEXT NAME NOT CONFIGURED, you should configure this in each module and avoid using this ⚠️',
@@ -25,7 +25,7 @@ import { WinstonLogger } from './logger/WinstonLogger';
           fromDomainToIntegrationEventMapper,
         );
       },
-      inject: [RabbitMQConnection, FromDomainToIntegrationEventMapper],
+      inject: [RabbitMQConnection, FromDomainToRabbitMQIntegrationEventMapper],
     },
     {
       provide: DATE_TIME_SERVICE,
@@ -48,9 +48,9 @@ import { WinstonLogger } from './logger/WinstonLogger';
     },
     RabbitMQConnection,
     {
-      provide: FromDomainToIntegrationEventMapper,
-      useFactory: (): FromDomainToIntegrationEventMapper => {
-        return new FromDomainToIntegrationEventMapper(
+      provide: FromDomainToRabbitMQIntegrationEventMapper,
+      useFactory: (): FromDomainToRabbitMQIntegrationEventMapper => {
+        return new FromDomainToRabbitMQIntegrationEventMapper(
           '⚠️ BOUNDED CONTEXT NAME NOT CONFIGURED, you should configure this in each module and avoid using this ⚠️',
         );
       },

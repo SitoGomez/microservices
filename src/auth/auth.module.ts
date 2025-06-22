@@ -8,7 +8,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { InMemoryCommandBus } from '../shared/commandBus/CommandBus';
 import { COMMAND_BUS } from '../shared/commandBus/ICommandBus';
 import { EVENT_BUS } from '../shared/events/eventBus/domain/IEventBus';
-import { FromDomainToIntegrationEventMapper } from '../shared/events/eventBus/infrastructure/FromDomainToIntegrationEventMapper';
+import { FromDomainToRabbitMQIntegrationEventMapper } from '../shared/events/eventBus/infrastructure/FromDomainToIntegrationEventMapper';
 import { RabbitMQConnection } from '../shared/events/eventBus/infrastructure/rabbitMQ/RabbitMQConnection';
 import { RabbitMQPublisherEventBus } from '../shared/events/eventBus/infrastructure/rabbitMQ/RabbitMQPublisherEventBus';
 import { ILogger, LOGGER } from '../shared/logger/ILogger';
@@ -95,7 +95,7 @@ import { BCryptPasswordHasher } from './user/infrastructure/hashers/BCryptPasswo
       provide: EVENT_BUS,
       useFactory: (
         rabbitMQConnection: RabbitMQConnection,
-        fromDomainToIntegrationEventMapper: FromDomainToIntegrationEventMapper,
+        fromDomainToIntegrationEventMapper: FromDomainToRabbitMQIntegrationEventMapper,
       ): RabbitMQPublisherEventBus => {
         return new RabbitMQPublisherEventBus(
           'auth.events',
@@ -103,7 +103,7 @@ import { BCryptPasswordHasher } from './user/infrastructure/hashers/BCryptPasswo
           fromDomainToIntegrationEventMapper,
         );
       },
-      inject: [RabbitMQConnection, FromDomainToIntegrationEventMapper],
+      inject: [RabbitMQConnection, FromDomainToRabbitMQIntegrationEventMapper],
     },
     {
       provide: USER_REPOSITORY,
@@ -121,9 +121,9 @@ import { BCryptPasswordHasher } from './user/infrastructure/hashers/BCryptPasswo
     MikroOrmUserMapper,
     LoginUserUseCase,
     {
-      provide: FromDomainToIntegrationEventMapper,
-      useFactory: (): FromDomainToIntegrationEventMapper => {
-        return new FromDomainToIntegrationEventMapper('auth');
+      provide: FromDomainToRabbitMQIntegrationEventMapper,
+      useFactory: (): FromDomainToRabbitMQIntegrationEventMapper => {
+        return new FromDomainToRabbitMQIntegrationEventMapper('auth');
       },
     },
   ],

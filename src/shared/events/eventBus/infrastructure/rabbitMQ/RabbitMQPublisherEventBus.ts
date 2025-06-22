@@ -3,7 +3,7 @@ import { Envelope, Publisher } from 'rabbitmq-client';
 
 import { DomainEvent } from '../../../DomainEvent';
 import { IEventBus } from '../../domain/IEventBus';
-import { FromDomainToIntegrationEventMapper } from '../FromDomainToIntegrationEventMapper';
+import { FromDomainToRabbitMQIntegrationEventMapper } from '../FromDomainToIntegrationEventMapper';
 
 import { RabbitMQConnection } from './RabbitMQConnection';
 
@@ -14,7 +14,7 @@ export class RabbitMQPublisherEventBus implements IEventBus, OnModuleDestroy {
   public constructor(
     private readonly boundedContextExchange: string,
     private readonly connection: RabbitMQConnection,
-    private readonly fromDomainToIntegrationEventMapper: FromDomainToIntegrationEventMapper,
+    private readonly fromDomainToIntegrationEventMapper: FromDomainToRabbitMQIntegrationEventMapper,
   ) {}
 
   public async dispatch(events: DomainEvent[]): Promise<void> {

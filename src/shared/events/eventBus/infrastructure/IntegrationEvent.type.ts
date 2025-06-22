@@ -1,4 +1,4 @@
-export type IntegrationEvent<T = any> = {
+export type RabbitMQIntegrationEvent<T = any> = {
   eventId: string;
   eventType: string;
   eventVersion: string;
