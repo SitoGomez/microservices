@@ -53,7 +53,7 @@
       "vhost": "/",
       "destination": "analytics.user-activity.user-registered.queue",
       "destination_type": "queue",
-      "routing_key": "user.registered",
+      "routing_key": "auth.UserRegistered",
       "arguments": {}
     }
   ]
