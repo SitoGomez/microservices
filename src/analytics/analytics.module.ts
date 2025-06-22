@@ -4,6 +4,13 @@ import { PostgreSqlDriver } from '@mikro-orm/postgresql';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
+import { EVENT_BUS } from '../shared/events/eventBus/domain/IEventBus';
+import { FromDomainToRabbitMQIntegrationEventMapper } from '../shared/events/eventBus/infrastructure/FromDomainToIntegrationEventMapper';
+import { RabbitMQConnection } from '../shared/events/eventBus/infrastructure/rabbitMQ/RabbitMQConnection';
+import { RabbitMQPublisherEventBus } from '../shared/events/eventBus/infrastructure/rabbitMQ/RabbitMQPublisherEventBus';
+import { ILogger, LOGGER } from '../shared/logger/ILogger';
+import { WinstonLogger } from '../shared/logger/WinstonLogger';
+
 import { analyticsMigrations } from './user-activity/infrastructure/databases/mikroOrm/migrations';
 
 @Module({
@@ -53,6 +60,49 @@ import { analyticsMigrations } from './user-activity/infrastructure/databases/mi
         },
       }),
     }),
+  ],
+  providers: [
+    {
+      provide: LOGGER,
+      useFactory: (): ILogger => {
+        return new WinstonLogger('ANALYTICS-MODULE');
+      },
+    },
+    {
+      provide: RabbitMQConnection,
+      useFactory: (
+        configService: ConfigService,
+        logger: ILogger,
+      ): RabbitMQConnection => {
+        return new RabbitMQConnection(configService, logger);
+      },
+      inject: [ConfigService, LOGGER],
+    },
+    {
+      provide: FromDomainToRabbitMQIntegrationEventMapper,
+      useFactory: (): FromDomainToRabbitMQIntegrationEventMapper => {
+        return new FromDomainToRabbitMQIntegrationEventMapper('analytics');
+      },
+    },
+    {
+      provide: EVENT_BUS,
+      useFactory: (
+        configService: ConfigService,
+        rabbitMQConnection: RabbitMQConnection,
+        fromDomainToIntegrationEventMapper: FromDomainToRabbitMQIntegrationEventMapper,
+      ): RabbitMQPublisherEventBus => {
+        return new RabbitMQPublisherEventBus(
+          configService.get<string>('ANALYTICS_RABBITMQ_EXCHANGE', ''),
+          rabbitMQConnection,
+          fromDomainToIntegrationEventMapper,
+        );
+      },
+      inject: [
+        ConfigService,
+        RabbitMQConnection,
+        FromDomainToRabbitMQIntegrationEventMapper,
+      ],
+    },
   ],
 })
 export class AnalyticsModule {}
