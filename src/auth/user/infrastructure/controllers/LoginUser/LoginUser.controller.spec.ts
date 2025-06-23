@@ -1,11 +1,10 @@
 import { MikroORM } from '@mikro-orm/core';
-import { INestApplication } from '@nestjs/common';
+import { HttpStatus, INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import * as request from 'supertest';
 import { App } from 'supertest/types';
 
-import { AppModule } from '../../../../../../app/app.module';
-import { registerCommands } from '../../../../../../app/utils/RegisterCommands';
+import { AuthModule } from '../../../../auth.module';
 import {
   IPasswordHasher,
   PASSWORD_HASHER,
@@ -23,19 +22,18 @@ describe('Given a request to login from an user', () => {
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
-      imports: [AppModule],
+      imports: [AuthModule],
     }).compile();
 
     passwordHasher = moduleRef.get(PASSWORD_HASHER);
 
     const orm = moduleRef.get(MikroORM);
-    await orm.getMigrator().up();
 
     entityManager = orm.em.fork();
 
     const appInstance = moduleRef.createNestApplication();
 
-    registerCommands(appInstance);
+    appInstance.useGlobalPipes(new ValidationPipe());
 
     await appInstance.init();
 
@@ -76,12 +74,12 @@ describe('Given a request to login from an user', () => {
 
     it('then should login an user', async () => {
       const response = await request(app.getHttpServer())
-        .post('/auth/users/login')
+        .post('/users/login')
         .send({
           email: VALID_EMAIL,
           password: VALID_PASSWORD,
         })
-        .expect(200);
+        .expect(HttpStatus.OK);
 
       expect(response.body).toHaveProperty('access_token');
     });
