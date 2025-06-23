@@ -12,6 +12,9 @@
 - [x] Add basic env service
 - [x] Remove unnecessary Grafana container
 - [x] Remove user data from user in auth module
+- [x] Implement factory to create the user with the domain event manager
+- [x] Add password hashing service
+- [x] Implement Given...When...Then in tests
 
 ---
 
@@ -33,7 +36,6 @@
 - [ ] Add testing e2e
 - [ ] Add integration tests over repositories
 - [ ] Add database seeder to have proper test data
-- [x] Implement Given...When...Then in tests
 - [ ] Add K6 to test performance
 - [ ] Add ESLint diff and pnpm test before pushing and failing if KO
 
@@ -41,8 +43,6 @@
 
 # 🧱 Domain & Application Layer
 
-- [x] Implement factory to create the user with the domain event manager
-- [x] Add password hashing service
 - [ ] Add controller input and output validations
 - [ ] Map internal errors to generic external error response
 - [ ] Add job process to get last 100 users registered in the platform at interval using a job
