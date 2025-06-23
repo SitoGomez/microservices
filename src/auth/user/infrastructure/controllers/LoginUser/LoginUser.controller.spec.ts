@@ -27,7 +27,7 @@ describe('Given a request to login from an user', () => {
 
     passwordHasher = moduleRef.get(PASSWORD_HASHER);
 
-    const orm = moduleRef.get(MikroORM);
+    const orm = moduleRef.get<MikroORM>('auth_MikroORM');
 
     entityManager = orm.em.fork();
 

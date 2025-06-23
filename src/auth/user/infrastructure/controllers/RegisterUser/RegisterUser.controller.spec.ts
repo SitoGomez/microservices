@@ -20,7 +20,7 @@ describe('Given a request to register an user', () => {
       imports: [AuthModule],
     }).compile();
 
-    const orm = moduleRef.get(MikroORM);
+    const orm = moduleRef.get<MikroORM>('auth_MikroORM');
 
     entityManager = orm.em.fork();
 
