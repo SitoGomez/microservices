@@ -4,6 +4,7 @@ import { PostgreSqlDriver } from '@mikro-orm/postgresql';
 import { Inject, Module, OnModuleInit } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
+import * as colorette from 'colorette';
 
 import { COMMAND_BUS } from '../shared/commandBus/ICommandBus';
 import { InMemoryCommandBus } from '../shared/commandBus/InMemoryCommandBus';
@@ -83,7 +84,7 @@ import { BCryptPasswordHasher } from './user/infrastructure/hashers/BCryptPasswo
     {
       provide: LOGGER,
       useFactory: (): ILogger => {
-        return new WinstonLogger('AUTH-MODULE');
+        return new WinstonLogger('AUTH-MODULE', colorette.blueBright);
       },
     },
     {

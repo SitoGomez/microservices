@@ -3,6 +3,7 @@ import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { PostgreSqlDriver } from '@mikro-orm/postgresql';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import * as colorette from 'colorette';
 
 import { EVENT_BUS } from '../shared/events/eventBus/domain/IEventBus';
 import { FromDomainToRabbitMQIntegrationEventMapper } from '../shared/events/eventBus/infrastructure/FromDomainToIntegrationEventMapper';
@@ -65,7 +66,7 @@ import { analyticsMigrations } from './user-activity/infrastructure/databases/mi
     {
       provide: LOGGER,
       useFactory: (): ILogger => {
-        return new WinstonLogger('ANALYTICS-MODULE');
+        return new WinstonLogger('ANALYTICS-MODULE', colorette.magenta);
       },
     },
     {

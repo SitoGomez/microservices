@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 import { Injectable } from '@nestjs/common';
-import { blue, cyan } from 'colorette';
+import * as colorette from 'colorette';
 import {
   Logger,
   LoggerOptions,
@@ -22,7 +22,7 @@ export class WinstonLogger implements ILogger {
   private readonly LOG_FOLDER: string = path.join(process.cwd(), 'logs');
   private winstonLogger: Logger;
 
-  public constructor(serviceName: string) {
+  public constructor(serviceName: string, serviceNameColor: colorette.Color) {
     this.createLogsFolderIfNotExists();
 
     this.winstonLogger = createLogger({
@@ -35,7 +35,7 @@ export class WinstonLogger implements ILogger {
               format: 'YYYY-MM-DD hh:mm:ss.SSS A',
             }),
             printf((info) => {
-              return `[ ${blue(serviceName)} ]- ${String(info.timestamp)} -[${String(info.level)}]: ${cyan(String(info.message))}`;
+              return `[ ${serviceNameColor(serviceName)} ]- ${String(info.timestamp)} -[${String(info.level)}]: ${colorette.cyan(String(info.message))}`;
             }),
           ),
         }),
