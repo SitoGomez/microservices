@@ -20,6 +20,10 @@ export class RabbitMQConnection implements OnModuleDestroy {
       );
     }
 
+    if (this.connection.ready) {
+      return this.connection;
+    }
+
     try {
       await this.connection.onConnect();
       this.logger.info('RabbitMQ connection established successfully');
