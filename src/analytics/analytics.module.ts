@@ -1,6 +1,7 @@
 import { Migrator } from '@mikro-orm/migrations';
-import { MikroOrmModule } from '@mikro-orm/nestjs';
+import { InjectMikroORM, MikroOrmModule } from '@mikro-orm/nestjs';
 import { MikroORM, PostgreSqlDriver } from '@mikro-orm/postgresql';
+import { TsMorphMetadataProvider } from '@mikro-orm/reflection';
 import { Inject, Module, OnModuleInit } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import * as colorette from 'colorette';
@@ -33,8 +34,13 @@ import { RabbitMQRecordUserRegistrationMessageHandler } from './user-activity/in
     MikroOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      driver: PostgreSqlDriver,
+      contextName: 'analytics',
       useFactory: (configService: ConfigService) => ({
+        registerRequestContext: false,
+        driver: PostgreSqlDriver,
+        metadataProvider: TsMorphMetadataProvider,
+        forceUndefined: true,
+        ignoreUndefinedInQuery: true,
         entities: [
           'dist/src/analytics/**/infrastructure/databases/mikroOrm/entities/*.entity.js',
         ],
@@ -58,7 +64,6 @@ import { RabbitMQRecordUserRegistrationMessageHandler } from './user-activity/in
           'localhost',
         ),
         port: configService.get<number>('ANALYTICS_QUERIES_DB_PORT', 5430),
-        driver: PostgreSqlDriver,
         debug: ['development', 'test'].includes(
           configService.get<string>('NODE_ENV', 'otherEnvironment'),
         ),
@@ -76,6 +81,7 @@ import { RabbitMQRecordUserRegistrationMessageHandler } from './user-activity/in
       }),
     }),
     MikroOrmModule.forFeature([UserActivity], 'analytics'),
+    MikroOrmModule.forMiddleware(),
   ],
   providers: [
     {
@@ -136,7 +142,7 @@ import { RabbitMQRecordUserRegistrationMessageHandler } from './user-activity/in
 })
 export class AnalyticsModule implements OnModuleInit {
   public constructor(
-    private readonly orm: MikroORM,
+    @InjectMikroORM('analytics') private readonly orm: MikroORM,
     @Inject(COMMAND_BUS) private readonly commandBus: InMemoryCommandBus,
     private readonly recordUserRegistrationUseCase: RecordUserRegistrationUseCase,
     private readonly rabbitMQRecordUserRegistrationMessageHandler: RabbitMQRecordUserRegistrationMessageHandler,

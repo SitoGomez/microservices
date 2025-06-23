@@ -1,6 +1,7 @@
 import { Migrator } from '@mikro-orm/migrations';
-import { MikroOrmModule } from '@mikro-orm/nestjs';
+import { InjectMikroORM, MikroOrmModule } from '@mikro-orm/nestjs';
 import { MikroORM, PostgreSqlDriver } from '@mikro-orm/postgresql';
+import { TsMorphMetadataProvider } from '@mikro-orm/reflection';
 import { Inject, Module, OnModuleInit } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
@@ -41,8 +42,13 @@ import { BCryptPasswordHasher } from './user/infrastructure/hashers/BCryptPasswo
     MikroOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      driver: PostgreSqlDriver,
+      contextName: 'auth',
       useFactory: (configService: ConfigService) => ({
+        registerRequestContext: false,
+        driver: PostgreSqlDriver,
+        metadataProvider: TsMorphMetadataProvider,
+        forceUndefined: true,
+        ignoreUndefinedInQuery: true,
         entities: [
           'dist/src/auth/**/infrastructure/databases/mikroOrm/entities/*.entity.js',
         ],
@@ -57,7 +63,6 @@ import { BCryptPasswordHasher } from './user/infrastructure/hashers/BCryptPasswo
         ),
         host: configService.get<string>('AUTH_COMMANDS_DB_HOST', 'localhost'),
         port: configService.get<number>('AUTH_COMMANDS_DB_PORT', 5430),
-        driver: PostgreSqlDriver,
         debug: ['development', 'test'].includes(
           configService.get<string>('NODE_ENV', 'otherEnvironment'),
         ),
@@ -73,7 +78,8 @@ import { BCryptPasswordHasher } from './user/infrastructure/hashers/BCryptPasswo
         },
       }),
     }),
-    MikroOrmModule.forFeature([UserEntity]),
+    MikroOrmModule.forFeature([UserEntity], 'auth'),
+    MikroOrmModule.forMiddleware(),
     JwtModule.registerAsync({
       global: true,
       imports: [ConfigModule],
@@ -152,10 +158,10 @@ import { BCryptPasswordHasher } from './user/infrastructure/hashers/BCryptPasswo
 })
 export class AuthModule implements OnModuleInit {
   public constructor(
+    @InjectMikroORM('auth') private readonly orm: MikroORM,
     @Inject(COMMAND_BUS) private readonly commandBus: InMemoryCommandBus,
     private readonly registerUserUseCase: RegisterUserUseCase,
     private readonly loginUserUseCase: LoginUserUseCase,
-    private readonly orm: MikroORM,
   ) {}
 
   public async onModuleInit(): Promise<void> {
