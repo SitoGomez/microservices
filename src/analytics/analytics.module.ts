@@ -1,10 +1,12 @@
 import { Migrator } from '@mikro-orm/migrations';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { MikroORM, PostgreSqlDriver } from '@mikro-orm/postgresql';
-import { Module, OnModuleInit } from '@nestjs/common';
+import { Inject, Module, OnModuleInit } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import * as colorette from 'colorette';
 
+import { COMMAND_BUS } from '../shared/commandBus/ICommandBus';
+import { InMemoryCommandBus } from '../shared/commandBus/InMemoryCommandBus';
 import { EVENT_BUS } from '../shared/events/eventBus/domain/IEventBus';
 import { FromDomainToRabbitMQIntegrationEventMapper } from '../shared/events/eventBus/infrastructure/FromDomainToIntegrationEventMapper';
 import { RabbitMQConnection } from '../shared/events/eventBus/infrastructure/rabbitMQ/RabbitMQConnection';
@@ -13,7 +15,10 @@ import { ILogger, LOGGER } from '../shared/logger/ILogger';
 import { WinstonLogger } from '../shared/logger/WinstonLogger';
 import { SharedModule } from '../shared/shared.module';
 
+import { RecordUserRegistrationUseCase } from './user-activity/application/RecordUserRegistration/RecordUserRegistration.usecase';
+import { RecordUserRegistrationCommand } from './user-activity/application/RecordUserRegistration/RecordUserRegistrationCommand';
 import { analyticsMigrations } from './user-activity/infrastructure/databases/mikroOrm/migrations';
+import { RabbitMQRecordUserRegistrationMessageHandler } from './user-activity/infrastructure/messageBrokers/rabbitMQ/consumers/RabbitMQRecordUserRegistration.messagehandler';
 
 @Module({
   imports: [
@@ -72,8 +77,15 @@ import { analyticsMigrations } from './user-activity/infrastructure/databases/mi
     {
       provide: LOGGER,
       useFactory: (): ILogger => {
-        return new WinstonLogger('ANALYTICS-MODULE', colorette.magenta);
+        return new WinstonLogger('ANALYTICS-MODULE', colorette.magentaBright);
       },
+    },
+    {
+      provide: COMMAND_BUS,
+      useFactory: (logger: ILogger): InMemoryCommandBus => {
+        return new InMemoryCommandBus(logger);
+      },
+      inject: [LOGGER],
     },
     {
       provide: RabbitMQConnection,
@@ -110,12 +122,28 @@ import { analyticsMigrations } from './user-activity/infrastructure/databases/mi
         FromDomainToRabbitMQIntegrationEventMapper,
       ],
     },
+    RabbitMQRecordUserRegistrationMessageHandler,
+    RecordUserRegistrationUseCase,
   ],
 })
 export class AnalyticsModule implements OnModuleInit {
-  public constructor(private readonly orm: MikroORM) {}
+  public constructor(
+    private readonly orm: MikroORM,
+    @Inject(COMMAND_BUS) private readonly commandBus: InMemoryCommandBus,
+    private readonly recordUserRegistrationUseCase: RecordUserRegistrationUseCase,
+    private readonly rabbitMQRecordUserRegistrationMessageHandler: RabbitMQRecordUserRegistrationMessageHandler,
+  ) {}
 
   public async onModuleInit(): Promise<void> {
     await this.orm.getMigrator().up();
+
+    this.commandBus.register(
+      RecordUserRegistrationCommand,
+      this.recordUserRegistrationUseCase,
+    );
+
+    await this.rabbitMQRecordUserRegistrationMessageHandler.createConsumer(
+      'analytics.user-activity.user-registered.queue',
+    );
   }
 }
