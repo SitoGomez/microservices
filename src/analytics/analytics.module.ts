@@ -1,7 +1,7 @@
 import { Migrator } from '@mikro-orm/migrations';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
-import { PostgreSqlDriver } from '@mikro-orm/postgresql';
-import { Module } from '@nestjs/common';
+import { MikroORM, PostgreSqlDriver } from '@mikro-orm/postgresql';
+import { Module, OnModuleInit } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import * as colorette from 'colorette';
 
@@ -106,4 +106,10 @@ import { analyticsMigrations } from './user-activity/infrastructure/databases/mi
     },
   ],
 })
-export class AnalyticsModule {}
+export class AnalyticsModule implements OnModuleInit {
+  public constructor(private readonly orm: MikroORM) {}
+
+  public async onModuleInit(): Promise<void> {
+    await this.orm.getMigrator().up();
+  }
+}

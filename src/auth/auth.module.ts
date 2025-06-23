@@ -1,6 +1,6 @@
 import { Migrator } from '@mikro-orm/migrations';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
-import { PostgreSqlDriver } from '@mikro-orm/postgresql';
+import { MikroORM, PostgreSqlDriver } from '@mikro-orm/postgresql';
 import { Inject, Module, OnModuleInit } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
@@ -151,9 +151,12 @@ export class AuthModule implements OnModuleInit {
     @Inject(COMMAND_BUS) private readonly commandBus: InMemoryCommandBus,
     private readonly registerUserUseCase: RegisterUserUseCase,
     private readonly loginUserUseCase: LoginUserUseCase,
+    private readonly orm: MikroORM,
   ) {}
 
-  public onModuleInit(): void {
+  public async onModuleInit(): Promise<void> {
+    await this.orm.getMigrator().up();
+
     this.commandBus.register(RegisterUserCommand, this.registerUserUseCase);
     this.commandBus.register(LoginUserCommand, this.loginUserUseCase);
   }
