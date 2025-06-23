@@ -1,7 +1,7 @@
 import type { Config } from 'jest';
 
 export default (): Config => {
-  process.env.NODE_ENV = 'test';
+  process.env.NODE_ENV = 'development'; //TODO: Change this in the future
 
   return {
     moduleFileExtensions: ['js', 'json', 'ts'],
