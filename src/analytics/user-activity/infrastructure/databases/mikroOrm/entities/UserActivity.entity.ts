@@ -6,7 +6,7 @@ export class UserActivity {
     userId: string,
     email: string,
     registrationDate: Date,
-    lastLoginDate: Date,
+    lastLoginDate: Date | undefined,
     loginCount: number,
     createdAt: Date,
     updatedAt: Date,
@@ -29,8 +29,12 @@ export class UserActivity {
   @Property({ fieldName: 'registration_date', type: 'timestampz' })
   public registrationDate: Date;
 
-  @Property({ fieldName: 'last_login_date', type: 'timestampz' })
-  public lastLoginDate: Date;
+  @Property({
+    fieldName: 'last_login_date',
+    type: 'timestampz',
+    nullable: true,
+  })
+  public lastLoginDate: Date | undefined;
 
   @Property({ fieldName: 'login_count', type: 'integer' })
   public loginCount: number;
