@@ -64,9 +64,7 @@ describe('Given a RegisterUserCommand', () => {
       await useCase.execute(VALID_COMMAND);
 
       expect(eventBus.getDispatchedEvents()).toHaveLength(1);
-      expect(eventBus.getDispatchedEvents()[0]).toBeInstanceOf(
-        UserRegistered,
-      );
+      expect(eventBus.getDispatchedEvents()[0]).toBeInstanceOf(UserRegistered);
     });
   });
 });
