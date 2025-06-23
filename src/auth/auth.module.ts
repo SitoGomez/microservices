@@ -1,12 +1,12 @@
 import { Migrator } from '@mikro-orm/migrations';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { PostgreSqlDriver } from '@mikro-orm/postgresql';
-import { Module } from '@nestjs/common';
+import { Inject, Module, OnModuleInit } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 
-import { InMemoryCommandBus } from '../shared/commandBus/CommandBus';
 import { COMMAND_BUS } from '../shared/commandBus/ICommandBus';
+import { InMemoryCommandBus } from '../shared/commandBus/InMemoryCommandBus';
 import { EVENT_BUS } from '../shared/events/eventBus/domain/IEventBus';
 import { FromDomainToRabbitMQIntegrationEventMapper } from '../shared/events/eventBus/infrastructure/FromDomainToIntegrationEventMapper';
 import { RabbitMQConnection } from '../shared/events/eventBus/infrastructure/rabbitMQ/RabbitMQConnection';
@@ -15,7 +15,9 @@ import { ILogger, LOGGER } from '../shared/logger/ILogger';
 import { WinstonLogger } from '../shared/logger/WinstonLogger';
 import { SharedModule } from '../shared/shared.module';
 
+import { LoginUserCommand } from './user/application/LoginUser/LoginUser.command';
 import { LoginUserUseCase } from './user/application/LoginUser/LoginUser.usecase';
+import { RegisterUserCommand } from './user/application/RegisterUser/RegisterUser.command';
 import { RegisterUserUseCase } from './user/application/RegisterUser/RegisterUser.usecase';
 import { ACCESS_TOKEN_MANAGER } from './user/domain/IAccessTokenManager';
 import { PASSWORD_HASHER } from './user/domain/IPasswordHasher';
@@ -143,4 +145,15 @@ import { BCryptPasswordHasher } from './user/infrastructure/hashers/BCryptPasswo
     LoginUserUseCase,
   ],
 })
-export class AuthModule {}
+export class AuthModule implements OnModuleInit {
+  public constructor(
+    @Inject(COMMAND_BUS) private readonly commandBus: InMemoryCommandBus,
+    private readonly registerUserUseCase: RegisterUserUseCase,
+    private readonly loginUserUseCase: LoginUserUseCase,
+  ) {}
+
+  public onModuleInit(): void {
+    this.commandBus.register(RegisterUserCommand, this.registerUserUseCase);
+    this.commandBus.register(LoginUserCommand, this.loginUserUseCase);
+  }
+}

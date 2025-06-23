@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 
 import { ILogger, LOGGER } from '../logger/ILogger';
 
@@ -9,17 +9,19 @@ import { ICommandHandler } from './ICommandHandler';
 
 @Injectable()
 export class InMemoryCommandBus implements ICommandBus {
-  public constructor(@Inject(LOGGER) private readonly logger: ILogger) {}
+  constructor(@Inject(LOGGER) private readonly logger: ILogger) {}
 
-  private handlers = new Map<string, ICommandHandler<BaseCommand>>();
+  private handlers = new Map<string, ICommandHandler<BaseCommand, any>>();
 
-  public register<T extends BaseCommand>(
+  public register<T extends BaseCommand, TResult = void>(
     commandType: new (...args: any[]) => T,
-    handler: ICommandHandler<T>,
+    handler: ICommandHandler<T, TResult>,
   ): void {
     const commandName = commandType.name;
-
-    this.handlers.set(commandName, handler);
+    this.handlers.set(
+      commandName,
+      handler as ICommandHandler<BaseCommand, any>,
+    );
   }
 
   public async execute<T extends BaseCommand, TResult = void>(
