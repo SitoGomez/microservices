@@ -26,6 +26,9 @@
 
 # 🧪 Testing & Validation
 
+- [ ] Create nest js server for testing
+- [ ] Configure jest config to use NODE_ENV variable as testing
+  -> Create .env for testing
 - [ ] Add testing e2e
 - [ ] Add integration tests over repositories
 - [ ] Add database seeder to have proper test data
