@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { DomainEvent } from '../../DomainEvent';
 
-import { RabbitMQIntegrationEvent } from './IntegrationEvent.type';
+import { RabbitMQIntegrationEvent } from './rabbitMQ/RabbitMQIntegrationEvent.type';
 
 @Injectable()
 export class FromDomainToRabbitMQIntegrationEventMapper {
