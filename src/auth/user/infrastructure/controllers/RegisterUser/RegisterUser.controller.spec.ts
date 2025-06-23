@@ -1,11 +1,10 @@
 import { MikroORM } from '@mikro-orm/core';
-import { INestApplication } from '@nestjs/common';
+import { HttpStatus, INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import * as request from 'supertest';
 import { App } from 'supertest/types';
 
-import { AppModule } from '../../../../../../app/app.module';
-import { registerCommands } from '../../../../../../app/utils/RegisterCommands';
+import { AuthModule } from '../../../../auth.module';
 
 describe('Given a request to register an user', () => {
   let app: INestApplication<App>;
@@ -14,21 +13,20 @@ describe('Given a request to register an user', () => {
 
   const VALID_USER_ID = '8f62c518-08fc-4f6f-86e0-8db845cc9c2d';
   const VALID_EMAIL = `test1@test.com`;
-  const VALID_PASSWORD = 'abc123';
+  const VALID_PASSWORD = 'abcd1234';
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
-      imports: [AppModule],
+      imports: [AuthModule],
     }).compile();
 
-    const appInstance = moduleRef.createNestApplication();
-
     const orm = moduleRef.get(MikroORM);
-    await orm.getMigrator().up();
 
     entityManager = orm.em.fork();
 
-    registerCommands(appInstance);
+    const appInstance = moduleRef.createNestApplication();
+
+    appInstance.useGlobalPipes(new ValidationPipe());
 
     await appInstance.init();
 
@@ -48,13 +46,13 @@ describe('Given a request to register an user', () => {
   describe('when the user is not registered yet', () => {
     it('then it should get registered', async () => {
       await request(app.getHttpServer())
-        .post('/auth/users/register')
+        .post('/users/register')
         .send({
           userId: VALID_USER_ID,
           email: VALID_EMAIL,
           password: VALID_PASSWORD,
         })
-        .expect(201);
+        .expect(HttpStatus.CREATED);
     });
   });
 });
