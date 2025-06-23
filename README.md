@@ -18,6 +18,7 @@
 # 🛠️ Core Infrastructure & Architecture
 
 - [ ] Extract MikroOrm config to be reused with CLI
+- [ ] Move logs to a bucket or external file
 - [ ] Add more databases
 - [ ] Create a Postgres TEST DB Docker container
 - [ ] Add traces for tracking full flow HTTP request - OpenTelemetry
