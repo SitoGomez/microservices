@@ -4,20 +4,8 @@ import { Migration20250611103940_RemoveFullnameColumnFromUsersTable } from './Mi
 import { Migration20250611103950_AddCreatedAtAndUpdatedAtToUsersTable } from './Migration20250611103950_AddCreatedAtAndUpdatedAtToUsersTable';
 
 export const authMigrations = [
-  {
-    name: Migration20250611103928_CreateUsersTable.name,
-    class: Migration20250611103928_CreateUsersTable,
-  },
-  {
-    name: Migration20250611103929_MakeEmailUniqueUsersTable.name,
-    class: Migration20250611103929_MakeEmailUniqueUsersTable,
-  },
-  {
-    name: Migration20250611103940_RemoveFullnameColumnFromUsersTable.name,
-    class: Migration20250611103940_RemoveFullnameColumnFromUsersTable,
-  },
-  {
-    name: Migration20250611103950_AddCreatedAtAndUpdatedAtToUsersTable.name,
-    class: Migration20250611103950_AddCreatedAtAndUpdatedAtToUsersTable,
-  },
+  Migration20250611103928_CreateUsersTable,
+  Migration20250611103929_MakeEmailUniqueUsersTable,
+  Migration20250611103940_RemoveFullnameColumnFromUsersTable,
+  Migration20250611103950_AddCreatedAtAndUpdatedAtToUsersTable,
 ];
