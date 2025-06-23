@@ -15,9 +15,12 @@ import { ILogger, LOGGER } from '../shared/logger/ILogger';
 import { WinstonLogger } from '../shared/logger/WinstonLogger';
 import { SharedModule } from '../shared/shared.module';
 
+import { USER_ACTIVITY_READ_LAYER } from './user-activity/application/IUserActivityReadLayer';
 import { RecordUserRegistrationUseCase } from './user-activity/application/RecordUserRegistration/RecordUserRegistration.usecase';
 import { RecordUserRegistrationCommand } from './user-activity/application/RecordUserRegistration/RecordUserRegistrationCommand';
+import { UserActivity } from './user-activity/infrastructure/databases/mikroOrm/entities/UserActivity.entity';
 import { analyticsMigrations } from './user-activity/infrastructure/databases/mikroOrm/migrations';
+import { MikroOrmUserActivityReadLayer } from './user-activity/infrastructure/databases/mikroOrm/MikroOrmUserActivityReadLayer';
 import { RabbitMQRecordUserRegistrationMessageHandler } from './user-activity/infrastructure/messageBrokers/rabbitMQ/consumers/RabbitMQRecordUserRegistration.messagehandler';
 
 @Module({
@@ -72,6 +75,7 @@ import { RabbitMQRecordUserRegistrationMessageHandler } from './user-activity/in
         },
       }),
     }),
+    MikroOrmModule.forFeature([UserActivity], 'analytics'),
   ],
   providers: [
     {
@@ -124,6 +128,10 @@ import { RabbitMQRecordUserRegistrationMessageHandler } from './user-activity/in
     },
     RabbitMQRecordUserRegistrationMessageHandler,
     RecordUserRegistrationUseCase,
+    {
+      provide: USER_ACTIVITY_READ_LAYER,
+      useClass: MikroOrmUserActivityReadLayer,
+    },
   ],
 })
 export class AnalyticsModule implements OnModuleInit {
