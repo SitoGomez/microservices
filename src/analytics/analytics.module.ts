@@ -11,11 +11,17 @@ import { RabbitMQConnection } from '../shared/events/eventBus/infrastructure/rab
 import { RabbitMQPublisherEventBus } from '../shared/events/eventBus/infrastructure/rabbitMQ/RabbitMQPublisherEventBus';
 import { ILogger, LOGGER } from '../shared/logger/ILogger';
 import { WinstonLogger } from '../shared/logger/WinstonLogger';
+import { SharedModule } from '../shared/shared.module';
 
 import { analyticsMigrations } from './user-activity/infrastructure/databases/mikroOrm/migrations';
 
 @Module({
   imports: [
+    SharedModule,
+    ConfigModule.forRoot({
+      envFilePath:
+        process.env.NODE_ENV === 'development' ? '.env.development' : '',
+    }),
     MikroOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],

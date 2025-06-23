@@ -33,6 +33,10 @@ import { MikroOrmUserRepository } from './user/infrastructure/databases/mikroOrm
 import { BCryptPasswordHasher } from './user/infrastructure/hashers/BCryptPasswordHasher';
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      envFilePath:
+        process.env.NODE_ENV === 'development' ? '.env.development' : '',
+    }),
     SharedModule,
     MikroOrmModule.forRootAsync({
       imports: [ConfigModule],
