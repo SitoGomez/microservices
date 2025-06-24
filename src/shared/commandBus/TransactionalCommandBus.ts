@@ -1,6 +1,7 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { MikroORM } from '@mikro-orm/postgresql';
+import { Injectable } from '@nestjs/common';
 
-import { ILogger, LOGGER } from '../logger/ILogger';
+import { ILogger } from '../logger/ILogger';
 
 import { BaseCommand } from './BaseCommand';
 import { NoHandlerForCommandError } from './errors/NoHandlerForCommand.error';
@@ -8,8 +9,11 @@ import { ICommandBus } from './ICommandBus';
 import { ICommandHandler } from './ICommandHandler';
 
 @Injectable()
-export class InMemoryCommandBus implements ICommandBus {
-  constructor(@Inject(LOGGER) private readonly logger: ILogger) {}
+export class TransactionalCommandBus implements ICommandBus {
+  public constructor(
+    private readonly logger: ILogger,
+    private readonly mikroOrm: MikroORM,
+  ) {}
 
   private handlers = new Map<string, ICommandHandler<BaseCommand, any>>();
 
@@ -39,6 +43,20 @@ export class InMemoryCommandBus implements ICommandBus {
     }
 
     this.logger.info(`Executing command: ${commandName} with id: ${commandId}`);
-    return await handler.execute(command);
+
+    /* IMPORTANT: This forked EntityManager is used to ensure that the command
+    execution is transactional and the context is isolated between commands. */
+    const forkedEm = this.mikroOrm.em.fork();
+    await forkedEm.begin();
+
+    try {
+      const commandExecutionResult = await handler.execute(command);
+      await forkedEm.commit();
+
+      return commandExecutionResult;
+    } catch (error) {
+      await forkedEm.rollback();
+      throw error;
+    }
   }
 }

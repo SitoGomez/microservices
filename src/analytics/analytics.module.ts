@@ -12,7 +12,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import * as colorette from 'colorette';
 
 import { COMMAND_BUS } from '../shared/commandBus/ICommandBus';
-import { InMemoryCommandBus } from '../shared/commandBus/InMemoryCommandBus';
+import { TransactionalCommandBus } from '../shared/commandBus/TransactionalCommandBus';
 import {
   EVENT_BUS,
   IEventBus,
@@ -100,10 +100,13 @@ import { RabbitMQRecordUserRegistrationMessageHandler } from './user-activity/in
     },
     {
       provide: COMMAND_BUS,
-      useFactory: (logger: ILogger): InMemoryCommandBus => {
-        return new InMemoryCommandBus(logger);
+      useFactory: (
+        logger: ILogger,
+        mikroOrm: MikroORM,
+      ): TransactionalCommandBus => {
+        return new TransactionalCommandBus(logger, mikroOrm);
       },
-      inject: [LOGGER],
+      inject: [LOGGER, 'analytics_MikroORM'],
     },
     {
       provide: RabbitMQConnection,
@@ -154,7 +157,7 @@ import { RabbitMQRecordUserRegistrationMessageHandler } from './user-activity/in
 export class AnalyticsModule implements OnModuleInit, OnApplicationShutdown {
   public constructor(
     @InjectMikroORM('analytics') private readonly orm: MikroORM,
-    @Inject(COMMAND_BUS) private readonly commandBus: InMemoryCommandBus,
+    @Inject(COMMAND_BUS) private readonly commandBus: TransactionalCommandBus,
     private readonly recordUserRegistrationUseCase: RecordUserRegistrationUseCase,
     @Inject(EVENT_BUS) private readonly eventBus: IEventBus,
     private readonly rabbitMQRecordUserRegistrationMessageHandler: RabbitMQRecordUserRegistrationMessageHandler,

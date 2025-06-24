@@ -13,7 +13,7 @@ import { JwtModule } from '@nestjs/jwt';
 import * as colorette from 'colorette';
 
 import { COMMAND_BUS } from '../shared/commandBus/ICommandBus';
-import { InMemoryCommandBus } from '../shared/commandBus/InMemoryCommandBus';
+import { TransactionalCommandBus } from '../shared/commandBus/TransactionalCommandBus';
 import {
   EVENT_BUS,
   IEventBus,
@@ -107,10 +107,13 @@ import { BCryptPasswordHasher } from './user/infrastructure/hashers/BCryptPasswo
     },
     {
       provide: COMMAND_BUS,
-      useFactory: (logger: ILogger): InMemoryCommandBus => {
-        return new InMemoryCommandBus(logger);
+      useFactory: (
+        logger: ILogger,
+        mikroOrm: MikroORM,
+      ): TransactionalCommandBus => {
+        return new TransactionalCommandBus(logger, mikroOrm);
       },
-      inject: [LOGGER],
+      inject: [LOGGER, 'auth_MikroORM'],
     },
     {
       provide: RabbitMQConnection,
@@ -170,7 +173,7 @@ import { BCryptPasswordHasher } from './user/infrastructure/hashers/BCryptPasswo
 export class AuthModule implements OnModuleInit, OnApplicationShutdown {
   public constructor(
     @InjectMikroORM('auth') private readonly orm: MikroORM,
-    @Inject(COMMAND_BUS) private readonly commandBus: InMemoryCommandBus,
+    @Inject(COMMAND_BUS) private readonly commandBus: TransactionalCommandBus,
     private readonly registerUserUseCase: RegisterUserUseCase,
     private readonly loginUserUseCase: LoginUserUseCase,
     @Inject(EVENT_BUS) private readonly eventBus: IEventBus,
