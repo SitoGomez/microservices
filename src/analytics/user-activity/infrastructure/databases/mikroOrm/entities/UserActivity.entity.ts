@@ -6,7 +6,7 @@ export class UserActivity {
     userId: string,
     email: string,
     registrationDate: Date,
-    lastLoginDate: Date | undefined,
+    lastLoginAt: Date | undefined,
     loginCount: number,
     createdAt: Date,
     updatedAt: Date,
@@ -14,7 +14,7 @@ export class UserActivity {
     this.userId = userId;
     this.email = email;
     this.registrationDate = registrationDate;
-    this.lastLoginDate = lastLoginDate;
+    this.lastLoginAt = lastLoginAt;
     this.loginCount = loginCount;
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;
@@ -30,11 +30,11 @@ export class UserActivity {
   public registrationDate: Date;
 
   @Property({
-    fieldName: 'last_login_date',
+    fieldName: 'last_login_at',
     type: 'timestampz',
     nullable: true,
   })
-  public lastLoginDate: Date | undefined;
+  public lastLoginAt: Date | undefined;
 
   @Property({ fieldName: 'login_count', type: 'integer' })
   public loginCount: number;
