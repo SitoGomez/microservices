@@ -1,7 +1,8 @@
-import { AsyncMessage } from 'rabbitmq-client';
+import { AsyncMessage, Consumer } from 'rabbitmq-client';
 
 import { BaseCommand } from '../../../../commandBus/BaseCommand';
 import { ICommandBus } from '../../../../commandBus/ICommandBus';
+import { ILogger } from '../../../../logger/ILogger';
 
 import { RabbitMQConnection } from './RabbitMQConnection';
 import { RabbitMQIntegrationEvent } from './RabbitMQIntegrationEvent.type';
@@ -10,9 +11,12 @@ export abstract class RabbitMQConsumer<
   TEventData,
   TCommand extends BaseCommand,
 > {
+  protected consumer: Consumer | null;
+
   protected constructor(
     private readonly rabbitMQConnection: RabbitMQConnection,
     private readonly commandBus: ICommandBus,
+    private readonly logger: ILogger,
   ) {}
 
   protected abstract fromRabbitMQIntegrationEventToCommand(
@@ -22,7 +26,7 @@ export abstract class RabbitMQConsumer<
   public async createConsumer(queueName: string): Promise<void> {
     const connection = await this.rabbitMQConnection.connect();
 
-    connection.createConsumer(
+    this.consumer = connection.createConsumer(
       {
         queue: queueName,
         queueOptions: {
@@ -37,5 +41,12 @@ export abstract class RabbitMQConsumer<
         await this.commandBus.execute(command);
       },
     );
+  }
+
+  public async close(): Promise<void> {
+    await this.consumer?.close();
+    this.consumer = null;
+
+    this.logger.info(`RabbitMQ ${this.constructor.name} closed`);
   }
 }

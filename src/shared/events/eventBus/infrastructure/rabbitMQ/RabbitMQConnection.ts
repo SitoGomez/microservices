@@ -1,11 +1,11 @@
-import { Inject, Injectable, OnModuleDestroy } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Connection } from 'rabbitmq-client';
 
 import { ILogger, LOGGER } from '../../../../logger/ILogger';
 
 @Injectable()
-export class RabbitMQConnection implements OnModuleDestroy {
+export class RabbitMQConnection {
   private connection: Connection | null;
 
   public constructor(
@@ -35,11 +35,10 @@ export class RabbitMQConnection implements OnModuleDestroy {
     }
   }
 
-  /**
-   * @internal DONT USE THIS METHOD DIRECTLY, ITS FOR NEST JS MODULE LIFECYCLE
-   */
-  public async onModuleDestroy(): Promise<void> {
+  public async close(): Promise<void> {
     await this.connection?.close();
-    this.logger.info('RabbitMQ connection closed');
+    this.connection = null;
+
+    this.logger.info('RabbitMQ CONNECTION closed');
   }
 }

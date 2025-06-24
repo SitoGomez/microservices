@@ -13,6 +13,11 @@ export class InMemoryEventBus implements IEventBus {
     return Promise.resolve();
   }
 
+  public close(): Promise<void> {
+    this.events = [];
+    return Promise.resolve();
+  }
+
   public getDispatchedEvents(): DomainEvent[] {
     return this.events;
   }

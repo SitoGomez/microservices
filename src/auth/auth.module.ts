@@ -2,14 +2,22 @@ import { Migrator } from '@mikro-orm/migrations';
 import { InjectMikroORM, MikroOrmModule } from '@mikro-orm/nestjs';
 import { MikroORM, PostgreSqlDriver } from '@mikro-orm/postgresql';
 import { TsMorphMetadataProvider } from '@mikro-orm/reflection';
-import { Inject, Module, OnModuleInit } from '@nestjs/common';
+import {
+  Inject,
+  Module,
+  OnApplicationShutdown,
+  OnModuleInit,
+} from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import * as colorette from 'colorette';
 
 import { COMMAND_BUS } from '../shared/commandBus/ICommandBus';
 import { InMemoryCommandBus } from '../shared/commandBus/InMemoryCommandBus';
-import { EVENT_BUS } from '../shared/events/eventBus/domain/IEventBus';
+import {
+  EVENT_BUS,
+  IEventBus,
+} from '../shared/events/eventBus/domain/IEventBus';
 import { FromDomainToRabbitMQIntegrationEventMapper } from '../shared/events/eventBus/infrastructure/FromDomainToIntegrationEventMapper';
 import { RabbitMQConnection } from '../shared/events/eventBus/infrastructure/rabbitMQ/RabbitMQConnection';
 import { RabbitMQPublisherEventBus } from '../shared/events/eventBus/infrastructure/rabbitMQ/RabbitMQPublisherEventBus';
@@ -126,17 +134,20 @@ import { BCryptPasswordHasher } from './user/infrastructure/hashers/BCryptPasswo
         configService: ConfigService,
         rabbitMQConnection: RabbitMQConnection,
         fromDomainToIntegrationEventMapper: FromDomainToRabbitMQIntegrationEventMapper,
+        logger: ILogger,
       ): RabbitMQPublisherEventBus => {
         return new RabbitMQPublisherEventBus(
           configService.get<string>('AUTH_RABBITMQ_EXCHANGE', ''),
           rabbitMQConnection,
           fromDomainToIntegrationEventMapper,
+          logger,
         );
       },
       inject: [
         ConfigService,
         RabbitMQConnection,
         FromDomainToRabbitMQIntegrationEventMapper,
+        LOGGER,
       ],
     },
     {
@@ -156,12 +167,14 @@ import { BCryptPasswordHasher } from './user/infrastructure/hashers/BCryptPasswo
     LoginUserUseCase,
   ],
 })
-export class AuthModule implements OnModuleInit {
+export class AuthModule implements OnModuleInit, OnApplicationShutdown {
   public constructor(
     @InjectMikroORM('auth') private readonly orm: MikroORM,
     @Inject(COMMAND_BUS) private readonly commandBus: InMemoryCommandBus,
     private readonly registerUserUseCase: RegisterUserUseCase,
     private readonly loginUserUseCase: LoginUserUseCase,
+    @Inject(EVENT_BUS) private readonly eventBus: IEventBus,
+    private readonly rabbitMQConnection: RabbitMQConnection,
   ) {}
 
   public async onModuleInit(): Promise<void> {
@@ -169,5 +182,17 @@ export class AuthModule implements OnModuleInit {
 
     this.commandBus.register(RegisterUserCommand, this.registerUserUseCase);
     this.commandBus.register(LoginUserCommand, this.loginUserUseCase);
+  }
+
+  public async onApplicationShutdown(): Promise<void> {
+    await this.orm.close(true);
+
+    /* IMPORTANT: The order to close RabbitMQ stuff MATTERS!
+     * 1. Close the RabbitMQ message handler/s first to stop receiving messages
+     * 2. Close the RabbitMQ publisher to stop sending messages
+     * 3. Close the RabbitMQ connection
+     */
+    await this.eventBus.close();
+    await this.rabbitMQConnection.close();
   }
 }

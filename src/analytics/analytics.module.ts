@@ -2,13 +2,21 @@ import { Migrator } from '@mikro-orm/migrations';
 import { InjectMikroORM, MikroOrmModule } from '@mikro-orm/nestjs';
 import { MikroORM, PostgreSqlDriver } from '@mikro-orm/postgresql';
 import { TsMorphMetadataProvider } from '@mikro-orm/reflection';
-import { Inject, Module, OnModuleInit } from '@nestjs/common';
+import {
+  Inject,
+  Module,
+  OnApplicationShutdown,
+  OnModuleInit,
+} from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import * as colorette from 'colorette';
 
 import { COMMAND_BUS } from '../shared/commandBus/ICommandBus';
 import { InMemoryCommandBus } from '../shared/commandBus/InMemoryCommandBus';
-import { EVENT_BUS } from '../shared/events/eventBus/domain/IEventBus';
+import {
+  EVENT_BUS,
+  IEventBus,
+} from '../shared/events/eventBus/domain/IEventBus';
 import { FromDomainToRabbitMQIntegrationEventMapper } from '../shared/events/eventBus/infrastructure/FromDomainToIntegrationEventMapper';
 import { RabbitMQConnection } from '../shared/events/eventBus/infrastructure/rabbitMQ/RabbitMQConnection';
 import { RabbitMQPublisherEventBus } from '../shared/events/eventBus/infrastructure/rabbitMQ/RabbitMQPublisherEventBus';
@@ -119,17 +127,20 @@ import { RabbitMQRecordUserRegistrationMessageHandler } from './user-activity/in
         configService: ConfigService,
         rabbitMQConnection: RabbitMQConnection,
         fromDomainToIntegrationEventMapper: FromDomainToRabbitMQIntegrationEventMapper,
+        logger: ILogger,
       ): RabbitMQPublisherEventBus => {
         return new RabbitMQPublisherEventBus(
           configService.get<string>('ANALYTICS_RABBITMQ_EXCHANGE', ''),
           rabbitMQConnection,
           fromDomainToIntegrationEventMapper,
+          logger,
         );
       },
       inject: [
         ConfigService,
         RabbitMQConnection,
         FromDomainToRabbitMQIntegrationEventMapper,
+        LOGGER,
       ],
     },
     RabbitMQRecordUserRegistrationMessageHandler,
@@ -140,12 +151,14 @@ import { RabbitMQRecordUserRegistrationMessageHandler } from './user-activity/in
     },
   ],
 })
-export class AnalyticsModule implements OnModuleInit {
+export class AnalyticsModule implements OnModuleInit, OnApplicationShutdown {
   public constructor(
     @InjectMikroORM('analytics') private readonly orm: MikroORM,
     @Inject(COMMAND_BUS) private readonly commandBus: InMemoryCommandBus,
     private readonly recordUserRegistrationUseCase: RecordUserRegistrationUseCase,
+    @Inject(EVENT_BUS) private readonly eventBus: IEventBus,
     private readonly rabbitMQRecordUserRegistrationMessageHandler: RabbitMQRecordUserRegistrationMessageHandler,
+    private readonly rabbitMQConnection: RabbitMQConnection,
   ) {}
 
   public async onModuleInit(): Promise<void> {
@@ -159,5 +172,18 @@ export class AnalyticsModule implements OnModuleInit {
     await this.rabbitMQRecordUserRegistrationMessageHandler.createConsumer(
       'analytics.user-activity.user-registered.queue',
     );
+  }
+
+  public async onApplicationShutdown(): Promise<void> {
+    await this.orm.close(true);
+
+    /* IMPORTANT: The order to close RabbitMQ stuff MATTERS!
+     * 1. Close the RabbitMQ message handler/s first to stop receiving messages
+     * 2. Close the RabbitMQ publisher to stop sending messages
+     * 3. Close the RabbitMQ connection
+     */
+    await this.rabbitMQRecordUserRegistrationMessageHandler.close();
+    await this.eventBus.close();
+    await this.rabbitMQConnection.close();
   }
 }

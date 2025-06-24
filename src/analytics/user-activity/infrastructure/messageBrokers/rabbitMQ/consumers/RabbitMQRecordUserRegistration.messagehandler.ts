@@ -8,6 +8,7 @@ import {
 import { RabbitMQConnection } from '../../../../../../shared/events/eventBus/infrastructure/rabbitMQ/RabbitMQConnection';
 import { RabbitMQConsumer } from '../../../../../../shared/events/eventBus/infrastructure/rabbitMQ/RabbitMQConsumer';
 import { RabbitMQIntegrationEvent } from '../../../../../../shared/events/eventBus/infrastructure/rabbitMQ/RabbitMQIntegrationEvent.type';
+import { LOGGER, ILogger } from '../../../../../../shared/logger/ILogger';
 import { RecordUserRegistrationCommand } from '../../../../application/RecordUserRegistration/RecordUserRegistrationCommand';
 
 @Injectable()
@@ -18,8 +19,9 @@ export class RabbitMQRecordUserRegistrationMessageHandler extends RabbitMQConsum
   public constructor(
     rabbitMQConnection: RabbitMQConnection,
     @Inject(COMMAND_BUS) commandBus: ICommandBus,
+    @Inject(LOGGER) logger: ILogger,
   ) {
-    super(rabbitMQConnection, commandBus);
+    super(rabbitMQConnection, commandBus, logger);
   }
 
   protected fromRabbitMQIntegrationEventToCommand(

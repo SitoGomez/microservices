@@ -1,6 +1,7 @@
-import { Injectable, OnModuleDestroy } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Envelope, Publisher } from 'rabbitmq-client';
 
+import { ILogger } from '../../../../logger/ILogger';
 import { DomainEvent } from '../../../DomainEvent';
 import { IEventBus } from '../../domain/IEventBus';
 import { FromDomainToRabbitMQIntegrationEventMapper } from '../FromDomainToIntegrationEventMapper';
@@ -8,13 +9,14 @@ import { FromDomainToRabbitMQIntegrationEventMapper } from '../FromDomainToInteg
 import { RabbitMQConnection } from './RabbitMQConnection';
 
 @Injectable()
-export class RabbitMQPublisherEventBus implements IEventBus, OnModuleDestroy {
+export class RabbitMQPublisherEventBus implements IEventBus {
   private publisher: Publisher | null = null;
 
   public constructor(
     private readonly boundedContextExchange: string,
     private readonly connection: RabbitMQConnection,
     private readonly fromDomainToIntegrationEventMapper: FromDomainToRabbitMQIntegrationEventMapper,
+    private readonly logger: ILogger,
   ) {}
 
   public async dispatch(events: DomainEvent[]): Promise<void> {
@@ -50,10 +52,10 @@ export class RabbitMQPublisherEventBus implements IEventBus, OnModuleDestroy {
     return this.publisher;
   }
 
-  /**
-   * @internal DONT USE THIS METHOD DIRECTLY, ITS FOR NEST JS MODULE LIFECYCLE
-   */
-  public async onModuleDestroy(): Promise<void> {
+  public async close(): Promise<void> {
     await this.publisher?.close();
+    this.publisher = null;
+
+    this.logger.info('RabbitMQ CHANNEL closed');
   }
 }
