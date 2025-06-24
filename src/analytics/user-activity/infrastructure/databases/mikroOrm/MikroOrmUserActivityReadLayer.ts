@@ -1,5 +1,5 @@
-import { InjectRepository } from '@mikro-orm/nestjs';
-import { EntityRepository } from '@mikro-orm/postgresql';
+import { InjectEntityManager } from '@mikro-orm/nestjs';
+import { EntityManager, EntityRepository } from '@mikro-orm/postgresql';
 import { Injectable } from '@nestjs/common';
 
 import { IUserActivityReadLayer } from '../../../application/IUserActivityReadLayer';
@@ -8,10 +8,13 @@ import { UserActivity } from './entities/UserActivity.entity';
 
 @Injectable()
 export class MikroOrmUserActivityReadLayer implements IUserActivityReadLayer {
+  private readonly userActivityRepository: EntityRepository<UserActivity>;
+
   public constructor(
-    @InjectRepository(UserActivity, 'analytics')
-    private readonly userActivityRepository: EntityRepository<UserActivity>,
-  ) {}
+    @InjectEntityManager('analytics') private readonly em: EntityManager,
+  ) {
+    this.userActivityRepository = this.em.getRepository(UserActivity);
+  }
 
   public async saveUserRegistration(
     userId: string,

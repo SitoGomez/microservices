@@ -1,3 +1,4 @@
+import { RequestContext } from '@mikro-orm/core';
 import { MikroORM } from '@mikro-orm/postgresql';
 import { Injectable } from '@nestjs/common';
 
@@ -44,19 +45,12 @@ export class TransactionalCommandBus implements ICommandBus {
 
     this.logger.info(`Executing command: ${commandName} with id: ${commandId}`);
 
-    /* IMPORTANT: This forked EntityManager is used to ensure that the command
-    execution is transactional and the context is isolated between commands. */
-    const forkedEm = this.mikroOrm.em.fork();
-    await forkedEm.begin();
+    const emFork = this.mikroOrm.em.fork({ useContext: true });
 
-    try {
-      const commandExecutionResult = await handler.execute(command);
-      await forkedEm.commit();
-
-      return commandExecutionResult;
-    } catch (error) {
-      await forkedEm.rollback();
-      throw error;
-    }
+    return RequestContext.create(emFork, async () => {
+      return emFork.transactional(async (_em) => {
+        return handler.execute(command);
+      });
+    });
   }
 }
