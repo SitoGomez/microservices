@@ -15,12 +15,13 @@
 - [x] Implement factory to create the user with the domain event manager
 - [x] Add password hashing service
 - [x] Implement Given...When...Then in tests
+- [x] Extract MikroOrm config to be reused with CLI
+- [x] Add database seeder to have proper test data
 
 ---
 
 # 🛠️ Core Infrastructure & Architecture
 
-- [ ] Extract MikroOrm config to be reused with CLI
 - [ ] Move logs to a bucket or external file
 - [ ] Add more databases
 - [ ] Create a Postgres TEST DB Docker container
@@ -35,7 +36,6 @@
   -> Create .env for testing
 - [ ] Add testing e2e
 - [ ] Add integration tests over repositories
-- [ ] Add database seeder to have proper test data
 - [ ] Add K6 to test performance
 - [ ] Add ESLint diff and pnpm test before pushing and failing if KO
 
