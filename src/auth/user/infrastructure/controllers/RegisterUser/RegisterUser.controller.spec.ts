@@ -1,4 +1,5 @@
 import { MikroORM } from '@mikro-orm/core';
+import { getMikroORMToken } from '@mikro-orm/nestjs';
 import { HttpStatus, INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import * as request from 'supertest';
@@ -20,7 +21,7 @@ describe('Given a request to register an user', () => {
       imports: [AuthModule],
     }).compile();
 
-    const orm = moduleRef.get<MikroORM>('auth_MikroORM');
+    const orm = moduleRef.get<MikroORM>(getMikroORMToken('auth'));
 
     entityManager = orm.em.fork();
 
