@@ -11,11 +11,11 @@ import { config as loadEnv } from 'dotenv';
 
 const config: Options = {
   driver: PostgreSqlDriver,
-  dbName: process.env.ANALYTICS_QUERIES_DB_NAME || 'postgres',
-  host: process.env.ANALYTICS_QUERIES_DB_HOST || 'localhost',
-  port: +(process.env.ANALYTICS_QUERIES_DB_PORT || 5430),
-  user: process.env.ANALYTICS_QUERIES_DB_USER || 'postgres',
-  password: process.env.ANALYTICS_QUERIES_DB_PASSWORD || 'postgres',
+  dbName: process.env.ANALYTICS_QUERIES_DB_NAME,
+  host: process.env.ANALYTICS_QUERIES_DB_HOST,
+  port: +process.env.ANALYTICS_QUERIES_DB_PORT!,
+  user: process.env.ANALYTICS_QUERIES_DB_USER,
+  password: process.env.ANALYTICS_QUERIES_DB_PASSWORD,
   entities: [
     'dist/src/analytics/**/infrastructure/databases/mikroOrm/entities/*.entity.js',
   ],
@@ -23,7 +23,7 @@ const config: Options = {
     'src/analytics/**/infrastructure/databases/mikroOrm/entities/*.entity.ts',
   ],
   metadataProvider: TsMorphMetadataProvider,
-  debug: ['development', 'test'].includes(process.env.NODE_ENV || ''),
+  debug: ['development'].includes(process.env.NODE_ENV!),
   migrations: {
     path: 'dist/src/analytics/**/infrastructure/databases/mikroOrm/migrations',
     pathTs: 'src/analytics/**/infrastructure/databases/mikroOrm/migrations',

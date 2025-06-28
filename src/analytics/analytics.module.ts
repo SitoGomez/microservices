@@ -55,26 +55,12 @@ import { RabbitMQRecordUserRegistrationMessageHandler } from './user-activity/in
         entitiesTs: [
           'src/analytics/**/infrastructure/databases/mikroOrm/entities/*.entity.ts',
         ],
-        dbName: configService.get<string>(
-          'ANALYTICS_QUERIES_DB_NAME',
-          'postgres',
-        ),
-        user: configService.get<string>(
-          'ANALYTICS_QUERIES_DB_USER',
-          'postgres',
-        ),
-        password: configService.get<string>(
-          'ANALYTICS_QUERIES_DB_PASSWORD',
-          'postgres',
-        ),
-        host: configService.get<string>(
-          'ANALYTICS_QUERIES_DB_HOST',
-          'localhost',
-        ),
-        port: configService.get<number>('ANALYTICS_QUERIES_DB_PORT', 5430),
-        debug: ['development', 'test'].includes(
-          configService.get<string>('NODE_ENV', 'otherEnvironment'),
-        ),
+        dbName: configService.get<string>('ANALYTICS_QUERIES_DB_NAME'),
+        user: configService.get<string>('ANALYTICS_QUERIES_DB_USER'),
+        password: configService.get<string>('ANALYTICS_QUERIES_DB_PASSWORD'),
+        host: configService.get<string>('ANALYTICS_QUERIES_DB_HOST'),
+        port: configService.get<number>('ANALYTICS_QUERIES_DB_PORT'),
+        debug: ['development'].includes(configService.get<string>('NODE_ENV')!),
         colors: true,
         extensions: [Migrator],
         migrations: {
@@ -133,7 +119,7 @@ import { RabbitMQRecordUserRegistrationMessageHandler } from './user-activity/in
         logger: ILogger,
       ): RabbitMQPublisherEventBus => {
         return new RabbitMQPublisherEventBus(
-          configService.get<string>('ANALYTICS_RABBITMQ_EXCHANGE', ''),
+          configService.get<string>('ANALYTICS_RABBITMQ_EXCHANGE')!,
           rabbitMQConnection,
           fromDomainToIntegrationEventMapper,
           logger,

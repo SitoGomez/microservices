@@ -63,17 +63,12 @@ import { BCryptPasswordHasher } from './user/infrastructure/hashers/BCryptPasswo
         entitiesTs: [
           'src/auth/**/infrastructure/databases/mikroOrm/entities/*.entity.ts',
         ],
-        dbName: configService.get<string>('AUTH_COMMANDS_DB_NAME', 'postgres'),
-        user: configService.get<string>('AUTH_COMMANDS_DB_USER', 'postgres'),
-        password: configService.get<string>(
-          'AUTH_COMMANDS_DB_PASSWORD',
-          'postgres',
-        ),
-        host: configService.get<string>('AUTH_COMMANDS_DB_HOST', 'localhost'),
-        port: configService.get<number>('AUTH_COMMANDS_DB_PORT', 5430),
-        debug: ['development', 'test'].includes(
-          configService.get<string>('NODE_ENV', 'otherEnvironment'),
-        ),
+        dbName: configService.get<string>('AUTH_COMMANDS_DB_NAME'),
+        user: configService.get<string>('AUTH_COMMANDS_DB_USER'),
+        password: configService.get<string>('AUTH_COMMANDS_DB_PASSWORD'),
+        host: configService.get<string>('AUTH_COMMANDS_DB_HOST'),
+        port: configService.get<number>('AUTH_COMMANDS_DB_PORT'),
+        debug: ['development'].includes(configService.get<string>('NODE_ENV')!),
         colors: true,
         extensions: [Migrator],
         migrations: {
@@ -140,7 +135,7 @@ import { BCryptPasswordHasher } from './user/infrastructure/hashers/BCryptPasswo
         logger: ILogger,
       ): RabbitMQPublisherEventBus => {
         return new RabbitMQPublisherEventBus(
-          configService.get<string>('AUTH_RABBITMQ_EXCHANGE', ''),
+          configService.get<string>('AUTH_RABBITMQ_EXCHANGE')!,
           rabbitMQConnection,
           fromDomainToIntegrationEventMapper,
           logger,
