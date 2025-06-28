@@ -108,7 +108,7 @@ import { BCryptPasswordHasher } from './user/infrastructure/hashers/BCryptPasswo
       ): TransactionalCommandBus => {
         return new TransactionalCommandBus(logger, mikroOrm);
       },
-      inject: [LOGGER, 'auth_MikroORM'],
+      inject: [LOGGER, getMikroORMToken('auth')],
     },
     {
       provide: RabbitMQConnection,

@@ -1,5 +1,9 @@
 import { Migrator } from '@mikro-orm/migrations';
-import { InjectMikroORM, MikroOrmModule } from '@mikro-orm/nestjs';
+import {
+  getMikroORMToken,
+  InjectMikroORM,
+  MikroOrmModule,
+} from '@mikro-orm/nestjs';
 import { MikroORM, PostgreSqlDriver } from '@mikro-orm/postgresql';
 import { TsMorphMetadataProvider } from '@mikro-orm/reflection';
 import {
@@ -92,7 +96,7 @@ import { RabbitMQRecordUserRegistrationMessageHandler } from './user-activity/in
       ): TransactionalCommandBus => {
         return new TransactionalCommandBus(logger, mikroOrm);
       },
-      inject: [LOGGER, 'analytics_MikroORM'],
+      inject: [LOGGER, getMikroORMToken('analytics')],
     },
     {
       provide: RabbitMQConnection,
