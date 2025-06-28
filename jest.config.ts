@@ -1,8 +1,6 @@
 import type { Config } from 'jest';
 
 export default (): Config => {
-  process.env.NODE_ENV = 'development'; //TODO: Change this in the future
-
   return {
     moduleFileExtensions: ['js', 'json', 'ts'],
     rootDir: 'src',
@@ -14,5 +12,6 @@ export default (): Config => {
     coverageDirectory: '../coverage',
     testEnvironment: 'node',
     verbose: true,
+    setupFiles: ['<rootDir>/../jest.setup.ts'],
   };
 };
