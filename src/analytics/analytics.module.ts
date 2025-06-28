@@ -1,11 +1,9 @@
-import { Migrator } from '@mikro-orm/migrations';
 import {
   getMikroORMToken,
   InjectMikroORM,
   MikroOrmModule,
 } from '@mikro-orm/nestjs';
-import { MikroORM, PostgreSqlDriver } from '@mikro-orm/postgresql';
-import { TsMorphMetadataProvider } from '@mikro-orm/reflection';
+import { MikroORM } from '@mikro-orm/postgresql';
 import {
   Inject,
   Module,
@@ -32,7 +30,7 @@ import { USER_ACTIVITY_READ_LAYER } from './user-activity/application/IUserActiv
 import { RecordUserRegistrationUseCase } from './user-activity/application/RecordUserRegistration/RecordUserRegistration.usecase';
 import { RecordUserRegistrationCommand } from './user-activity/application/RecordUserRegistration/RecordUserRegistrationCommand';
 import { UserActivity } from './user-activity/infrastructure/databases/mikroOrm/entities/UserActivity.entity';
-import { analyticsMigrations } from './user-activity/infrastructure/databases/mikroOrm/migrations';
+import { createMikroOrmQueriesDDBBBaseConfig } from './user-activity/infrastructure/databases/mikroOrm/MikroOrmQueriesDDBB.base.config';
 import { MikroOrmUserActivityReadLayer } from './user-activity/infrastructure/databases/mikroOrm/MikroOrmUserActivityReadLayer';
 import { RabbitMQRecordUserRegistrationMessageHandler } from './user-activity/infrastructure/messageBrokers/rabbitMQ/consumers/RabbitMQRecordUserRegistration.messagehandler';
 
@@ -43,40 +41,10 @@ import { RabbitMQRecordUserRegistrationMessageHandler } from './user-activity/in
       envFilePath:
         process.env.NODE_ENV === 'development' ? '.env.development' : '',
     }),
-    MikroOrmModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
+    MikroOrmModule.forRoot({
       contextName: 'analytics',
-      useFactory: (configService: ConfigService) => ({
-        registerRequestContext: false,
-        driver: PostgreSqlDriver,
-        metadataProvider: TsMorphMetadataProvider,
-        forceUndefined: true,
-        ignoreUndefinedInQuery: true,
-        entities: [
-          'dist/src/analytics/**/infrastructure/databases/mikroOrm/entities/*.entity.js',
-        ],
-        entitiesTs: [
-          'src/analytics/**/infrastructure/databases/mikroOrm/entities/*.entity.ts',
-        ],
-        dbName: configService.get<string>('ANALYTICS_QUERIES_DB_NAME'),
-        user: configService.get<string>('ANALYTICS_QUERIES_DB_USER'),
-        password: configService.get<string>('ANALYTICS_QUERIES_DB_PASSWORD'),
-        host: configService.get<string>('ANALYTICS_QUERIES_DB_HOST'),
-        port: configService.get<number>('ANALYTICS_QUERIES_DB_PORT'),
-        debug: ['development'].includes(configService.get<string>('NODE_ENV')!),
-        colors: true,
-        extensions: [Migrator],
-        migrations: {
-          path: 'dist/src/analytics/**/infrastructure/databases/mikroOrm/migrations',
-          pathTs:
-            'src/analytics/**/infrastructure/databases/mikroOrm/migrations',
-          transactional: true,
-          allOrNothing: true,
-          snapshot: true,
-          migrationsList: analyticsMigrations,
-        },
-      }),
+      registerRequestContext: false,
+      ...createMikroOrmQueriesDDBBBaseConfig(),
     }),
     MikroOrmModule.forFeature([UserActivity], 'analytics'),
     MikroOrmModule.forMiddleware(),

@@ -1,7 +1,9 @@
-import { Migrator } from '@mikro-orm/migrations';
-import { InjectMikroORM, MikroOrmModule } from '@mikro-orm/nestjs';
-import { MikroORM, PostgreSqlDriver } from '@mikro-orm/postgresql';
-import { TsMorphMetadataProvider } from '@mikro-orm/reflection';
+import {
+  getMikroORMToken,
+  InjectMikroORM,
+  MikroOrmModule,
+} from '@mikro-orm/nestjs';
+import { MikroORM } from '@mikro-orm/postgresql';
 import {
   Inject,
   Module,
@@ -36,50 +38,20 @@ import { JWTAccessTokenManager } from './user/infrastructure/accessTokenManager/
 import { LoginUserController } from './user/infrastructure/controllers/LoginUser/LoginUser.controller';
 import { RegisterUserController } from './user/infrastructure/controllers/RegisterUser/RegisterUser.controller';
 import { UserEntity } from './user/infrastructure/databases/mikroOrm/entities/User.entity';
-import { authMigrations } from './user/infrastructure/databases/mikroOrm/migrations';
+import { createMikroOrmCommandsDDBBBaseConfig } from './user/infrastructure/databases/mikroOrm/MikroOrmCommandsDDBB.base.config';
 import { MikroOrmUserMapper } from './user/infrastructure/databases/mikroOrm/MikroOrmUserMapper';
 import { MikroOrmUserRepository } from './user/infrastructure/databases/mikroOrm/MikroOrmUserRepository';
 import { BCryptPasswordHasher } from './user/infrastructure/hashers/BCryptPasswordHasher';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath:
-        process.env.NODE_ENV === 'development' ? '.env.development' : '',
+      envFilePath: `.env.${process.env.NODE_ENV}`,
     }),
     SharedModule,
-    MikroOrmModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
+    MikroOrmModule.forRoot({
       contextName: 'auth',
-      useFactory: (configService: ConfigService) => ({
-        registerRequestContext: false,
-        driver: PostgreSqlDriver,
-        metadataProvider: TsMorphMetadataProvider,
-        forceUndefined: true,
-        ignoreUndefinedInQuery: true,
-        entities: [
-          'dist/src/auth/**/infrastructure/databases/mikroOrm/entities/*.entity.js',
-        ],
-        entitiesTs: [
-          'src/auth/**/infrastructure/databases/mikroOrm/entities/*.entity.ts',
-        ],
-        dbName: configService.get<string>('AUTH_COMMANDS_DB_NAME'),
-        user: configService.get<string>('AUTH_COMMANDS_DB_USER'),
-        password: configService.get<string>('AUTH_COMMANDS_DB_PASSWORD'),
-        host: configService.get<string>('AUTH_COMMANDS_DB_HOST'),
-        port: configService.get<number>('AUTH_COMMANDS_DB_PORT'),
-        debug: ['development'].includes(configService.get<string>('NODE_ENV')!),
-        colors: true,
-        extensions: [Migrator],
-        migrations: {
-          path: 'dist/src/auth/**/infrastructure/databases/mikroOrm/migrations',
-          pathTs: '/src/auth/**/infrastructure/databases/mikroOrm/migrations',
-          transactional: true,
-          allOrNothing: true,
-          snapshot: true,
-          migrationsList: authMigrations,
-        },
-      }),
+      registerRequestContext: false,
+      ...createMikroOrmCommandsDDBBBaseConfig(),
     }),
     MikroOrmModule.forFeature([UserEntity], 'auth'),
     MikroOrmModule.forMiddleware(),
