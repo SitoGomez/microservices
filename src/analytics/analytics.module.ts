@@ -38,8 +38,7 @@ import { RabbitMQRecordUserRegistrationMessageHandler } from './user-activity/in
   imports: [
     SharedModule,
     ConfigModule.forRoot({
-      envFilePath:
-        process.env.NODE_ENV === 'development' ? '.env.development' : '',
+      envFilePath: `.env.${process.env.NODE_ENV}`,
     }),
     MikroOrmModule.forRoot({
       contextName: 'analytics',
