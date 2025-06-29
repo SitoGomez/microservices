@@ -44,10 +44,10 @@ import { GenerateTopHundredActiveUsersReportScheduler } from './user-activity/in
 
 @Module({
   imports: [
-    SharedModule,
     ConfigModule.forRoot({
       envFilePath: `.env.${process.env.NODE_ENV}`,
     }),
+    SharedModule,
     MikroOrmModule.forRoot({
       contextName: 'analytics',
       registerRequestContext: false,
