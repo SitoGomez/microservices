@@ -3,8 +3,8 @@ import { Envelope, Publisher } from 'rabbitmq-client';
 
 import { ILogger } from '../../../../logger/ILogger';
 import { DomainEvent } from '../../../DomainEvent';
-import { IEventBus } from '../IEventBus';
 import { FromDomainToRabbitMQIntegrationEventMapper } from '../FromDomainToIntegrationEventMapper';
+import { IEventBus } from '../IEventBus';
 
 import { RabbitMQConnection } from './RabbitMQConnection';
 
