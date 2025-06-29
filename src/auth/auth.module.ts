@@ -6,9 +6,12 @@ import {
 import { MikroORM } from '@mikro-orm/postgresql';
 import {
   Inject,
+  MiddlewareConsumer,
   Module,
+  NestModule,
   OnApplicationShutdown,
   OnModuleInit,
+  RequestMethod,
 } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
@@ -25,6 +28,7 @@ import { RabbitMQConnection } from '../shared/events/eventBus/infrastructure/rab
 import { RabbitMQPublisherEventBus } from '../shared/events/eventBus/infrastructure/rabbitMQ/RabbitMQPublisherEventBus';
 import { ILogger, LOGGER } from '../shared/logger/ILogger';
 import { WinstonLogger } from '../shared/logger/WinstonLogger';
+import { RequiredIdempotentKeyMiddleware } from '../shared/middlewares/RequiredIdempotentKeyMiddleware/RequiredIdempotentKeyMiddleware';
 import { SharedModule } from '../shared/shared.module';
 
 import { LoginUserCommand } from './user/application/LoginUser/LoginUser.command';
@@ -137,7 +141,9 @@ import { BCryptPasswordHasher } from './user/infrastructure/hashers/BCryptPasswo
     LoginUserUseCase,
   ],
 })
-export class AuthModule implements OnModuleInit, OnApplicationShutdown {
+export class AuthModule
+  implements OnModuleInit, OnApplicationShutdown, NestModule
+{
   public constructor(
     @InjectMikroORM('auth') private readonly orm: MikroORM,
     @Inject(COMMAND_BUS) private readonly commandBus: TransactionalCommandBus,
@@ -146,6 +152,15 @@ export class AuthModule implements OnModuleInit, OnApplicationShutdown {
     @Inject(EVENT_BUS) private readonly eventBus: IEventBus,
     private readonly rabbitMQConnection: RabbitMQConnection,
   ) {}
+
+  public configure(consumer: MiddlewareConsumer): void {
+    consumer
+      .apply(RequiredIdempotentKeyMiddleware)
+      .forRoutes(
+        { path: 'auth/users/register', method: RequestMethod.POST },
+        { path: 'auth/users/login', method: RequestMethod.POST },
+      );
+  }
 
   public async onModuleInit(): Promise<void> {
     await this.orm.getMigrator().up();
