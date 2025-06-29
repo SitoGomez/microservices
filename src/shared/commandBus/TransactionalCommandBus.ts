@@ -45,10 +45,18 @@ export class TransactionalCommandBus implements ICommandBus {
 
     this.logger.info(`Executing command: ${commandName} with id: ${commandId}`);
 
+    const existingEM = RequestContext.getEntityManager();
+
+    if (existingEM) {
+      return existingEM.transactional(async () => {
+        return handler.execute(command);
+      });
+    }
+
     const emFork = this.mikroOrm.em.fork({ useContext: true });
 
     return RequestContext.create(emFork, async () => {
-      return emFork.transactional(async (_em) => {
+      return emFork.transactional(async () => {
         return handler.execute(command);
       });
     });
