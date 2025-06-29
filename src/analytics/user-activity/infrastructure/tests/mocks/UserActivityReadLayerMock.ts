@@ -1,20 +1,35 @@
+import { GetTopHundredActiveUsersReadModel } from '../../../application/GetTopHundredActiveUsers/GetTopHundredActiveUsersReadModel';
 import { IUserActivityReadLayer } from '../../../application/IUserActivityReadLayer';
 
-export class UserActivityReadLayerMock implements IUserActivityReadLayer {
-  public constructor(
-    private storedData: {
-      userId: string;
-      email: string;
-      createdAt: Date;
-    }[] = [],
-  ) {}
+interface UserActivityToReturnData {
+  userId: string;
+  email: string;
+  registrationDate: Date;
+  lastLoginAt: Date;
+  loginCount: number;
+}
 
-  public stored(): { userId: string; email: string; createdAt: Date }[] {
-    return this.storedData;
+interface UserActivityToStoredData {
+  userId: string;
+  email: string;
+  createdAt: Date;
+}
+
+export class UserActivityReadLayerMock implements IUserActivityReadLayer {
+  private stored: UserActivityToStoredData[] = [];
+  private toReturn: UserActivityToReturnData[] = [];
+
+  public getStored(): UserActivityToStoredData[] {
+    return this.stored;
+  }
+
+  public setToReturn(users: UserActivityToReturnData[]): void {
+    this.toReturn = users;
   }
 
   public clean(): void {
-    this.storedData = [];
+    this.stored = [];
+    this.toReturn = [];
   }
 
   public saveUserRegistration(
@@ -22,7 +37,13 @@ export class UserActivityReadLayerMock implements IUserActivityReadLayer {
     email: string,
     createdAt: Date,
   ): Promise<void> {
-    this.storedData.push({ userId, email, createdAt });
+    this.stored.push({ userId, email, createdAt });
     return Promise.resolve();
+  }
+
+  public getTopHundredActiveUsers(): Promise<
+    GetTopHundredActiveUsersReadModel[]
+  > {
+    return Promise.resolve(this.toReturn);
   }
 }

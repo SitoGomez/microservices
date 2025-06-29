@@ -1,7 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
 
 import { ICommandHandler } from '../../../../shared/commandBus/ICommandHandler';
-import { EVENT_BUS, IEventBus } from '../../../../shared/events/eventBus/domain/IEventBus';
+import {
+  EVENT_BUS,
+  IEventBus,
+} from '../../../../shared/events/eventBus/domain/IEventBus';
 import { UserByEmailNotFoundError } from '../../domain/errors/UserByEmailNotFound.error';
 import { WrongUserCredentialsError } from '../../domain/errors/WrongUserCredentials.error';
 import { UserLogged } from '../../domain/events/UserLogged.event';

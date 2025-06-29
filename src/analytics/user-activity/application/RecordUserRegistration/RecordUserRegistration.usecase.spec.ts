@@ -26,10 +26,14 @@ describe('Given a RecordUserRegistrationCommand', () => {
     it('then a new user activity should be created', async () => {
       await useCase.execute(VALID_COMMAND);
 
-      expect(userActivityReadLayer.stored()).toHaveLength(1);
-      expect(userActivityReadLayer.stored()[0].userId).toEqual(VALID_USER_ID);
-      expect(userActivityReadLayer.stored()[0].email).toEqual(VALID_USER_EMAIL);
-      expect(userActivityReadLayer.stored()[0].createdAt).toEqual(
+      expect(userActivityReadLayer.getStored()).toHaveLength(1);
+      expect(userActivityReadLayer.getStored()[0].userId).toEqual(
+        VALID_USER_ID,
+      );
+      expect(userActivityReadLayer.getStored()[0].email).toEqual(
+        VALID_USER_EMAIL,
+      );
+      expect(userActivityReadLayer.getStored()[0].createdAt).toEqual(
         VALID_REGISTRATION_DATE,
       );
     });

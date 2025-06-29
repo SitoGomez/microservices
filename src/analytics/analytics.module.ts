@@ -11,6 +11,7 @@ import {
   OnModuleInit,
 } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ScheduleModule } from '@nestjs/schedule';
 import * as colorette from 'colorette';
 
 import { COMMAND_BUS } from '../shared/commandBus/ICommandBus';
@@ -24,8 +25,13 @@ import { RabbitMQConnection } from '../shared/events/eventBus/infrastructure/rab
 import { RabbitMQPublisherEventBus } from '../shared/events/eventBus/infrastructure/rabbitMQ/RabbitMQPublisherEventBus';
 import { ILogger, LOGGER } from '../shared/logger/ILogger';
 import { WinstonLogger } from '../shared/logger/WinstonLogger';
+import { InMemoryQueryBus } from '../shared/queryBus/InMemoryQueryBus';
+import { QUERY_BUS } from '../shared/queryBus/IQueryBus';
 import { SharedModule } from '../shared/shared.module';
 
+import { GetTopHundredActiveUsersUseCase } from './user-activity/application/GetTopHundredActiveUsers/GetTopHundredActiveUsers.usecase';
+import { GetTopHundredActiveUsersQuery } from './user-activity/application/GetTopHundredActiveUsers/GetTopHundredActiveUsersQuery';
+import { USERS_REPORT_GENERATOR } from './user-activity/application/GetTopHundredActiveUsers/IUsersReportGenerator';
 import { USER_ACTIVITY_READ_LAYER } from './user-activity/application/IUserActivityReadLayer';
 import { RecordUserRegistrationUseCase } from './user-activity/application/RecordUserRegistration/RecordUserRegistration.usecase';
 import { RecordUserRegistrationCommand } from './user-activity/application/RecordUserRegistration/RecordUserRegistrationCommand';
@@ -33,6 +39,8 @@ import { UserActivity } from './user-activity/infrastructure/databases/mikroOrm/
 import { createMikroOrmQueriesDDBBBaseConfig } from './user-activity/infrastructure/databases/mikroOrm/MikroOrmQueriesDDBB.base.config';
 import { MikroOrmUserActivityReadLayer } from './user-activity/infrastructure/databases/mikroOrm/MikroOrmUserActivityReadLayer';
 import { RabbitMQRecordUserRegistrationMessageHandler } from './user-activity/infrastructure/messageBrokers/rabbitMQ/consumers/RabbitMQRecordUserRegistration.messagehandler';
+import { CSVUserReportGenerator } from './user-activity/infrastructure/reports/CSVUsersReportGenerator';
+import { GetTopHundredActiveUsersScheduler } from './user-activity/infrastructure/schedulers/GetTopHundredActiveUsersScheduler';
 
 @Module({
   imports: [
@@ -47,6 +55,7 @@ import { RabbitMQRecordUserRegistrationMessageHandler } from './user-activity/in
     }),
     MikroOrmModule.forFeature([UserActivity], 'analytics'),
     MikroOrmModule.forMiddleware(),
+    ScheduleModule.forRoot(),
   ],
   providers: [
     {
@@ -59,9 +68,16 @@ import { RabbitMQRecordUserRegistrationMessageHandler } from './user-activity/in
       provide: COMMAND_BUS,
       useFactory: (
         logger: ILogger,
-        mikroOrm: MikroORM,
+        mikroORM: MikroORM,
       ): TransactionalCommandBus => {
-        return new TransactionalCommandBus(logger, mikroOrm);
+        return new TransactionalCommandBus(logger, mikroORM);
+      },
+      inject: [LOGGER, getMikroORMToken('analytics')],
+    },
+    {
+      provide: QUERY_BUS,
+      useFactory: (logger: ILogger): InMemoryQueryBus => {
+        return new InMemoryQueryBus(logger);
       },
       inject: [LOGGER, getMikroORMToken('analytics')],
     },
@@ -109,13 +125,21 @@ import { RabbitMQRecordUserRegistrationMessageHandler } from './user-activity/in
       provide: USER_ACTIVITY_READ_LAYER,
       useClass: MikroOrmUserActivityReadLayer,
     },
+    {
+      provide: USERS_REPORT_GENERATOR,
+      useClass: CSVUserReportGenerator,
+    },
+    GetTopHundredActiveUsersUseCase,
+    GetTopHundredActiveUsersScheduler,
   ],
 })
 export class AnalyticsModule implements OnModuleInit, OnApplicationShutdown {
   public constructor(
     @InjectMikroORM('analytics') private readonly orm: MikroORM,
     @Inject(COMMAND_BUS) private readonly commandBus: TransactionalCommandBus,
+    @Inject(QUERY_BUS) private readonly queryBus: InMemoryQueryBus,
     private readonly recordUserRegistrationUseCase: RecordUserRegistrationUseCase,
+    private readonly getTopHundredActiveUsersUseCase: GetTopHundredActiveUsersUseCase,
     @Inject(EVENT_BUS) private readonly eventBus: IEventBus,
     private readonly rabbitMQRecordUserRegistrationMessageHandler: RabbitMQRecordUserRegistrationMessageHandler,
     private readonly rabbitMQConnection: RabbitMQConnection,
@@ -127,6 +151,11 @@ export class AnalyticsModule implements OnModuleInit, OnApplicationShutdown {
     this.commandBus.register(
       RecordUserRegistrationCommand,
       this.recordUserRegistrationUseCase,
+    );
+
+    this.queryBus.register(
+      GetTopHundredActiveUsersQuery,
+      this.getTopHundredActiveUsersUseCase,
     );
 
     await this.rabbitMQRecordUserRegistrationMessageHandler.createConsumer(
