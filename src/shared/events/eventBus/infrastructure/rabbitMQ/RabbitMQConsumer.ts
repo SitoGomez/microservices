@@ -1,8 +1,10 @@
-import { AsyncMessage, Consumer } from 'rabbitmq-client';
+import { MikroORM, RequestContext } from '@mikro-orm/core';
+import { Consumer } from 'rabbitmq-client';
 
 import { BaseCommand } from '../../../../commandBus/BaseCommand';
 import { ICommandBus } from '../../../../commandBus/ICommandBus';
 import { ILogger } from '../../../../logger/ILogger';
+import { IProcessedEventService } from '../IProcessedEventService';
 
 import { RabbitMQConnection } from './RabbitMQConnection';
 import { RabbitMQIntegrationEvent } from './RabbitMQIntegrationEvent.type';
@@ -17,6 +19,8 @@ export abstract class RabbitMQConsumer<
     private readonly rabbitMQConnection: RabbitMQConnection,
     private readonly commandBus: ICommandBus,
     private readonly logger: ILogger,
+    private readonly mikroOrm: MikroORM,
+    private readonly processedEventService: IProcessedEventService,
   ) {}
 
   protected abstract fromRabbitMQIntegrationEventToCommand(
@@ -33,12 +37,36 @@ export abstract class RabbitMQConsumer<
           durable: true,
         },
       },
-      async (message: AsyncMessage): Promise<void> => {
-        const command = this.fromRabbitMQIntegrationEventToCommand(
-          message.body as RabbitMQIntegrationEvent<TEventData>,
-        );
+      async ({
+        body: eventData,
+      }: {
+        body: RabbitMQIntegrationEvent<TEventData>;
+      }): Promise<void> => {
+        const emFork = this.mikroOrm.em.fork({ useContext: true });
 
-        await this.commandBus.execute(command);
+        return RequestContext.create(emFork, async () => {
+          return emFork.transactional(async () => {
+            const isEventAlreadyProcessed =
+              await this.processedEventService.isProcessed(
+                eventData.eventId,
+                eventData.eventType,
+              );
+
+            if (isEventAlreadyProcessed) {
+              return;
+            }
+
+            const command =
+              this.fromRabbitMQIntegrationEventToCommand(eventData);
+
+            await this.commandBus.execute(command);
+
+            await this.processedEventService.save(
+              eventData.eventId,
+              eventData.eventType,
+            );
+          });
+        });
       },
     );
   }
