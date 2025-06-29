@@ -1,3 +1,5 @@
+import { randomUUID } from 'crypto';
+
 import {
   Body,
   Controller,
@@ -26,7 +28,11 @@ export class LoginUserController {
   public async handle(
     @Body() body: LoginUserControllerDto,
   ): Promise<{ access_token: string }> {
-    const command = new LoginUserCommand(body.email, body.password);
+    const command = new LoginUserCommand(
+      randomUUID(),
+      body.email,
+      body.password,
+    );
 
     return this.commandBus.execute(command);
   }

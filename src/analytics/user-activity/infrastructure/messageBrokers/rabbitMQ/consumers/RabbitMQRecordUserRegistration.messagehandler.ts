@@ -1,3 +1,5 @@
+import { randomUUID } from 'crypto';
+
 import { MikroORM } from '@mikro-orm/core';
 import { getMikroORMToken } from '@mikro-orm/nestjs';
 import { Injectable, Inject } from '@nestjs/common';
@@ -43,6 +45,7 @@ export class RabbitMQRecordUserRegistrationMessageHandler extends RabbitMQConsum
     event: RabbitMQIntegrationEvent<IUserWasRegisteredEventData>,
   ): RecordUserRegistrationCommand {
     return new RecordUserRegistrationCommand(
+      randomUUID(),
       event.data.userId,
       event.data.email,
       new Date(event.data.createdAt),

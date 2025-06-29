@@ -1,3 +1,5 @@
+import { randomUUID } from 'crypto';
+
 import {
   Body,
   Controller,
@@ -25,6 +27,7 @@ export class RegisterUserController {
   @HttpCode(HttpStatus.CREATED)
   public async handle(@Body() body: RegisterUserControllerDto): Promise<void> {
     const command = new RegisterUserCommand(
+      randomUUID(),
       body.userId,
       body.email,
       body.password,
