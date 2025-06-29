@@ -22,6 +22,7 @@ import {
   IEventBus,
 } from '../shared/events/eventBus/infrastructure/IEventBus';
 import { PROCESSED_EVENT_SERVICE } from '../shared/events/eventBus/infrastructure/IProcessedEventService';
+import { MikroOrmProcessedEventService } from '../shared/events/eventBus/infrastructure/mikroOrm/MikroOrmEventProcessedService';
 import { RabbitMQConnection } from '../shared/events/eventBus/infrastructure/rabbitMQ/RabbitMQConnection';
 import { RabbitMQPublisherEventBus } from '../shared/events/eventBus/infrastructure/rabbitMQ/RabbitMQPublisherEventBus';
 import { ILogger, LOGGER } from '../shared/logger/ILogger';
@@ -38,7 +39,6 @@ import { RecordUserRegistrationUseCase } from './user-activity/application/Recor
 import { RecordUserRegistrationCommand } from './user-activity/application/RecordUserRegistration/RecordUserRegistrationCommand';
 import { ProcessedEvent } from './user-activity/infrastructure/databases/mikroOrm/entities/ProcessedEvent.entity';
 import { UserActivity } from './user-activity/infrastructure/databases/mikroOrm/entities/UserActivity.entity';
-import { MikroOrmProcessedEventService } from './user-activity/infrastructure/databases/mikroOrm/events/MikroOrmEventProcessedService';
 import { createMikroOrmQueriesDDBBBaseConfig } from './user-activity/infrastructure/databases/mikroOrm/MikroOrmQueriesDDBB.base.config';
 import { MikroOrmUserActivityReadLayer } from './user-activity/infrastructure/databases/mikroOrm/MikroOrmUserActivityReadLayer';
 import { RabbitMQRecordUserRegistrationMessageHandler } from './user-activity/infrastructure/messageBrokers/rabbitMQ/consumers/RabbitMQRecordUserRegistration.messagehandler';
@@ -82,7 +82,7 @@ import { GenerateTopHundredActiveUsersReportScheduler } from './user-activity/in
       useFactory: (logger: ILogger): InMemoryQueryBus => {
         return new InMemoryQueryBus(logger);
       },
-      inject: [LOGGER, getMikroORMToken('analytics')],
+      inject: [LOGGER],
     },
     {
       provide: RabbitMQConnection,
@@ -136,7 +136,10 @@ import { GenerateTopHundredActiveUsersReportScheduler } from './user-activity/in
     GenerateTopHundredActiveUsersReportScheduler,
     {
       provide: PROCESSED_EVENT_SERVICE,
-      useClass: MikroOrmProcessedEventService,
+      useFactory: (mikroOrm: MikroORM): MikroOrmProcessedEventService => {
+        return new MikroOrmProcessedEventService(mikroOrm.em);
+      },
+      inject: [getMikroORMToken('analytics')],
     },
   ],
 })
