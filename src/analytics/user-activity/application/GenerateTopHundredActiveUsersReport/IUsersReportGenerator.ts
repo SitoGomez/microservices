@@ -1,8 +1,8 @@
-import { GetTopHundredActiveUsersReadModel } from './GetTopHundredActiveUsersReadModel';
+import { GenerateTopHundredActiveUsersReportReadModel } from './GenerateTopHundredActiveUsersReportReadModel';
 
 export interface IUsersReportGenerator {
   generateTopHundredActiveUsersReport(
-    users: GetTopHundredActiveUsersReadModel[],
+    users: GenerateTopHundredActiveUsersReportReadModel[],
   ): Promise<void>;
 }
 

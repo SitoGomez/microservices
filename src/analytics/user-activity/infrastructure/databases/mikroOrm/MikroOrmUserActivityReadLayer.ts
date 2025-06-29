@@ -2,7 +2,7 @@ import { InjectEntityManager } from '@mikro-orm/nestjs';
 import { EntityManager, EntityRepository } from '@mikro-orm/postgresql';
 import { Injectable } from '@nestjs/common';
 
-import { GetTopHundredActiveUsersReadModel } from '../../../application/GetTopHundredActiveUsers/GetTopHundredActiveUsersReadModel';
+import { GenerateTopHundredActiveUsersReportReadModel } from '../../../application/GenerateTopHundredActiveUsersReport/GenerateTopHundredActiveUsersReportReadModel';
 import { IUserActivityReadLayer } from '../../../application/IUserActivityReadLayer';
 
 import { UserActivity } from './entities/UserActivity.entity';
@@ -36,7 +36,7 @@ export class MikroOrmUserActivityReadLayer implements IUserActivityReadLayer {
   }
 
   public async getTopHundredActiveUsers(): Promise<
-    GetTopHundredActiveUsersReadModel[]
+    GenerateTopHundredActiveUsersReportReadModel[]
   > {
     const users = await this.userActivityRepository.findAll({
       orderBy: { loginCount: 'DESC' },

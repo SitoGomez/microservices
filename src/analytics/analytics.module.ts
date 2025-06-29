@@ -29,9 +29,9 @@ import { InMemoryQueryBus } from '../shared/queryBus/InMemoryQueryBus';
 import { QUERY_BUS } from '../shared/queryBus/IQueryBus';
 import { SharedModule } from '../shared/shared.module';
 
-import { GetTopHundredActiveUsersUseCase } from './user-activity/application/GetTopHundredActiveUsers/GetTopHundredActiveUsers.usecase';
-import { GetTopHundredActiveUsersQuery } from './user-activity/application/GetTopHundredActiveUsers/GetTopHundredActiveUsersQuery';
-import { USERS_REPORT_GENERATOR } from './user-activity/application/GetTopHundredActiveUsers/IUsersReportGenerator';
+import { GenerateTopHundredActiveUsersReportUseCase } from './user-activity/application/GenerateTopHundredActiveUsersReport/GenerateTopHundredActiveUsersReport.usecase';
+import { GenerateTopHundredActiveUsersReportQuery } from './user-activity/application/GenerateTopHundredActiveUsersReport/GenerateTopHundredActiveUsersReportQuery';
+import { USERS_REPORT_GENERATOR } from './user-activity/application/GenerateTopHundredActiveUsersReport/IUsersReportGenerator';
 import { USER_ACTIVITY_READ_LAYER } from './user-activity/application/IUserActivityReadLayer';
 import { RecordUserRegistrationUseCase } from './user-activity/application/RecordUserRegistration/RecordUserRegistration.usecase';
 import { RecordUserRegistrationCommand } from './user-activity/application/RecordUserRegistration/RecordUserRegistrationCommand';
@@ -40,7 +40,7 @@ import { createMikroOrmQueriesDDBBBaseConfig } from './user-activity/infrastruct
 import { MikroOrmUserActivityReadLayer } from './user-activity/infrastructure/databases/mikroOrm/MikroOrmUserActivityReadLayer';
 import { RabbitMQRecordUserRegistrationMessageHandler } from './user-activity/infrastructure/messageBrokers/rabbitMQ/consumers/RabbitMQRecordUserRegistration.messagehandler';
 import { CSVUserReportGenerator } from './user-activity/infrastructure/reports/CSVUsersReportGenerator';
-import { GetTopHundredActiveUsersScheduler } from './user-activity/infrastructure/schedulers/GetTopHundredActiveUsersScheduler';
+import { GenerateTopHundredActiveUsersReportScheduler } from './user-activity/infrastructure/schedulers/GenerateTopHundredActiveUsersReportScheduler';
 
 @Module({
   imports: [
@@ -129,8 +129,8 @@ import { GetTopHundredActiveUsersScheduler } from './user-activity/infrastructur
       provide: USERS_REPORT_GENERATOR,
       useClass: CSVUserReportGenerator,
     },
-    GetTopHundredActiveUsersUseCase,
-    GetTopHundredActiveUsersScheduler,
+    GenerateTopHundredActiveUsersReportUseCase,
+    GenerateTopHundredActiveUsersReportScheduler,
   ],
 })
 export class AnalyticsModule implements OnModuleInit, OnApplicationShutdown {
@@ -139,7 +139,7 @@ export class AnalyticsModule implements OnModuleInit, OnApplicationShutdown {
     @Inject(COMMAND_BUS) private readonly commandBus: TransactionalCommandBus,
     @Inject(QUERY_BUS) private readonly queryBus: InMemoryQueryBus,
     private readonly recordUserRegistrationUseCase: RecordUserRegistrationUseCase,
-    private readonly getTopHundredActiveUsersUseCase: GetTopHundredActiveUsersUseCase,
+    private readonly generateTopHundredActiveUsersReportUseCase: GenerateTopHundredActiveUsersReportUseCase,
     @Inject(EVENT_BUS) private readonly eventBus: IEventBus,
     private readonly rabbitMQRecordUserRegistrationMessageHandler: RabbitMQRecordUserRegistrationMessageHandler,
     private readonly rabbitMQConnection: RabbitMQConnection,
@@ -154,8 +154,8 @@ export class AnalyticsModule implements OnModuleInit, OnApplicationShutdown {
     );
 
     this.queryBus.register(
-      GetTopHundredActiveUsersQuery,
-      this.getTopHundredActiveUsersUseCase,
+      GenerateTopHundredActiveUsersReportQuery,
+      this.generateTopHundredActiveUsersReportUseCase,
     );
 
     await this.rabbitMQRecordUserRegistrationMessageHandler.createConsumer(

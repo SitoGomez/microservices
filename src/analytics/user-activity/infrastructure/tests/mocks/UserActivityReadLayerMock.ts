@@ -1,4 +1,4 @@
-import { GetTopHundredActiveUsersReadModel } from '../../../application/GetTopHundredActiveUsers/GetTopHundredActiveUsersReadModel';
+import { GenerateTopHundredActiveUsersReportReadModel } from '../../../application/GenerateTopHundredActiveUsersReport/GenerateTopHundredActiveUsersReportReadModel';
 import { IUserActivityReadLayer } from '../../../application/IUserActivityReadLayer';
 
 interface UserActivityToReturnData {
@@ -42,7 +42,7 @@ export class UserActivityReadLayerMock implements IUserActivityReadLayer {
   }
 
   public getTopHundredActiveUsers(): Promise<
-    GetTopHundredActiveUsersReadModel[]
+    GenerateTopHundredActiveUsersReportReadModel[]
   > {
     return Promise.resolve(this.toReturn);
   }

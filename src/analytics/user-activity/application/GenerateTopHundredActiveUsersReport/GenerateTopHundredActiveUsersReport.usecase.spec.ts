@@ -3,13 +3,13 @@ import { randomUUID } from 'crypto';
 import { UserActivityReadLayerMock } from '../../infrastructure/tests/mocks/UserActivityReadLayerMock';
 import { UsersReportGeneratorMock } from '../../infrastructure/tests/mocks/UsersReportGeneratorMock';
 
-import { GetTopHundredActiveUsersUseCase } from './GetTopHundredActiveUsers.usecase';
-import { GetTopHundredActiveUsersQuery } from './GetTopHundredActiveUsersQuery';
+import { GenerateTopHundredActiveUsersReportUseCase } from './GenerateTopHundredActiveUsersReport.usecase';
+import { GenerateTopHundredActiveUsersReportQuery } from './GenerateTopHundredActiveUsersReportQuery';
 
-describe(`Given a GetTopHundredActiveUsersQuery to handle`, () => {
+describe(`Given a GenerateTopHundredActiveUsersReportQuery to handle`, () => {
   let userActivityReadLayer: UserActivityReadLayerMock;
   let usersReportGenerator: UsersReportGeneratorMock;
-  let getTopHundredActiveUsersUseCase: GetTopHundredActiveUsersUseCase;
+  let generateTopHundredActiveUsersReportUseCase: GenerateTopHundredActiveUsersReportUseCase;
 
   const VALID_ACTIVE_USER = {
     userId: randomUUID().toString(),
@@ -22,10 +22,11 @@ describe(`Given a GetTopHundredActiveUsersQuery to handle`, () => {
   beforeAll(() => {
     userActivityReadLayer = new UserActivityReadLayerMock();
     usersReportGenerator = new UsersReportGeneratorMock();
-    getTopHundredActiveUsersUseCase = new GetTopHundredActiveUsersUseCase(
-      userActivityReadLayer,
-      usersReportGenerator,
-    );
+    generateTopHundredActiveUsersReportUseCase =
+      new GenerateTopHundredActiveUsersReportUseCase(
+        userActivityReadLayer,
+        usersReportGenerator,
+      );
   });
 
   afterEach(() => {
@@ -37,9 +38,9 @@ describe(`Given a GetTopHundredActiveUsersQuery to handle`, () => {
     it(`Then it should save no data`, async () => {
       userActivityReadLayer.setToReturn([]);
 
-      const query = new GetTopHundredActiveUsersQuery();
+      const query = new GenerateTopHundredActiveUsersReportQuery();
 
-      await getTopHundredActiveUsersUseCase.execute(query);
+      await generateTopHundredActiveUsersReportUseCase.execute(query);
 
       expect(usersReportGenerator.getStored()).toEqual([]);
     });
@@ -49,9 +50,9 @@ describe(`Given a GetTopHundredActiveUsersQuery to handle`, () => {
     it(`Then it save the top hundred active users`, async () => {
       userActivityReadLayer.setToReturn([VALID_ACTIVE_USER]);
 
-      const query = new GetTopHundredActiveUsersQuery();
+      const query = new GenerateTopHundredActiveUsersReportQuery();
 
-      await getTopHundredActiveUsersUseCase.execute(query);
+      await generateTopHundredActiveUsersReportUseCase.execute(query);
 
       expect(usersReportGenerator.getStored()).toEqual([VALID_ACTIVE_USER]);
     });

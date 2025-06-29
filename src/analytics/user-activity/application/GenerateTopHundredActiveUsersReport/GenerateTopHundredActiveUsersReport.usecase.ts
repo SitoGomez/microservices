@@ -6,14 +6,14 @@ import {
   USER_ACTIVITY_READ_LAYER,
 } from '../IUserActivityReadLayer';
 
-import { GetTopHundredActiveUsersQuery } from './GetTopHundredActiveUsersQuery';
+import { GenerateTopHundredActiveUsersReportQuery } from './GenerateTopHundredActiveUsersReportQuery';
 import {
   IUsersReportGenerator,
   USERS_REPORT_GENERATOR,
 } from './IUsersReportGenerator';
 
-export class GetTopHundredActiveUsersUseCase
-  implements IQueryHandler<GetTopHundredActiveUsersQuery, void>
+export class GenerateTopHundredActiveUsersReportUseCase
+  implements IQueryHandler<GenerateTopHundredActiveUsersReportQuery, void>
 {
   public constructor(
     @Inject(USER_ACTIVITY_READ_LAYER)
@@ -22,7 +22,9 @@ export class GetTopHundredActiveUsersUseCase
     private readonly usersReportGenerator: IUsersReportGenerator,
   ) {}
 
-  public async execute(_query: GetTopHundredActiveUsersQuery): Promise<void> {
+  public async execute(
+    _query: GenerateTopHundredActiveUsersReportQuery,
+  ): Promise<void> {
     const users = await this.userActivityReadLayer.getTopHundredActiveUsers();
     return this.usersReportGenerator.generateTopHundredActiveUsersReport(users);
   }

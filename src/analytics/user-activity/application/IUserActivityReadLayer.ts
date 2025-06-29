@@ -1,4 +1,4 @@
-import { GetTopHundredActiveUsersReadModel } from './GetTopHundredActiveUsers/GetTopHundredActiveUsersReadModel';
+import { GenerateTopHundredActiveUsersReportReadModel } from './GenerateTopHundredActiveUsersReport/GenerateTopHundredActiveUsersReportReadModel';
 
 export interface IUserActivityReadLayer {
   saveUserRegistration(
@@ -7,7 +7,9 @@ export interface IUserActivityReadLayer {
     createdAt: Date,
   ): Promise<void>;
 
-  getTopHundredActiveUsers(): Promise<GetTopHundredActiveUsersReadModel[]>;
+  getTopHundredActiveUsers(): Promise<
+    GenerateTopHundredActiveUsersReportReadModel[]
+  >;
 }
 
 export const USER_ACTIVITY_READ_LAYER = Symbol('UserActivityReadLayer');

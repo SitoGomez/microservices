@@ -1,6 +1,6 @@
 import { BaseQuery } from '../../../../shared/queryBus/BaseQuery';
 
-export class GetTopHundredActiveUsersQuery extends BaseQuery {
+export class GenerateTopHundredActiveUsersReportQuery extends BaseQuery {
   public constructor() {
     super();
   }

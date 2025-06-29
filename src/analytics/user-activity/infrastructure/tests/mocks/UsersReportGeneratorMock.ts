@@ -1,10 +1,10 @@
-import { GetTopHundredActiveUsersReadModel } from '../../../application/GetTopHundredActiveUsers/GetTopHundredActiveUsersReadModel';
-import { IUsersReportGenerator } from '../../../application/GetTopHundredActiveUsers/IUsersReportGenerator';
+import { GenerateTopHundredActiveUsersReportReadModel } from '../../../application/GenerateTopHundredActiveUsersReport/GenerateTopHundredActiveUsersReportReadModel';
+import { IUsersReportGenerator } from '../../../application/GenerateTopHundredActiveUsersReport/IUsersReportGenerator';
 
 export class UsersReportGeneratorMock implements IUsersReportGenerator {
-  private stored: GetTopHundredActiveUsersReadModel[] = [];
+  private stored: GenerateTopHundredActiveUsersReportReadModel[] = [];
 
-  public getStored(): GetTopHundredActiveUsersReadModel[] {
+  public getStored(): GenerateTopHundredActiveUsersReportReadModel[] {
     return this.stored;
   }
 
@@ -13,7 +13,7 @@ export class UsersReportGeneratorMock implements IUsersReportGenerator {
   }
 
   public async generateTopHundredActiveUsersReport(
-    users: GetTopHundredActiveUsersReadModel[],
+    users: GenerateTopHundredActiveUsersReportReadModel[],
   ): Promise<void> {
     this.stored = users;
     return Promise.resolve();
