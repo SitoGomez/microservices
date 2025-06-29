@@ -16,11 +16,11 @@ import * as colorette from 'colorette';
 
 import { COMMAND_BUS } from '../shared/commandBus/ICommandBus';
 import { TransactionalCommandBus } from '../shared/commandBus/TransactionalCommandBus';
+import { FromDomainToRabbitMQIntegrationEventMapper } from '../shared/events/eventBus/infrastructure/FromDomainToIntegrationEventMapper';
 import {
   EVENT_BUS,
   IEventBus,
-} from '../shared/events/eventBus/domain/IEventBus';
-import { FromDomainToRabbitMQIntegrationEventMapper } from '../shared/events/eventBus/infrastructure/FromDomainToIntegrationEventMapper';
+} from '../shared/events/eventBus/infrastructure/IEventBus';
 import { RabbitMQConnection } from '../shared/events/eventBus/infrastructure/rabbitMQ/RabbitMQConnection';
 import { RabbitMQPublisherEventBus } from '../shared/events/eventBus/infrastructure/rabbitMQ/RabbitMQPublisherEventBus';
 import { ILogger, LOGGER } from '../shared/logger/ILogger';

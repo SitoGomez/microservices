@@ -1,5 +1,5 @@
 import { InMemoryDateTimeService } from '../../../../shared/dateTimeService/infrastructure/doubles/InMemoryDateTimeService';
-import { InMemoryEventBus } from '../../../../shared/events/eventBus/infrastructure/InMemoryEventBus';
+import { EventBusMock } from '../../../../shared/events/eventBus/infrastructure/testing/EventBusMock';
 import { UserByEmailNotFoundError } from '../../domain/errors/UserByEmailNotFound.error';
 import { WrongUserCredentialsError } from '../../domain/errors/WrongUserCredentials.error';
 import { UserLogged } from '../../domain/events/UserLogged.event';
@@ -13,7 +13,7 @@ import { LoginUserUseCase } from './LoginUser.usecase';
 
 describe('Given an LoginUserCommand', () => {
   const userRepository = new UserRepositoryMock();
-  const eventBus = new InMemoryEventBus();
+  const eventBus = new EventBusMock();
   const dateTimeService = new InMemoryDateTimeService();
   const passwordHasher = new PasswordHasherMock();
   const accessTokenManagerMock = new AccessTokenManagerMock();

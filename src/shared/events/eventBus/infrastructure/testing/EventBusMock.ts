@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
-import { DomainEvent } from '../../DomainEvent';
-import { IEventBus } from '../domain/IEventBus';
+import { DomainEvent } from '../../../DomainEvent';
+import { IEventBus } from '../IEventBus';
 
 @Injectable()
-export class InMemoryEventBus implements IEventBus {
+export class EventBusMock implements IEventBus {
   private events: DomainEvent[] = [];
 
   public dispatch(events: DomainEvent[]): Promise<void> {
