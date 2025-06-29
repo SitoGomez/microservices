@@ -1,5 +1,3 @@
-import { randomUUID } from 'crypto';
-
 import {
   Body,
   Controller,
@@ -7,6 +5,7 @@ import {
   HttpStatus,
   Inject,
   Post,
+  Headers,
 } from '@nestjs/common';
 
 import {
@@ -26,13 +25,10 @@ export class LoginUserController {
   @Post('/users/login')
   @HttpCode(HttpStatus.OK)
   public async handle(
+    @Headers('x-request-id') requestId: string,
     @Body() body: LoginUserControllerDto,
   ): Promise<{ access_token: string }> {
-    const command = new LoginUserCommand(
-      randomUUID(),
-      body.email,
-      body.password,
-    );
+    const command = new LoginUserCommand(requestId, body.email, body.password);
 
     return this.commandBus.execute(command);
   }
