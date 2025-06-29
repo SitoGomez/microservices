@@ -35,6 +35,7 @@ import { USERS_REPORT_GENERATOR } from './user-activity/application/GenerateTopH
 import { USER_ACTIVITY_READ_LAYER } from './user-activity/application/IUserActivityReadLayer';
 import { RecordUserRegistrationUseCase } from './user-activity/application/RecordUserRegistration/RecordUserRegistration.usecase';
 import { RecordUserRegistrationCommand } from './user-activity/application/RecordUserRegistration/RecordUserRegistrationCommand';
+import { ProcessedEvent } from './user-activity/infrastructure/databases/mikroOrm/entities/ProcessedEvent.entity';
 import { UserActivity } from './user-activity/infrastructure/databases/mikroOrm/entities/UserActivity.entity';
 import { createMikroOrmQueriesDDBBBaseConfig } from './user-activity/infrastructure/databases/mikroOrm/MikroOrmQueriesDDBB.base.config';
 import { MikroOrmUserActivityReadLayer } from './user-activity/infrastructure/databases/mikroOrm/MikroOrmUserActivityReadLayer';
@@ -53,7 +54,7 @@ import { GenerateTopHundredActiveUsersReportScheduler } from './user-activity/in
       registerRequestContext: false,
       ...createMikroOrmQueriesDDBBBaseConfig(),
     }),
-    MikroOrmModule.forFeature([UserActivity], 'analytics'),
+    MikroOrmModule.forFeature([UserActivity, ProcessedEvent], 'analytics'),
     MikroOrmModule.forMiddleware(),
     ScheduleModule.forRoot(),
   ],
