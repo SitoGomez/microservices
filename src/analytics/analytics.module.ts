@@ -156,10 +156,12 @@ import { GenerateTopHundredActiveUsersReportScheduler } from './user-activity/in
     GenerateTopHundredActiveUsersReportScheduler,
     {
       provide: PROCESSED_EVENT_SERVICE,
-      useFactory: (mikroOrm: MikroORM): MikroOrmProcessedEventService => {
-        return new MikroOrmProcessedEventService(mikroOrm.em);
+      useFactory: (em: EntityManager): MikroOrmProcessedEventService => {
+        return new MikroOrmProcessedEventService(
+          em.getRepository(ProcessedEventEntity),
+        );
       },
-      inject: [getMikroORMToken('analytics')],
+      inject: [getEntityManagerToken('analytics')],
     },
     {
       provide: PROCESSED_COMMAND_SERVICE,
