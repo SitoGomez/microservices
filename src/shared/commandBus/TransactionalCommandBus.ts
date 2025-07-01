@@ -1,4 +1,4 @@
-import { RequestContext } from '@mikro-orm/core';
+import { EntityManager, RequestContext } from '@mikro-orm/core';
 import { MikroORM } from '@mikro-orm/postgresql';
 import { Injectable } from '@nestjs/common';
 
@@ -18,14 +18,17 @@ export class TransactionalCommandBus implements ICommandBus {
     private readonly processedCommandService: IProcessedCommandService,
   ) {}
 
-  private handlers = new Map<string, ICommandHandler<BaseCommand, any>>();
+  private registeredCommandHandlers = new Map<
+    string,
+    ICommandHandler<BaseCommand, any>
+  >();
 
   public register<T extends BaseCommand, TResult = void>(
     commandType: new (...args: any[]) => T,
     handler: ICommandHandler<T, TResult>,
   ): void {
     const commandName = commandType.name;
-    this.handlers.set(
+    this.registeredCommandHandlers.set(
       commandName,
       handler as ICommandHandler<BaseCommand, any>,
     );
@@ -34,10 +37,30 @@ export class TransactionalCommandBus implements ICommandBus {
   public async execute<T extends BaseCommand, TResult = void>(
     command: T,
   ): Promise<TResult> {
-    const commandName = command.constructor.name;
-    const commandId = command.id;
+    const commandHandler = this.getCommandHandlerOrThrow<T, TResult>(command);
 
-    const handler = this.handlers.get(commandName) as
+    const existingEM = RequestContext.getEntityManager();
+
+    if (existingEM) {
+      return this.executeCommand<T, TResult>(
+        existingEM,
+        command,
+        commandHandler,
+      );
+    }
+
+    const emFork = this.mikroOrm.em.fork({ useContext: true });
+
+    return RequestContext.create(emFork, async () => {
+      return this.executeCommand<T, TResult>(emFork, command, commandHandler);
+    });
+  }
+
+  private getCommandHandlerOrThrow<T extends BaseCommand, TResult = void>(
+    command: T,
+  ): ICommandHandler<T, TResult> {
+    const commandName = command.constructor.name;
+    const handler = this.registeredCommandHandlers.get(commandName) as
       | ICommandHandler<T, TResult>
       | undefined;
 
@@ -45,9 +68,18 @@ export class TransactionalCommandBus implements ICommandBus {
       throw new NoHandlerForCommandError(commandName);
     }
 
-    const existingEM = RequestContext.getEntityManager();
+    return handler;
+  }
 
-    if (existingEM) {
+  private executeCommand<T extends BaseCommand, TResult = void>(
+    em: EntityManager,
+    command: T,
+    commandHandler: ICommandHandler<T, TResult>,
+  ): Promise<TResult> {
+    const commandName = command.constructor.name;
+    const commandId = command.id;
+
+    return em.transactional(async () => {
       if (await this.isCommandAlreadyProcessed(commandId, commandName)) {
         //TODO: Return the same result
         return Promise.resolve() as TResult;
@@ -56,32 +88,11 @@ export class TransactionalCommandBus implements ICommandBus {
       this.logger.info(
         `Executing command: ${commandName} with id: ${commandId}`,
       );
-      return existingEM.transactional(async () => {
-        const result = handler.execute(command);
+      const result = commandHandler.execute(command);
 
-        await this.markCommandAsProcessed(commandId, commandName);
+      await this.markCommandAsProcessed(commandId, commandName);
 
-        return result;
-      });
-    }
-
-    const emFork = this.mikroOrm.em.fork({ useContext: true });
-
-    return RequestContext.create(emFork, async () => {
-      return emFork.transactional(async () => {
-        if (await this.isCommandAlreadyProcessed(commandId, commandName)) {
-          return Promise.resolve() as TResult;
-        }
-
-        this.logger.info(
-          `Executing command: ${commandName} with id: ${commandId}`,
-        );
-        const result = handler.execute(command);
-
-        await this.markCommandAsProcessed(commandId, commandName);
-
-        return result;
-      });
+      return result;
     });
   }
 
