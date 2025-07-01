@@ -1,4 +1,6 @@
+import { EntityManager } from '@mikro-orm/core';
 import {
+  getEntityManagerToken,
   getMikroORMToken,
   InjectMikroORM,
   MikroOrmModule,
@@ -15,6 +17,12 @@ import { ScheduleModule } from '@nestjs/schedule';
 import * as colorette from 'colorette';
 
 import { COMMAND_BUS } from '../shared/commandBus/ICommandBus';
+import { ProcessedCommandEntity } from '../shared/commandBus/infrastructure/mikroOrm/entities/ProcessedCommands.entity';
+import { MikroOrmProcessedCommandService } from '../shared/commandBus/infrastructure/mikroOrm/MikroOrmCommandProcessedService';
+import {
+  IProcessedCommandService,
+  PROCESSED_COMMAND_SERVICE,
+} from '../shared/commandBus/IProcessedCommand';
 import { TransactionalCommandBus } from '../shared/commandBus/TransactionalCommandBus';
 import { FromDomainToRabbitMQIntegrationEventMapper } from '../shared/events/eventBus/infrastructure/FromDomainToIntegrationEventMapper';
 import {
@@ -37,8 +45,8 @@ import { USERS_REPORT_GENERATOR } from './user-activity/application/GenerateTopH
 import { USER_ACTIVITY_READ_LAYER } from './user-activity/application/IUserActivityReadLayer';
 import { RecordUserRegistrationUseCase } from './user-activity/application/RecordUserRegistration/RecordUserRegistration.usecase';
 import { RecordUserRegistrationCommand } from './user-activity/application/RecordUserRegistration/RecordUserRegistrationCommand';
-import { ProcessedEvent } from './user-activity/infrastructure/databases/mikroOrm/entities/ProcessedEvent.entity';
-import { UserActivity } from './user-activity/infrastructure/databases/mikroOrm/entities/UserActivity.entity';
+import { ProcessedEventEntity } from './user-activity/infrastructure/databases/mikroOrm/entities/ProcessedEvent.entity';
+import { UserActivityEntity } from './user-activity/infrastructure/databases/mikroOrm/entities/UserActivity.entity';
 import { createMikroOrmQueriesDDBBBaseConfig } from './user-activity/infrastructure/databases/mikroOrm/MikroOrmQueriesDDBB.base.config';
 import { MikroOrmUserActivityReadLayer } from './user-activity/infrastructure/databases/mikroOrm/MikroOrmUserActivityReadLayer';
 import { RabbitMQRecordUserRegistrationMessageHandler } from './user-activity/infrastructure/messageBrokers/rabbitMQ/consumers/RabbitMQRecordUserRegistration.messagehandler';
@@ -56,7 +64,10 @@ import { GenerateTopHundredActiveUsersReportScheduler } from './user-activity/in
       registerRequestContext: false,
       ...createMikroOrmQueriesDDBBBaseConfig(),
     }),
-    MikroOrmModule.forFeature([UserActivity, ProcessedEvent], 'analytics'),
+    MikroOrmModule.forFeature(
+      [UserActivityEntity, ProcessedEventEntity, ProcessedCommandEntity],
+      'analytics',
+    ),
     MikroOrmModule.forMiddleware(),
     ScheduleModule.forRoot(),
   ],
@@ -72,10 +83,19 @@ import { GenerateTopHundredActiveUsersReportScheduler } from './user-activity/in
       useFactory: (
         logger: ILogger,
         mikroORM: MikroORM,
+        processedCommandService: IProcessedCommandService,
       ): TransactionalCommandBus => {
-        return new TransactionalCommandBus(logger, mikroORM);
+        return new TransactionalCommandBus(
+          logger,
+          mikroORM,
+          processedCommandService,
+        );
       },
-      inject: [LOGGER, getMikroORMToken('analytics')],
+      inject: [
+        LOGGER,
+        getMikroORMToken('analytics'),
+        PROCESSED_COMMAND_SERVICE,
+      ],
     },
     {
       provide: QUERY_BUS,
@@ -140,6 +160,15 @@ import { GenerateTopHundredActiveUsersReportScheduler } from './user-activity/in
         return new MikroOrmProcessedEventService(mikroOrm.em);
       },
       inject: [getMikroORMToken('analytics')],
+    },
+    {
+      provide: PROCESSED_COMMAND_SERVICE,
+      useFactory: (em: EntityManager): MikroOrmProcessedCommandService => {
+        return new MikroOrmProcessedCommandService(
+          em.getRepository(ProcessedCommandEntity),
+        );
+      },
+      inject: [getEntityManagerToken('analytics')],
     },
   ],
 })

@@ -8,12 +8,14 @@ import { BaseCommand } from './BaseCommand';
 import { NoHandlerForCommandError } from './errors/NoHandlerForCommand.error';
 import { ICommandBus } from './ICommandBus';
 import { ICommandHandler } from './ICommandHandler';
+import { IProcessedCommandService } from './IProcessedCommand';
 
 @Injectable()
 export class TransactionalCommandBus implements ICommandBus {
   public constructor(
     private readonly logger: ILogger,
     private readonly mikroOrm: MikroORM,
+    private readonly processedCommandService: IProcessedCommandService,
   ) {}
 
   private handlers = new Map<string, ICommandHandler<BaseCommand, any>>();
@@ -43,13 +45,23 @@ export class TransactionalCommandBus implements ICommandBus {
       throw new NoHandlerForCommandError(commandName);
     }
 
-    this.logger.info(`Executing command: ${commandName} with id: ${commandId}`);
-
     const existingEM = RequestContext.getEntityManager();
 
     if (existingEM) {
+      if (await this.isCommandAlreadyProcessed(commandId, commandName)) {
+        //TODO: Return the same result
+        return Promise.resolve() as TResult;
+      }
+
+      this.logger.info(
+        `Executing command: ${commandName} with id: ${commandId}`,
+      );
       return existingEM.transactional(async () => {
-        return handler.execute(command);
+        const result = handler.execute(command);
+
+        await this.markCommandAsProcessed(commandId, commandName);
+
+        return result;
       });
     }
 
@@ -57,8 +69,33 @@ export class TransactionalCommandBus implements ICommandBus {
 
     return RequestContext.create(emFork, async () => {
       return emFork.transactional(async () => {
-        return handler.execute(command);
+        if (await this.isCommandAlreadyProcessed(commandId, commandName)) {
+          return Promise.resolve() as TResult;
+        }
+
+        this.logger.info(
+          `Executing command: ${commandName} with id: ${commandId}`,
+        );
+        const result = handler.execute(command);
+
+        await this.markCommandAsProcessed(commandId, commandName);
+
+        return result;
       });
     });
+  }
+
+  private async isCommandAlreadyProcessed(
+    commandId: string,
+    commandName: string,
+  ): Promise<boolean> {
+    return this.processedCommandService.isProcessed(commandId, commandName);
+  }
+
+  private async markCommandAsProcessed(
+    commandId: string,
+    commandName: string,
+  ): Promise<void> {
+    return this.processedCommandService.save(commandId, commandName);
   }
 }

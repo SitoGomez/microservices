@@ -1,9 +1,10 @@
 import {
+  getEntityManagerToken,
   getMikroORMToken,
   InjectMikroORM,
   MikroOrmModule,
 } from '@mikro-orm/nestjs';
-import { MikroORM } from '@mikro-orm/postgresql';
+import { EntityManager, MikroORM } from '@mikro-orm/postgresql';
 import {
   Inject,
   MiddlewareConsumer,
@@ -18,6 +19,12 @@ import { JwtModule } from '@nestjs/jwt';
 import * as colorette from 'colorette';
 
 import { COMMAND_BUS } from '../shared/commandBus/ICommandBus';
+import { ProcessedCommandEntity } from '../shared/commandBus/infrastructure/mikroOrm/entities/ProcessedCommands.entity';
+import { MikroOrmProcessedCommandService } from '../shared/commandBus/infrastructure/mikroOrm/MikroOrmCommandProcessedService';
+import {
+  IProcessedCommandService,
+  PROCESSED_COMMAND_SERVICE,
+} from '../shared/commandBus/IProcessedCommand';
 import { TransactionalCommandBus } from '../shared/commandBus/TransactionalCommandBus';
 import { FromDomainToRabbitMQIntegrationEventMapper } from '../shared/events/eventBus/infrastructure/FromDomainToIntegrationEventMapper';
 import {
@@ -57,7 +64,7 @@ import { BCryptPasswordHasher } from './user/infrastructure/hashers/BCryptPasswo
       registerRequestContext: false,
       ...createMikroOrmCommandsDDBBBaseConfig(),
     }),
-    MikroOrmModule.forFeature([UserEntity], 'auth'),
+    MikroOrmModule.forFeature([UserEntity, ProcessedCommandEntity], 'auth'),
     MikroOrmModule.forMiddleware(),
     JwtModule.registerAsync({
       global: true,
@@ -81,10 +88,15 @@ import { BCryptPasswordHasher } from './user/infrastructure/hashers/BCryptPasswo
       useFactory: (
         logger: ILogger,
         mikroOrm: MikroORM,
+        processedCommandService: IProcessedCommandService,
       ): TransactionalCommandBus => {
-        return new TransactionalCommandBus(logger, mikroOrm);
+        return new TransactionalCommandBus(
+          logger,
+          mikroOrm,
+          processedCommandService,
+        );
       },
-      inject: [LOGGER, getMikroORMToken('auth')],
+      inject: [LOGGER, getMikroORMToken('auth'), PROCESSED_COMMAND_SERVICE],
     },
     {
       provide: RabbitMQConnection,
@@ -135,6 +147,15 @@ import { BCryptPasswordHasher } from './user/infrastructure/hashers/BCryptPasswo
     {
       provide: ACCESS_TOKEN_MANAGER,
       useClass: JWTAccessTokenManager,
+    },
+    {
+      provide: PROCESSED_COMMAND_SERVICE,
+      useFactory: (em: EntityManager): MikroOrmProcessedCommandService => {
+        return new MikroOrmProcessedCommandService(
+          em.getRepository(ProcessedCommandEntity),
+        );
+      },
+      inject: [getEntityManagerToken('auth')],
     },
     RegisterUserUseCase,
     MikroOrmUserMapper,

@@ -1,7 +1,7 @@
 import { Entity, PrimaryKey, Property } from '@mikro-orm/core';
 
 @Entity({ tableName: 'processed_commands' })
-export class ProcessedCommand {
+export class ProcessedCommandEntity {
   public constructor(
     commandId: string,
     commandName: string,
