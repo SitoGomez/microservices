@@ -21,9 +21,11 @@ export const createMikroOrmCommandsDDBBBaseConfig = (): Options => ({
   colors: true,
   entities: [
     'dist/src/auth/**/infrastructure/databases/mikroOrm/entities/*.entity.js',
+    'dist/src/shared/**/mikroOrm/entities/*.entity.js',
   ],
   entitiesTs: [
     'src/auth/**/infrastructure/databases/mikroOrm/entities/*.entity.ts',
+    'src/shared/**/mikroOrm/entities/*.entity.ts',
   ],
   extensions: [Migrator],
   migrations: {

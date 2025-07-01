@@ -12,9 +12,11 @@ export const createMikroOrmQueriesDDBBBaseConfig = (): Options => ({
   ignoreUndefinedInQuery: true,
   entities: [
     'dist/src/analytics/**/infrastructure/databases/mikroOrm/entities/*.entity.js',
+    'dist/src/shared/**/mikroOrm/entities/*.entity.js',
   ],
   entitiesTs: [
     'src/analytics/**/infrastructure/databases/mikroOrm/entities/*.entity.ts',
+    'src/shared/**/mikroOrm/entities/*.entity.ts',
   ],
   dbName: process.env.ANALYTICS_QUERIES_DB_NAME,
   user: process.env.ANALYTICS_QUERIES_DB_USER,
