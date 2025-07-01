@@ -1,4 +1,4 @@
-import { MikroORM, RequestContext } from '@mikro-orm/core';
+import { EntityManager, MikroORM, RequestContext } from '@mikro-orm/core';
 import { Consumer } from 'rabbitmq-client';
 
 import { BaseCommand } from '../../../../commandBus/BaseCommand';
@@ -45,30 +45,46 @@ export abstract class RabbitMQConsumer<
         const emFork = this.mikroOrm.em.fork({ useContext: true });
 
         return RequestContext.create(emFork, async () => {
-          return emFork.transactional(async () => {
-            const isEventAlreadyProcessed =
-              await this.processedEventService.isProcessed(
-                eventData.eventId,
-                eventData.eventType,
-              );
-
-            if (isEventAlreadyProcessed) {
-              return;
-            }
-
-            const command =
-              this.fromRabbitMQIntegrationEventToCommand(eventData);
-
-            await this.commandBus.execute(command);
-
-            await this.processedEventService.save(
-              eventData.eventId,
-              eventData.eventType,
-            );
-          });
+          return this.executeCommand(emFork, eventData);
         });
       },
     );
+  }
+
+  private async executeCommand(
+    em: EntityManager,
+    eventData: RabbitMQIntegrationEvent<TEventData>,
+  ): Promise<void> {
+    return em.transactional(async () => {
+      if (
+        await this.isEventAlreadyProcessed(
+          eventData.eventId,
+          eventData.eventType,
+        )
+      ) {
+        return;
+      }
+
+      const command = this.fromRabbitMQIntegrationEventToCommand(eventData);
+
+      await this.commandBus.execute(command);
+
+      return this.markEventAsProcessed(eventData.eventId, eventData.eventType);
+    });
+  }
+
+  private isEventAlreadyProcessed(
+    eventId: string,
+    eventType: string,
+  ): Promise<boolean> {
+    return this.processedEventService.isProcessed(eventId, eventType);
+  }
+
+  private markEventAsProcessed(
+    eventId: string,
+    eventType: string,
+  ): Promise<void> {
+    return this.processedEventService.save(eventId, eventType);
   }
 
   public async close(): Promise<void> {
