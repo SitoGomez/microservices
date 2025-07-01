@@ -1,19 +1,19 @@
 import { EntityManager, EntityRepository } from '@mikro-orm/core';
 import { Injectable } from '@nestjs/common';
 
-import { ProcessedEvent } from '../../../../../analytics/user-activity/infrastructure/databases/mikroOrm/entities/ProcessedEvent.entity';
+import { ProcessedEventEntity } from '../../../../../analytics/user-activity/infrastructure/databases/mikroOrm/entities/ProcessedEvent.entity';
 import { IProcessedEventService } from '../IProcessedEventService';
 
 @Injectable()
 export class MikroOrmProcessedEventService implements IProcessedEventService {
-  private readonly processedEventRepository: EntityRepository<ProcessedEvent>;
+  private readonly processedEventRepository: EntityRepository<ProcessedEventEntity>;
 
   public constructor(private readonly em: EntityManager) {
-    this.processedEventRepository = this.em.getRepository(ProcessedEvent);
+    this.processedEventRepository = this.em.getRepository(ProcessedEventEntity);
   }
 
   public async save(eventId: string, eventType: string): Promise<void> {
-    const processedEvent = new ProcessedEvent(eventId, eventType);
+    const processedEvent = new ProcessedEventEntity(eventId, eventType);
 
     await this.processedEventRepository.insert(processedEvent);
   }

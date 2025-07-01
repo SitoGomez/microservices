@@ -5,16 +5,16 @@ import { Injectable } from '@nestjs/common';
 import { GenerateTopHundredActiveUsersReportReadModel } from '../../../application/GenerateTopHundredActiveUsersReport/GenerateTopHundredActiveUsersReportReadModel';
 import { IUserActivityReadLayer } from '../../../application/IUserActivityReadLayer';
 
-import { UserActivity } from './entities/UserActivity.entity';
+import { UserActivityEntity } from './entities/UserActivity.entity';
 
 @Injectable()
 export class MikroOrmUserActivityReadLayer implements IUserActivityReadLayer {
-  private readonly userActivityRepository: EntityRepository<UserActivity>;
+  private readonly userActivityRepository: EntityRepository<UserActivityEntity>;
 
   public constructor(
     @InjectEntityManager('analytics') private readonly em: EntityManager,
   ) {
-    this.userActivityRepository = this.em.getRepository(UserActivity);
+    this.userActivityRepository = this.em.getRepository(UserActivityEntity);
   }
 
   public async saveUserRegistration(
@@ -22,7 +22,7 @@ export class MikroOrmUserActivityReadLayer implements IUserActivityReadLayer {
     email: string,
     createdAt: Date,
   ): Promise<void> {
-    const userActivity = new UserActivity(
+    const userActivity = new UserActivityEntity(
       userId,
       email,
       createdAt,

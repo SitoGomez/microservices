@@ -1,7 +1,7 @@
 import { Entity, PrimaryKey, Property } from '@mikro-orm/core';
 
 @Entity({ tableName: 'processed_events' })
-export class ProcessedEvent {
+export class ProcessedEventEntity {
   public constructor(eventId: string, eventType: string, processedAt?: Date) {
     this.eventId = eventId;
     this.eventType = eventType;

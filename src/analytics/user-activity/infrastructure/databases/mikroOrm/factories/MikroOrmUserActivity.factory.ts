@@ -1,12 +1,12 @@
 import { faker } from '@faker-js/faker';
 import { Factory } from '@mikro-orm/seeder';
 
-import { UserActivity } from '../entities/UserActivity.entity';
+import { UserActivityEntity } from '../entities/UserActivity.entity';
 
-export class MikroOrmUserFactory extends Factory<UserActivity> {
-  public model = UserActivity;
+export class MikroOrmUserFactory extends Factory<UserActivityEntity> {
+  public model = UserActivityEntity;
 
-  public definition(): Partial<UserActivity> {
+  public definition(): Partial<UserActivityEntity> {
     return {
       userId: crypto.randomUUID(),
       email: `${faker.person.firstName().toLowerCase()}${Number(faker.string.numeric(5))}@${faker.internet.domainName()}`,
