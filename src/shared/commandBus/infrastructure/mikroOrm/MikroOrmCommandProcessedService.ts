@@ -2,6 +2,7 @@ import { EntityRepository } from '@mikro-orm/core';
 import { Injectable } from '@nestjs/common';
 
 import { IProcessedCommandService } from '../../IProcessedCommandService';
+import { ProcessedCommandResponseType } from '../../ProcessedCommandResponse.type';
 
 import { ProcessedCommandEntity } from './entities/ProcessedCommands.entity';
 
@@ -13,8 +14,16 @@ export class MikroOrmProcessedCommandService
     private readonly processedCommandRepository: EntityRepository<ProcessedCommandEntity>,
   ) {}
 
-  public async save(commandId: string, commandType: string): Promise<void> {
-    const processedCommand = new ProcessedCommandEntity(commandId, commandType);
+  public async save(
+    commandId: string,
+    commandType: string,
+    commandResponse: string | undefined,
+  ): Promise<void> {
+    const processedCommand = new ProcessedCommandEntity(
+      commandId,
+      commandType,
+      commandResponse,
+    );
 
     await this.processedCommandRepository.insert(processedCommand);
   }
@@ -22,12 +31,12 @@ export class MikroOrmProcessedCommandService
   public async findByCommandIdAndName(
     commandId: string,
     commandName: string,
-  ): Promise<any> {
-    const processedCommand = await this.processedCommandRepository.findOne({
+  ): Promise<ProcessedCommandResponseType | undefined> {
+    const result = await this.processedCommandRepository.findOne({
       commandId,
       commandName,
     });
 
-    return processedCommand;
+    return result ? result : undefined;
   }
 }

@@ -9,6 +9,7 @@ import { NoHandlerForCommandError } from './errors/NoHandlerForCommand.error';
 import { ICommandBus } from './ICommandBus';
 import { ICommandHandler } from './ICommandHandler';
 import { IProcessedCommandService } from './IProcessedCommandService';
+import { ProcessedCommandResponseType } from './ProcessedCommandResponse.type';
 
 @Injectable()
 export class TransactionalCommandBus implements ICommandBus {
@@ -80,39 +81,51 @@ export class TransactionalCommandBus implements ICommandBus {
     const commandId = command.id;
 
     return em.transactional(async () => {
-      if (await this.isCommandAlreadyProcessed(commandId, commandName)) {
-        //TODO: Return the same result
-        return Promise.resolve() as TResult;
+      const alreadyProcessedCommand = await this.getAlreadyProcessedCommand(
+        commandId,
+        commandName,
+      );
+
+      if (alreadyProcessedCommand) {
+        if (alreadyProcessedCommand.commandResponse === undefined) {
+          return Promise.resolve() as Promise<TResult>;
+        }
+
+        return Promise.resolve(
+          alreadyProcessedCommand.commandResponse,
+        ) as Promise<TResult>;
       }
 
       this.logger.info(
         `Executing command: ${commandName} with id: ${commandId}`,
       );
-      const result = commandHandler.execute(command);
+      const commandResponse = await commandHandler.execute(command);
 
-      await this.markCommandAsProcessed(commandId, commandName);
+      await this.saveProcessedCommand(commandId, commandName, commandResponse);
 
-      return result;
+      return commandResponse;
     });
   }
 
-  private async isCommandAlreadyProcessed(
+  private async getAlreadyProcessedCommand(
     commandId: string,
     commandName: string,
-  ): Promise<boolean> {
-    const alreadyProcessedCommand =
-      await this.processedCommandService.findByCommandIdAndName(
-        commandId,
-        commandName,
-      );
-
-    return !!alreadyProcessedCommand;
+  ): Promise<ProcessedCommandResponseType | undefined> {
+    return this.processedCommandService.findByCommandIdAndName(
+      commandId,
+      commandName,
+    );
   }
 
-  private async markCommandAsProcessed(
+  private async saveProcessedCommand<TResult>(
     commandId: string,
     commandName: string,
+    commandResponse?: TResult,
   ): Promise<void> {
-    return this.processedCommandService.save(commandId, commandName);
+    return this.processedCommandService.save(
+      commandId,
+      commandName,
+      commandResponse as string | undefined,
+    );
   }
 }
