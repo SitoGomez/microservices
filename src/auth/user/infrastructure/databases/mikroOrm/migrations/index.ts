@@ -3,6 +3,7 @@ import { Migration20250611103929_MakeEmailUniqueUsersTable } from './Migration20
 import { Migration20250611103940_RemoveFullnameColumnFromUsersTable } from './Migration20250611103940_RemoveFullnameColumnFromUsersTable';
 import { Migration20250611103950_AddCreatedAtAndUpdatedAtToUsersTable } from './Migration20250611103950_AddCreatedAtAndUpdatedAtToUsersTable';
 import { Migration20250629123211_CreateProcessedCommandsTable } from './Migration20250629173211_CreateProcessedCommandsTable';
+import { Migration20250702151011_AddCommandResponseColumnToCommandProcessedTable } from './Migration20250702151011_AddCommandResponseColumnToCommandProcessedTable';
 
 export const authMigrations = [
   Migration20250611103928_CreateUsersTable,
@@ -10,4 +11,5 @@ export const authMigrations = [
   Migration20250611103940_RemoveFullnameColumnFromUsersTable,
   Migration20250611103950_AddCreatedAtAndUpdatedAtToUsersTable,
   Migration20250629123211_CreateProcessedCommandsTable,
+  Migration20250702151011_AddCommandResponseColumnToCommandProcessedTable,
 ];

@@ -2,10 +2,12 @@ import { Migration20250620203425_CreateUsersActivityTable } from './Migration202
 import { Migration20250623183022_AddCreatedAtAndUpdatedAtToUsersActivityTable } from './Migration20250623183022_AddCreatedAtAndUpdatedAtToUsersActivityTable';
 import { Migration20250629123211_CreateProcessedEventsTable } from './Migration20250629123211_CreateProcessedEventsTable';
 import { Migration20250629123211_CreateProcessedCommandsTable } from './Migration20250629173211_CreateProcessedCommandsTable';
+import { Migration20250702151011_AddCommandResponseColumnToCommandProcessedTable } from './Migration20250702151011_AddCommandResponseColumnToCommandProcessedTable';
 
 export const analyticsMigrations = [
   Migration20250620203425_CreateUsersActivityTable,
   Migration20250623183022_AddCreatedAtAndUpdatedAtToUsersActivityTable,
   Migration20250629123211_CreateProcessedEventsTable,
   Migration20250629123211_CreateProcessedCommandsTable,
+  Migration20250702151011_AddCommandResponseColumnToCommandProcessedTable,
 ];
