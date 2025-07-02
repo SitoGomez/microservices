@@ -19,15 +19,15 @@ export class MikroOrmProcessedCommandService
     await this.processedCommandRepository.insert(processedCommand);
   }
 
-  public async isProcessed(
+  public async findByCommandIdAndName(
     commandId: string,
     commandName: string,
-  ): Promise<boolean> {
+  ): Promise<any> {
     const processedCommand = await this.processedCommandRepository.findOne({
       commandId,
       commandName,
     });
 
-    return !!processedCommand;
+    return processedCommand;
   }
 }

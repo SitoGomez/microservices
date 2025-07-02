@@ -100,7 +100,13 @@ export class TransactionalCommandBus implements ICommandBus {
     commandId: string,
     commandName: string,
   ): Promise<boolean> {
-    return this.processedCommandService.isProcessed(commandId, commandName);
+    const alreadyProcessedCommand =
+      await this.processedCommandService.findByCommandIdAndName(
+        commandId,
+        commandName,
+      );
+
+    return !!alreadyProcessedCommand;
   }
 
   private async markCommandAsProcessed(
