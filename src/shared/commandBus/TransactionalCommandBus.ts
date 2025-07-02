@@ -8,7 +8,7 @@ import { BaseCommand } from './BaseCommand';
 import { NoHandlerForCommandError } from './errors/NoHandlerForCommand.error';
 import { ICommandBus } from './ICommandBus';
 import { ICommandHandler } from './ICommandHandler';
-import { IProcessedCommandService } from './IProcessedCommand';
+import { IProcessedCommandService } from './IProcessedCommandService';
 
 @Injectable()
 export class TransactionalCommandBus implements ICommandBus {

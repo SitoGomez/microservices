@@ -1,7 +1,7 @@
 import { EntityRepository } from '@mikro-orm/core';
 import { Injectable } from '@nestjs/common';
 
-import { IProcessedCommandService } from '../../IProcessedCommand';
+import { IProcessedCommandService } from '../../IProcessedCommandService';
 
 import { ProcessedCommandEntity } from './entities/ProcessedCommands.entity';
 

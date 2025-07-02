@@ -24,7 +24,7 @@ import { MikroOrmProcessedCommandService } from '../shared/commandBus/infrastruc
 import {
   IProcessedCommandService,
   PROCESSED_COMMAND_SERVICE,
-} from '../shared/commandBus/IProcessedCommand';
+} from '../shared/commandBus/IProcessedCommandService';
 import { TransactionalCommandBus } from '../shared/commandBus/TransactionalCommandBus';
 import { FromDomainToRabbitMQIntegrationEventMapper } from '../shared/events/eventBus/infrastructure/FromDomainToIntegrationEventMapper';
 import {
