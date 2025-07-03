@@ -67,9 +67,19 @@ export abstract class RabbitMQConsumer<
 
       const command = this.fromRabbitMQIntegrationEventToCommand(eventData);
 
-      await this.commandBus.execute(command);
-
-      return this.markEventAsProcessed(eventData.eventId, eventData.eventType);
+      try {
+        await this.commandBus.execute(command);
+        return this.markEventAsProcessed(
+          eventData.eventId,
+          eventData.eventType,
+        );
+      } catch (error: any) {
+        //TODO: Handle failing events
+        this.logger.error(
+          `Error processing event ${eventData.eventType} with ID ${eventData.eventId}: ${error}`,
+          error,
+        );
+      }
     });
   }
 
