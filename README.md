@@ -39,7 +39,7 @@
 
 ## 🧪 Testing & Validation
 - [ ] Add K6 for performance testing  
-- [ ] Add ESLint diff and pnpm test check before push  
+- [x] Add ESLint diff and pnpm test check before push  
 
 ---
 
