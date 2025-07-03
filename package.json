@@ -19,7 +19,8 @@
     "mikroorm:auth:db:commands:create-migration": "pnpm mikro-orm migration:create --blank --config src/auth/user/infrastructure/databases/mikroOrm/MikroOrmCommandsDDBB.cli.config.ts",
     "mikroorm:analytics:db:queries:create-migration": "pnpm mikro-orm migration:create --blank --config src/analytics/user-activity/infrastructure/databases/mikroOrm/MikroOrmQueriesDDBB.cli.config.ts",
     "mikroorm:auth:db:commands:users:seed": "pnpm mikro-orm seeder:run --config src/auth/user/infrastructure/databases/mikroOrm/MikroOrmCommandsDDBB.cli.config.ts --class=MikroOrmUserSeeder",
-    "mikroorm:analytics:db:queries:users-activity:seed": "pnpm mikro-orm seeder:run --config src/analytics/user-activity/infrastructure/databases/mikroOrm/MikroOrmQueriesDDBB.cli.config.ts --class=MikroOrmUserActivitySeeder"
+    "mikroorm:analytics:db:queries:users-activity:seed": "pnpm mikro-orm seeder:run --config src/analytics/user-activity/infrastructure/databases/mikroOrm/MikroOrmQueriesDDBB.cli.config.ts --class=MikroOrmUserActivitySeeder",
+    "prepare": "husky"
   },
   "dependencies": {
     "@mikro-orm/core": "^6.4.16",

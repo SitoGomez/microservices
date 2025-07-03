@@ -1,0 +1,10 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+pnpm lint
+if [ $? -ne 0 ]; then
+  echo "❌ ESLint failed. Push aborted."
+  exit 1
+fi
+
+pnpm test
