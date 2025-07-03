@@ -33,12 +33,11 @@
 - [ ] Add cache for checking commands, events, and query responses  
 - [ ] Prevent loss of events/commands on app or RabbitMQ restart  
 - [ ] Implement multiservice coordination mechanism (e.g., SAGA)  
+- [ ] Normalize tables https://franiglesias.github.io/db-normalization/
 
 ---
 
 ## 🧪 Testing & Validation
-
-- [ ] Create NestJS test server  
 - [ ] Add K6 for performance testing  
 - [ ] Add ESLint diff and pnpm test check before push  
 
