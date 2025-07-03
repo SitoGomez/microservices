@@ -25,6 +25,7 @@ describe('Given an LoginUserCommand', () => {
     accessTokenManagerMock,
   );
 
+  const VALID_COMMAND_ID = 'f983cb7c-1d8e-4c5c-9cd2-714305b297f1';
   const VALID_USER_EMAIL = 'jose.test@test.com';
   const VALID_USER_PASSWORD = 'abc123';
   const VALID_TIMESTAMP_IN_MS = 1749285081000;
@@ -41,6 +42,7 @@ describe('Given an LoginUserCommand', () => {
   };
 
   const VALID_COMMAND = new LoginUserCommand(
+    VALID_COMMAND_ID,
     VALID_USER_EMAIL,
     VALID_USER_PASSWORD,
   );

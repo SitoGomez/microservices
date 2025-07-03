@@ -20,6 +20,7 @@ describe('Given a RegisterUserCommand', () => {
     passwordHasher,
   );
 
+  const VALID_COMMAND_ID = 'f983cb7c-1d8e-4c5c-9cd2-714305b297f1';
   const VALID_USER_ID = 'f165cb7c-1d8e-4c5c-9cd2-714305b297f1';
   const VALID_USER_EMAIL = 'jose.test@test.com';
   const VALID_USER_PASSWORD = 'abc123';
@@ -27,6 +28,7 @@ describe('Given a RegisterUserCommand', () => {
   const HASHED_PASSWORD = 'hashed-password';
 
   const VALID_COMMAND = new RegisterUserCommand(
+    VALID_COMMAND_ID,
     VALID_USER_ID,
     VALID_USER_EMAIL,
     VALID_USER_PASSWORD,

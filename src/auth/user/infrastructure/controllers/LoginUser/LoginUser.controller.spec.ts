@@ -1,3 +1,5 @@
+import { randomUUID } from 'crypto';
+
 import { MikroORM } from '@mikro-orm/core';
 import { getMikroORMToken } from '@mikro-orm/nestjs';
 import { HttpStatus, INestApplication, ValidationPipe } from '@nestjs/common';
@@ -76,6 +78,7 @@ describe('Given a request to login from an user', () => {
     it('then should login an user', async () => {
       const response = await request(app.getHttpServer())
         .post('/users/login')
+        .set('x-request-id', `${randomUUID()}`)
         .send({
           email: VALID_EMAIL,
           password: VALID_PASSWORD,
