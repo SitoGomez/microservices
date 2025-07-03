@@ -13,8 +13,10 @@ import {
   ICommandBus,
 } from '../../../../../shared/commandBus/ICommandBus';
 import { LoginUserCommand } from '../../../application/LoginUser/LoginUser.command';
+import { LoginUserResponse } from '../../../application/LoginUser/LoginUserResponse.type';
 
-import { LoginUserControllerDto } from './LoginUserController.dto';
+import { LoginUserControllerInputDto } from './LoginUserControllerInput.dto';
+import { LoginUserControllerOutputDto } from './LoginUserControllerOutput.dto';
 
 @Controller()
 export class LoginUserController {
@@ -26,10 +28,15 @@ export class LoginUserController {
   @HttpCode(HttpStatus.OK)
   public async handle(
     @Headers('x-request-id') requestId: string,
-    @Body() body: LoginUserControllerDto,
-  ): Promise<{ access_token: string }> {
+    @Body() body: LoginUserControllerInputDto,
+  ): Promise<LoginUserControllerOutputDto> {
     const command = new LoginUserCommand(requestId, body.email, body.password);
 
-    return this.commandBus.execute(command);
+    const commandResult = await this.commandBus.execute<
+      LoginUserCommand,
+      LoginUserResponse
+    >(command);
+
+    return new LoginUserControllerOutputDto(commandResult.access_token);
   }
 }

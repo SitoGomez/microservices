@@ -16,10 +16,11 @@ import { IPasswordHasher, PASSWORD_HASHER } from '../../domain/IPasswordHasher';
 import { IUserRepository, USER_REPOSITORY } from '../../domain/UserRepository';
 
 import { LoginUserCommand } from './LoginUser.command';
+import { LoginUserResponse } from './LoginUserResponse.type';
 
 @Injectable()
 export class LoginUserUseCase
-  implements ICommandHandler<LoginUserCommand, { access_token: string }>
+  implements ICommandHandler<LoginUserCommand, LoginUserResponse>
 {
   public constructor(
     @Inject(USER_REPOSITORY) private readonly userRepository: IUserRepository,
@@ -31,7 +32,7 @@ export class LoginUserUseCase
 
   public async execute(
     loginUserCommand: LoginUserCommand,
-  ): Promise<{ access_token: string }> {
+  ): Promise<LoginUserResponse> {
     const { email, password } = loginUserCommand;
 
     const user = await this.userRepository.findByEmail(email);
