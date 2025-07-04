@@ -22,7 +22,10 @@ export class WinstonLogger implements ILogger {
   private readonly LOG_FOLDER: string = path.join(process.cwd(), 'logs');
   private winstonLogger: Logger;
 
-  public constructor(serviceName: string, serviceNameColor: colorette.Color) {
+  public constructor(
+    serviceName: string,
+    chosenServiceNameColor: colorette.Color,
+  ) {
     this.createLogsFolderIfNotExists();
 
     this.winstonLogger = createLogger({
@@ -30,12 +33,16 @@ export class WinstonLogger implements ILogger {
       transports: [
         new transports.Console({
           format: combine(
+            format((info) => {
+              info.nonColorizedLevel = info.level;
+              return info;
+            })(),
             colorize({ level: true }),
             timestamp({
               format: 'YYYY-MM-DD hh:mm:ss.SSS A',
             }),
             printf((info) => {
-              return `[ ${serviceNameColor(serviceName)} ]- ${String(info.timestamp)} -[${String(info.level)}]: ${colorette.cyan(String(info.message))}`;
+              return `[ ${chosenServiceNameColor(serviceName)} ]- ${String(info.timestamp)} -[${String(info.level)}]: ${this.getMessageLogColor(info.nonColorizedLevel as string)(String(info.message))}`;
             }),
           ),
         }),
@@ -72,6 +79,17 @@ export class WinstonLogger implements ILogger {
       extension: '.log',
       datePattern: 'YYYY-ww',
     });
+  }
+
+  private getMessageLogColor(level: string): colorette.Color {
+    switch (level) {
+      case 'info':
+        return colorette.cyan;
+      case 'error':
+        return colorette.red;
+      default:
+        return colorette.white;
+    }
   }
 
   public info(message: string, ...args: unknown[]): void {
