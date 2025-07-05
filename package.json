@@ -17,8 +17,12 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "mikroorm:auth:db:commands:create-migration": "pnpm mikro-orm migration:create --blank --config src/auth/user/infrastructure/databases/mikroOrm/MikroOrmCommandsDDBB.cli.config.ts",
-    "mikroorm:analytics:db:queries:create-migration": "pnpm mikro-orm migration:create --blank --config src/analytics/user-activity/infrastructure/databases/mikroOrm/MikroOrmQueriesDDBB.cli.config.ts",
+    "mikroorm:auth:db:commands:rollback-last-migration": "pnpm mikro-orm migration:down --config src/auth/user/infrastructure/databases/mikroOrm/MikroOrmCommandsDDBB.cli.config.ts",
+    "mikroorm:auth:db:commands:recreate-ddbb": "pnpm mikro-orm migration:fresh  --config src/auth/user/infrastructure/databases/mikroOrm/MikroOrmCommandsDDBB.cli.config.ts",
     "mikroorm:auth:db:commands:users:seed": "pnpm mikro-orm seeder:run --config src/auth/user/infrastructure/databases/mikroOrm/MikroOrmCommandsDDBB.cli.config.ts --class=MikroOrmUserSeeder",
+    "mikroorm:analytics:db:queries:create-migration": "pnpm mikro-orm migration:create --blank --config src/analytics/user-activity/infrastructure/databases/mikroOrm/MikroOrmQueriesDDBB.cli.config.ts",
+    "mikroorm:analytics:db:queries:rollback-last-migration": "pnpm mikro-orm migration:down --config src/analytics/user-activity/infrastructure/databases/mikroOrm/MikroOrmQueriesDDBB.cli.config.ts",
+    "mikroorm:analytics:db:queries:recreate-ddbb": "pnpm mikro-orm migration:fresh  --config src/analytics/user-activity/infrastructure/databases/mikroOrm/MikroOrmQueriesDDBB.cli.config.ts",
     "mikroorm:analytics:db:queries:users-activity:seed": "pnpm mikro-orm seeder:run --config src/analytics/user-activity/infrastructure/databases/mikroOrm/MikroOrmQueriesDDBB.cli.config.ts --class=MikroOrmUserActivitySeeder",
     "prepare": "husky"
   },
