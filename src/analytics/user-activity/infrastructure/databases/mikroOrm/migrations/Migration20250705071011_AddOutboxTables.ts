@@ -18,7 +18,7 @@ export class Migration20250705071011_AddOutboxTables extends Migration {
     this.addSql(`
       CREATE TABLE IF NOT EXISTS outbox_events (
         event_id UUID PRIMARY KEY,
-        event_type smallint NOT NULL,
+        event_type TEXT NOT NULL,
         event_status smallint NOT NULL,
         payload JSONB NOT NULL,
         retry_count INTEGER DEFAULT 0 NOT NULL,
