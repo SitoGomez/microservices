@@ -3,6 +3,7 @@ import { Migration20250623183022_AddCreatedAtAndUpdatedAtToUsersActivityTable } 
 import { Migration20250629123211_CreateProcessedEventsTable } from './Migration20250629123211_CreateProcessedEventsTable';
 import { Migration20250629123211_CreateProcessedCommandsTable } from './Migration20250629173211_CreateProcessedCommandsTable';
 import { Migration20250702151011_AddCommandResponseColumnToCommandProcessedTable } from './Migration20250702151011_AddCommandResponseColumnToCommandProcessedTable';
+import { Migration20250705071011_AddOutboxTables } from './Migration20250705071011_AddOutboxTables';
 
 export const analyticsMigrations = [
   Migration20250620203425_CreateUsersActivityTable,
@@ -10,4 +11,5 @@ export const analyticsMigrations = [
   Migration20250629123211_CreateProcessedEventsTable,
   Migration20250629123211_CreateProcessedCommandsTable,
   Migration20250702151011_AddCommandResponseColumnToCommandProcessedTable,
+  Migration20250705071011_AddOutboxTables,
 ];
