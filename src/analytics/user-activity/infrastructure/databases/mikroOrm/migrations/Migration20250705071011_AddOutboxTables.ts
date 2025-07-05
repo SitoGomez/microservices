@@ -34,7 +34,7 @@ export class Migration20250705071011_AddOutboxTables extends Migration {
     this.addSql(
       `ALTER TABLE outbox_events DROP CONSTRAINT IF EXISTS fk_outbox_events_outbox_events_event_status_id;`,
     );
-    this.addSql(`DROP TABLE IF EXISTS outbox_events_event_types;`);
+    this.addSql(`DROP TABLE IF EXISTS outbox_events_event_status;`);
     this.addSql(`DROP TABLE IF EXISTS outbox_events;`);
   }
 }
