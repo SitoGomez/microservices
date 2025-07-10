@@ -26,6 +26,7 @@
 # TODO 📝
 ## 🛠️ Core Infrastructure & Architecture
 
+- [ ] AVOID RETURNING ACCESS_TOKEN in command ⚠️
 - [ ] Move logs to a bucket or external file
 - [ ] Add integration tests for repositories
   - [ ] Use Postgres TEST DB Docker container
