@@ -70,6 +70,7 @@ describe('Given a RegisterUserCommand', () => {
       await useCase.execute(VALID_COMMAND);
 
       expect(eventStore.getStored()).toHaveLength(1);
+      expect(eventStore.getStored()[0]).toBeInstanceOf(UserRegistered);
     });
 
     it('should dispatch an UserWasRegisteredEvent', async () => {
