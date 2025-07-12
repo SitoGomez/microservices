@@ -5,7 +5,7 @@ export class Migration20250629123211_CreateProcessedEventsTable extends Migratio
     this.addSql(`CREATE TABLE processed_events (
       event_id UUID PRIMARY KEY,
       event_type TEXT NOT NULL,
-      processed_at TIMESTAMP DEFAULT NOW() NOT NULL
+      processed_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
     );`);
   }
 

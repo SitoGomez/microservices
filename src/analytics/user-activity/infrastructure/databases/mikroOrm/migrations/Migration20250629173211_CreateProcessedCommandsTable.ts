@@ -5,7 +5,7 @@ export class Migration20250629123211_CreateProcessedCommandsTable extends Migrat
     this.addSql(`CREATE TABLE processed_commands (
       command_id UUID PRIMARY KEY,
       command_name TEXT NOT NULL,
-      processed_at TIMESTAMP DEFAULT NOW() NOT NULL
+      processed_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
     );`);
   }
 
