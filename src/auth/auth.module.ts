@@ -30,6 +30,9 @@ import { EVENT_BUS, IEventBus } from '../shared/events/eventBus/IEventBus';
 import { FromDomainToRabbitMQIntegrationEventMapper } from '../shared/events/eventBus/infrastructure/FromDomainToIntegrationEventMapper';
 import { RabbitMQConnection } from '../shared/events/eventBus/infrastructure/rabbitMQ/RabbitMQConnection';
 import { RabbitMQPublisherEventBus } from '../shared/events/eventBus/infrastructure/rabbitMQ/RabbitMQPublisherEventBus';
+import { EVENTS_STORE } from '../shared/events/eventStore/IEventsStore';
+import { EventStoreEntity } from '../shared/events/eventStore/infrastructure/mikroOrm/entities/EventsStore.entity';
+import { MikroOrmEventStore } from '../shared/events/eventStore/infrastructure/mikroOrm/MikroOrmEventStore';
 import { ILogger, LOGGER } from '../shared/logger/ILogger';
 import { WinstonLogger } from '../shared/logger/WinstonLogger';
 import { RequiredIdempotentKeyMiddleware } from '../shared/middlewares/RequiredIdempotentKeyMiddleware/RequiredIdempotentKeyMiddleware';
@@ -132,6 +135,13 @@ import { BCryptPasswordHasher } from './user/infrastructure/hashers/BCryptPasswo
         FromDomainToRabbitMQIntegrationEventMapper,
         LOGGER,
       ],
+    },
+    {
+      provide: EVENTS_STORE,
+      useFactory: (em: EntityManager): MikroOrmEventStore => {
+        return new MikroOrmEventStore(em.getRepository(EventStoreEntity));
+      },
+      inject: [getEntityManagerToken('auth')],
     },
     {
       provide: USER_REPOSITORY,

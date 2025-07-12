@@ -9,6 +9,10 @@ import {
   EVENT_BUS,
   IEventBus,
 } from '../../../../shared/events/eventBus/IEventBus';
+import {
+  EVENTS_STORE,
+  IEventsStore,
+} from '../../../../shared/events/eventStore/IEventsStore';
 import { IPasswordHasher, PASSWORD_HASHER } from '../../domain/IPasswordHasher';
 import { User } from '../../domain/User';
 import { IUserRepository, USER_REPOSITORY } from '../../domain/UserRepository';
@@ -22,6 +26,7 @@ export class RegisterUserUseCase
   public constructor(
     @Inject(USER_REPOSITORY) private readonly userRepository: IUserRepository,
     @Inject(EVENT_BUS) private readonly eventBus: IEventBus,
+    @Inject(EVENTS_STORE) private readonly eventsStore: IEventsStore,
     @Inject(DATE_TIME_SERVICE)
     private readonly dateTimeService: IDateTimeService,
     @Inject(PASSWORD_HASHER) private readonly passwordHasher: IPasswordHasher,
@@ -42,6 +47,9 @@ export class RegisterUserUseCase
 
     await this.userRepository.register(registeredUser);
 
-    await this.eventBus.dispatch(registeredUser.releaseEvents());
+    const events = registeredUser.releaseEvents();
+
+    await this.eventsStore.save(events);
+    await this.eventBus.dispatch(events);
   }
 }

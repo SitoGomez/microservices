@@ -20,21 +20,22 @@ export class EventStoreEntity {
   @Property({ type: types.integer, default: 0 })
   public retryCount: number;
 
-  @Property({ type: types.date, nullable: true })
+  @Property({ type: types.datetime, nullable: true })
   public nextRetryAt?: Date;
 
-  @Property({ type: types.date })
-  public occuredAt: Date;
+  @Property({ type: types.datetime })
+  public occurredAt: Date;
 
-  @Property({ type: types.date, nullable: true })
+  @Property({ type: types.datetime, nullable: true })
   public publishedAt?: Date;
 
   public constructor(
     eventId: string,
     eventType: string,
     eventStatus: number,
+    eventVersion: number,
     payload: string,
-    occuredAt: Date,
+    occurredAt: Date,
     retryCount?: number,
     nextRetryAt?: Date,
     publishedAt?: Date,
@@ -42,10 +43,11 @@ export class EventStoreEntity {
     this.eventId = eventId;
     this.eventType = eventType;
     this.eventStatus = eventStatus;
+    this.eventVersion = eventVersion;
     this.payload = payload;
     this.retryCount = retryCount ?? 0;
     this.nextRetryAt = nextRetryAt;
     this.publishedAt = publishedAt;
-    this.occuredAt = occuredAt;
+    this.occurredAt = occurredAt;
   }
 }
