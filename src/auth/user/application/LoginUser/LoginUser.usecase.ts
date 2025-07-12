@@ -54,6 +54,7 @@ export class LoginUserUseCase
       UserLogged.create(loginUserCommand.id, user.getUserId(), email),
     ]);
 
+    //TODO: FIX THIS, commands should not return a response
     return {
       access_token:
         await this.accessTokenManager.generateAccessTokenFromUser(user),
