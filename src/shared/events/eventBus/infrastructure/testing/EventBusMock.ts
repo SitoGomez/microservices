@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { DomainEvent } from '../../../DomainEvent';
-import { IEventBus } from '../IEventBus';
+import { IEventBus } from '../../IEventBus';
 
 @Injectable()
 export class EventBusMock implements IEventBus {

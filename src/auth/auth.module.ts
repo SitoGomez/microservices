@@ -26,11 +26,8 @@ import {
   PROCESSED_COMMAND_SERVICE,
 } from '../shared/commandBus/IProcessedCommandService';
 import { TransactionalCommandBus } from '../shared/commandBus/TransactionalCommandBus';
+import { EVENT_BUS, IEventBus } from '../shared/events/eventBus/IEventBus';
 import { FromDomainToRabbitMQIntegrationEventMapper } from '../shared/events/eventBus/infrastructure/FromDomainToIntegrationEventMapper';
-import {
-  EVENT_BUS,
-  IEventBus,
-} from '../shared/events/eventBus/infrastructure/IEventBus';
 import { RabbitMQConnection } from '../shared/events/eventBus/infrastructure/rabbitMQ/RabbitMQConnection';
 import { RabbitMQPublisherEventBus } from '../shared/events/eventBus/infrastructure/rabbitMQ/RabbitMQPublisherEventBus';
 import { ILogger, LOGGER } from '../shared/logger/ILogger';

@@ -4,7 +4,7 @@ import { Consumer } from 'rabbitmq-client';
 import { BaseCommand } from '../../../../commandBus/BaseCommand';
 import { ICommandBus } from '../../../../commandBus/ICommandBus';
 import { ILogger } from '../../../../logger/ILogger';
-import { IProcessedEventService } from '../IProcessedEventService';
+import { IProcessedEventService } from '../../IProcessedEventService';
 
 import { RabbitMQConnection } from './RabbitMQConnection';
 import { RabbitMQIntegrationEvent } from './RabbitMQIntegrationEvent.type';

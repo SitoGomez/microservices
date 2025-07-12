@@ -2,7 +2,7 @@ import { EntityRepository } from '@mikro-orm/core';
 import { Injectable } from '@nestjs/common';
 
 import { ProcessedEventEntity } from '../../../../../analytics/user-activity/infrastructure/databases/mikroOrm/entities/ProcessedEvent.entity';
-import { IProcessedEventService } from '../IProcessedEventService';
+import { IProcessedEventService } from '../../IProcessedEventService';
 
 @Injectable()
 export class MikroOrmProcessedEventService implements IProcessedEventService {

@@ -1,4 +1,4 @@
-import { DomainEvent } from '../../DomainEvent';
+import { DomainEvent } from '../DomainEvent';
 
 export interface IEventBus {
   dispatch(events: DomainEvent[]): Promise<void>;

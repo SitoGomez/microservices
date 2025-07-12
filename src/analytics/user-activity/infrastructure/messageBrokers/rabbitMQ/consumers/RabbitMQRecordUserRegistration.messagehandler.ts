@@ -9,13 +9,13 @@ import {
   COMMAND_BUS,
   ICommandBus,
 } from '../../../../../../shared/commandBus/ICommandBus';
-import {
-  IProcessedEventService,
-  PROCESSED_EVENT_SERVICE,
-} from '../../../../../../shared/events/eventBus/infrastructure/IProcessedEventService';
 import { RabbitMQConnection } from '../../../../../../shared/events/eventBus/infrastructure/rabbitMQ/RabbitMQConnection';
 import { RabbitMQConsumer } from '../../../../../../shared/events/eventBus/infrastructure/rabbitMQ/RabbitMQConsumer';
 import { RabbitMQIntegrationEvent } from '../../../../../../shared/events/eventBus/infrastructure/rabbitMQ/RabbitMQIntegrationEvent.type';
+import {
+  IProcessedEventService,
+  PROCESSED_EVENT_SERVICE,
+} from '../../../../../../shared/events/eventBus/IProcessedEventService';
 import { LOGGER, ILogger } from '../../../../../../shared/logger/ILogger';
 import { RecordUserRegistrationCommand } from '../../../../application/RecordUserRegistration/RecordUserRegistrationCommand';
 
