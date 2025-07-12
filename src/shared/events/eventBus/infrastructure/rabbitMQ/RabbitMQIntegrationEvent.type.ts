@@ -1,7 +1,7 @@
 export type RabbitMQIntegrationEvent<T = any> = {
   eventId: string;
   eventType: string;
-  eventVersion: string;
+  eventVersion: number;
   occurredAtTimestamp: number;
   entityId: string;
   causationId: string;
