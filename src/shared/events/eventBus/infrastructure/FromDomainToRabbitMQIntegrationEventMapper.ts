@@ -18,7 +18,7 @@ export class FromDomainToRabbitMQIntegrationEventMapper {
       causationId: event.causationId,
       data: event.data,
       metadata: {
-        integrationEventVersion: 'v1',
+        integrationEventVersion: 1,
         boundedContext: this.boundedContext,
       },
     };
