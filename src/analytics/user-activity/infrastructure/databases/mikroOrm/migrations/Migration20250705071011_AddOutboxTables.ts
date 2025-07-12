@@ -13,7 +13,8 @@ export class Migration20250705071011_AddOutboxTables extends Migration {
       VALUES
         (1, 'PENDING'),
         (2, 'PROCESSED'),
-        (3, 'FAILED');`);
+        (3, 'FAILED')
+        ON CONFLICT (id) DO NOTHING;`);
 
     this.addSql(`
       CREATE TABLE IF NOT EXISTS outbox_events (
