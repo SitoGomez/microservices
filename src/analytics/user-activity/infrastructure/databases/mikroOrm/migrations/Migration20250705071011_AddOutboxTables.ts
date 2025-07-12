@@ -24,7 +24,7 @@ export class Migration20250705071011_AddOutboxTables extends Migration {
         payload JSONB NOT NULL,
         retry_count INTEGER DEFAULT 0 NOT NULL,
         next_retry_at TIMESTAMP DEFAULT NOW() NULL,
-        created_at TIMESTAMP DEFAULT NOW() NOT NULL,
+        occuredAt TIMESTAMP NOT NULL,
         published_at TIMESTAMP NULL);`);
 
     this.addSql(`
