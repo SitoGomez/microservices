@@ -4,7 +4,7 @@ import { Envelope, Publisher } from 'rabbitmq-client';
 import { ILogger } from '../../../../logger/ILogger';
 import { DomainEvent } from '../../../DomainEvent';
 import { IEventBus } from '../../IEventBus';
-import { FromDomainToRabbitMQIntegrationEventMapper } from '../FromDomainToIntegrationEventMapper';
+import { FromDomainToRabbitMQIntegrationEventMapper } from '../FromDomainToRabbitMQIntegrationEventMapper';
 
 import { RabbitMQConnection } from './RabbitMQConnection';
 
