@@ -1,14 +1,24 @@
 import { EntityRepository } from '@mikro-orm/core';
+import { Inject } from '@nestjs/common';
 
+import {
+  DATE_TIME_SERVICE,
+  IDateTimeService,
+} from '../../../../dateTimeService/domain/IDateTimeService';
 import { DomainEvent } from '../../../DomainEvent';
 import { EventStatusEnum } from '../../EventStatus.enum';
+import { EventStoredDTO } from '../../EventStoredDTO';
 import { IEventsStore } from '../../IEventsStore';
+import { FromMikroOrmEventStoreEntityToEventStoreDTOEventMapper } from '../FromMikroOrmEventStoreEntityToEventStoreDTOEventMapper';
 
 import { EventStoreEntity } from './entities/EventsStore.entity';
 
 export class MikroOrmEventStore implements IEventsStore {
   public constructor(
     private readonly eventStoreRepository: EntityRepository<EventStoreEntity>,
+    private readonly fromMikroOrmEventStoreEntityToEventStoreDTOEventMapper: FromMikroOrmEventStoreEntityToEventStoreDTOEventMapper,
+    @Inject(DATE_TIME_SERVICE)
+    private readonly dateTimeService: IDateTimeService,
   ) {}
 
   public async save(events: DomainEvent[]): Promise<void> {
@@ -30,5 +40,28 @@ export class MikroOrmEventStore implements IEventsStore {
     });
 
     await this.eventStoreRepository.insertMany(eventStoreEntities);
+  }
+
+  public async getNextEventsToProcess(): Promise<EventStoredDTO[]> {
+    const currentDate = new Date(this.dateTimeService.now());
+    const maxRetriesPerEvent = 3;
+
+    const pendingEventsOrFailedEventsToBeProcessed =
+      await this.eventStoreRepository.find({
+        $or: [
+          { eventStatus: EventStatusEnum.PENDING },
+          {
+            $and: [
+              { eventStatus: EventStatusEnum.FAILED },
+              { nextRetryAt: { $lte: currentDate } },
+              { retryCount: { $lt: maxRetriesPerEvent } },
+            ],
+          },
+        ],
+      });
+
+    return this.fromMikroOrmEventStoreEntityToEventStoreDTOEventMapper.map(
+      pendingEventsOrFailedEventsToBeProcessed,
+    );
   }
 }

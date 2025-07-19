@@ -26,13 +26,25 @@ import {
   PROCESSED_COMMAND_SERVICE,
 } from '../shared/commandBus/IProcessedCommandService';
 import { TransactionalCommandBus } from '../shared/commandBus/TransactionalCommandBus';
+import {
+  DATE_TIME_SERVICE,
+  IDateTimeService,
+} from '../shared/dateTimeService/domain/IDateTimeService';
 import { EVENT_BUS, IEventBus } from '../shared/events/eventBus/IEventBus';
 import { FromDomainToRabbitMQIntegrationEventMapper } from '../shared/events/eventBus/infrastructure/FromDomainToRabbitMQIntegrationEventMapper';
 import { RabbitMQConnection } from '../shared/events/eventBus/infrastructure/rabbitMQ/RabbitMQConnection';
 import { RabbitMQPublisherEventBus } from '../shared/events/eventBus/infrastructure/rabbitMQ/RabbitMQPublisherEventBus';
-import { EVENTS_STORE } from '../shared/events/eventStore/IEventsStore';
+import {
+  EVENTS_STORE,
+  IEventsStore,
+} from '../shared/events/eventStore/IEventsStore';
+import { FromMikroOrmEventStoreEntityToEventStoreDTOEventMapper } from '../shared/events/eventStore/infrastructure/FromMikroOrmEventStoreEntityToEventStoreDTOEventMapper';
 import { EventStoreEntity } from '../shared/events/eventStore/infrastructure/mikroOrm/entities/EventsStore.entity';
 import { MikroOrmEventStore } from '../shared/events/eventStore/infrastructure/mikroOrm/MikroOrmEventStore';
+import { MESSAGE_RELAY } from '../shared/events/messageRelay/IMessageRelay';
+import { FromIntegrationEventToRabbitMQEventMapper } from '../shared/events/messageRelay/infrastructure/FromIntegrationEventToRabbitMQEventMapper';
+import { ProcessNextEventsScheduler } from '../shared/events/messageRelay/infrastructure/schedulers/ProcessNextEventsScheduler';
+import { MessageRelayProcess } from '../shared/events/messageRelay/MessageRelayProcess';
 import { ILogger, LOGGER } from '../shared/logger/ILogger';
 import { WinstonLogger } from '../shared/logger/WinstonLogger';
 import { RequiredIdempotentKeyMiddleware } from '../shared/middlewares/RequiredIdempotentKeyMiddleware/RequiredIdempotentKeyMiddleware';
@@ -136,12 +148,31 @@ import { BCryptPasswordHasher } from './user/infrastructure/hashers/BCryptPasswo
         LOGGER,
       ],
     },
+    FromMikroOrmEventStoreEntityToEventStoreDTOEventMapper,
     {
       provide: EVENTS_STORE,
-      useFactory: (em: EntityManager): MikroOrmEventStore => {
-        return new MikroOrmEventStore(em.getRepository(EventStoreEntity));
+      useFactory: (
+        em: EntityManager,
+        fromMikroOrmEventStoreEntityToEventStoreDTOEventMapper: FromMikroOrmEventStoreEntityToEventStoreDTOEventMapper,
+        dateTimeService: IDateTimeService,
+      ): MikroOrmEventStore => {
+        /**
+         * IMPORTANT: We need to use a scoped EntityManager here
+         * because event store is used in a cronjob
+         */
+        const scopedEntityManager = em.fork();
+
+        return new MikroOrmEventStore(
+          scopedEntityManager.getRepository(EventStoreEntity),
+          fromMikroOrmEventStoreEntityToEventStoreDTOEventMapper,
+          dateTimeService,
+        );
       },
-      inject: [getEntityManagerToken('auth')],
+      inject: [
+        getEntityManagerToken('auth'),
+        FromMikroOrmEventStoreEntityToEventStoreDTOEventMapper,
+        DATE_TIME_SERVICE,
+      ],
     },
     {
       provide: USER_REPOSITORY,
@@ -164,6 +195,38 @@ import { BCryptPasswordHasher } from './user/infrastructure/hashers/BCryptPasswo
       },
       inject: [getEntityManagerToken('auth')],
     },
+    {
+      provide: FromIntegrationEventToRabbitMQEventMapper,
+      useFactory: (): FromIntegrationEventToRabbitMQEventMapper => {
+        return new FromIntegrationEventToRabbitMQEventMapper('auth');
+      },
+    },
+    {
+      provide: MESSAGE_RELAY,
+      useFactory: (
+        eventStore: IEventsStore,
+        fromIntegrationEventToRabbitMQEventMapper: FromIntegrationEventToRabbitMQEventMapper,
+        rabbitMQConnection: RabbitMQConnection,
+        configService: ConfigService,
+        logger: ILogger,
+      ): MessageRelayProcess => {
+        return new MessageRelayProcess(
+          eventStore,
+          fromIntegrationEventToRabbitMQEventMapper,
+          configService.get<string>('AUTH_RABBITMQ_EXCHANGE')!,
+          rabbitMQConnection,
+          logger,
+        );
+      },
+      inject: [
+        EVENTS_STORE,
+        FromIntegrationEventToRabbitMQEventMapper,
+        RabbitMQConnection,
+        ConfigService,
+        LOGGER,
+      ],
+    },
+    ProcessNextEventsScheduler,
     RegisterUserUseCase,
     MikroOrmUserMapper,
     LoginUserUseCase,
