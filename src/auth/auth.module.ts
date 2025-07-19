@@ -41,6 +41,11 @@ import {
 import { FromMikroOrmEventStoreEntityToEventStoreDTOEventMapper } from '../shared/events/eventStore/infrastructure/FromMikroOrmEventStoreEntityToEventStoreDTOEventMapper';
 import { EventStoreEntity } from '../shared/events/eventStore/infrastructure/mikroOrm/entities/EventsStore.entity';
 import { MikroOrmEventStore } from '../shared/events/eventStore/infrastructure/mikroOrm/MikroOrmEventStore';
+import {
+  IMessageBrokerPublisher,
+  MESSAGE_BROKER_PUBLISHER,
+} from '../shared/events/messageBrokerPublisher/IMessageBrokerPublisher';
+import { RabbitMQMessageBrokerPublisher } from '../shared/events/messageBrokerPublisher/infrastructure/RabbitMQMessageBrokerPublisher';
 import { MESSAGE_RELAY } from '../shared/events/messageRelay/IMessageRelay';
 import { FromIntegrationEventToRabbitMQEventMapper } from '../shared/events/messageRelay/infrastructure/FromIntegrationEventToRabbitMQEventMapper';
 import { ProcessNextEventsScheduler } from '../shared/events/messageRelay/infrastructure/schedulers/ProcessNextEventsScheduler';
@@ -205,25 +210,34 @@ import { BCryptPasswordHasher } from './user/infrastructure/hashers/BCryptPasswo
       provide: MESSAGE_RELAY,
       useFactory: (
         eventStore: IEventsStore,
-        fromIntegrationEventToRabbitMQEventMapper: FromIntegrationEventToRabbitMQEventMapper,
-        rabbitMQConnection: RabbitMQConnection,
-        configService: ConfigService,
+        messageBrokerPublisher: IMessageBrokerPublisher,
         logger: ILogger,
       ): MessageRelayProcess => {
         return new MessageRelayProcess(
           eventStore,
-          fromIntegrationEventToRabbitMQEventMapper,
-          configService.get<string>('AUTH_RABBITMQ_EXCHANGE')!,
-          rabbitMQConnection,
+          messageBrokerPublisher,
           logger,
         );
       },
+      inject: [EVENTS_STORE, MESSAGE_BROKER_PUBLISHER, LOGGER],
+    },
+    {
+      provide: MESSAGE_BROKER_PUBLISHER,
+      useFactory: (
+        rabbitMQConnection: RabbitMQConnection,
+        configService: ConfigService,
+        fromIntegrationEventToRabbitMQEventMapper: FromIntegrationEventToRabbitMQEventMapper,
+      ): RabbitMQMessageBrokerPublisher => {
+        return new RabbitMQMessageBrokerPublisher(
+          rabbitMQConnection,
+          configService.get<string>('AUTH_RABBITMQ_EXCHANGE')!,
+          fromIntegrationEventToRabbitMQEventMapper,
+        );
+      },
       inject: [
-        EVENTS_STORE,
-        FromIntegrationEventToRabbitMQEventMapper,
         RabbitMQConnection,
         ConfigService,
-        LOGGER,
+        FromIntegrationEventToRabbitMQEventMapper,
       ],
     },
     ProcessNextEventsScheduler,

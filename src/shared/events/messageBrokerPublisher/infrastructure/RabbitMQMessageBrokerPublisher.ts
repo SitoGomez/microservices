@@ -1,0 +1,52 @@
+import { Injectable } from '@nestjs/common';
+import { Envelope, Publisher } from 'rabbitmq-client';
+
+import { RabbitMQConnection } from '../../eventBus/infrastructure/rabbitMQ/RabbitMQConnection';
+import { EventStoredDTO } from '../../eventStore/EventStoredDTO';
+import { FromIntegrationEventToRabbitMQEventMapper } from '../../messageRelay/infrastructure/FromIntegrationEventToRabbitMQEventMapper';
+import { IMessageBrokerPublisher } from '../IMessageBrokerPublisher';
+
+@Injectable()
+export class RabbitMQMessageBrokerPublisher implements IMessageBrokerPublisher {
+  private publisher: Publisher | null = null;
+
+  public constructor(
+    private readonly connection: RabbitMQConnection,
+    private readonly boundedContextExchange: string,
+    private readonly fromIntegrationEventToRabbitMQEventMapper: FromIntegrationEventToRabbitMQEventMapper,
+  ) {}
+
+  public async publish(events: EventStoredDTO[]): Promise<void> {
+    const publisher: Publisher = await this.getPublisher();
+
+    const rabbitMQEvents =
+      this.fromIntegrationEventToRabbitMQEventMapper.map(events);
+
+    await Promise.all(
+      rabbitMQEvents.map((event) =>
+        publisher.send(
+          {
+            contentType: 'application/json',
+            persistent: true,
+            durable: true,
+            exchange: this.boundedContextExchange,
+            routingKey: event.eventType,
+            timestamp: event.occurredAtTimestamp,
+          } as Envelope,
+          event,
+        ),
+      ),
+    );
+  }
+
+  private async getPublisher(): Promise<Publisher> {
+    if (!this.publisher) {
+      const connection = await this.connection.connect();
+      this.publisher = connection.createPublisher();
+    }
+
+    return this.publisher;
+  }
+
+  //TODO: Implement close method to clean up resources
+}
