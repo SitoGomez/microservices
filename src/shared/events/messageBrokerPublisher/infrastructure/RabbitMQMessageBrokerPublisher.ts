@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Envelope, Publisher } from 'rabbitmq-client';
 
+import { ILogger } from '../../../logger/ILogger';
 import { RabbitMQConnection } from '../../eventBus/infrastructure/rabbitMQ/RabbitMQConnection';
 import { EventStoredDTO } from '../../eventStore/EventStoredDTO';
 import { FromIntegrationEventToRabbitMQEventMapper } from '../../messageRelay/infrastructure/FromIntegrationEventToRabbitMQEventMapper';
@@ -14,6 +15,7 @@ export class RabbitMQMessageBrokerPublisher implements IMessageBrokerPublisher {
     private readonly connection: RabbitMQConnection,
     private readonly boundedContextExchange: string,
     private readonly fromIntegrationEventToRabbitMQEventMapper: FromIntegrationEventToRabbitMQEventMapper,
+    private readonly logger: ILogger,
   ) {}
 
   public async publish(events: EventStoredDTO[]): Promise<void> {
@@ -48,5 +50,10 @@ export class RabbitMQMessageBrokerPublisher implements IMessageBrokerPublisher {
     return this.publisher;
   }
 
-  //TODO: Implement close method to clean up resources
+  public async close(): Promise<void> {
+    await this.publisher?.close();
+    this.publisher = null;
+
+    this.logger.info('RabbitMQ CHANNEL closed');
+  }
 }

@@ -227,17 +227,20 @@ import { BCryptPasswordHasher } from './user/infrastructure/hashers/BCryptPasswo
         rabbitMQConnection: RabbitMQConnection,
         configService: ConfigService,
         fromIntegrationEventToRabbitMQEventMapper: FromIntegrationEventToRabbitMQEventMapper,
+        logger: ILogger,
       ): RabbitMQMessageBrokerPublisher => {
         return new RabbitMQMessageBrokerPublisher(
           rabbitMQConnection,
           configService.get<string>('AUTH_RABBITMQ_EXCHANGE')!,
           fromIntegrationEventToRabbitMQEventMapper,
+          logger,
         );
       },
       inject: [
         RabbitMQConnection,
         ConfigService,
         FromIntegrationEventToRabbitMQEventMapper,
+        LOGGER,
       ],
     },
     ProcessNextEventsScheduler,
@@ -255,6 +258,8 @@ export class AuthModule
     private readonly registerUserUseCase: RegisterUserUseCase,
     private readonly loginUserUseCase: LoginUserUseCase,
     @Inject(EVENT_BUS) private readonly eventBus: IEventBus,
+    @Inject(MESSAGE_BROKER_PUBLISHER)
+    private readonly messageBrokerPublisher: IMessageBrokerPublisher,
     private readonly rabbitMQConnection: RabbitMQConnection,
   ) {}
 
@@ -283,6 +288,7 @@ export class AuthModule
      * 3. Close the RabbitMQ connection
      */
     await this.eventBus.close();
+    await this.messageBrokerPublisher.close();
     await this.rabbitMQConnection.close();
   }
 }
