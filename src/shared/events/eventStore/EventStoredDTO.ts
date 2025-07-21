@@ -7,5 +7,5 @@ export interface EventStoredDTO {
   retryCount: number;
   nextRetryAt?: Date;
   occurredAt: Date;
-  publishedAt?: Date;
+  processedAt?: Date;
 }

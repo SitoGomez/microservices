@@ -22,10 +22,17 @@ export class MessageRelayProcess implements IMessageRelay {
       return;
     }
 
-    await this.eventBus.publish(eventsToProcess);
+    try {
+      await this.eventBus.publish(eventsToProcess);
 
-    await this.eventStore.markEventsAsProcessed(
-      eventsToProcess.map((event) => event.eventId),
-    );
+      await this.eventStore.markEventsAsProcessed(
+        eventsToProcess.map((event) => event.eventId),
+      );
+      // eslint-disable-next-line unused-imports/no-unused-vars
+    } catch (_: unknown) {
+      await this.eventStore.markEventsAsFailed(
+        eventsToProcess.map((event) => event.eventId),
+      );
+    }
   }
 }

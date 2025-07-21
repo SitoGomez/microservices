@@ -18,7 +18,7 @@ export class FromMikroOrmEventStoreEntityToEventStoreDTOEventMapper {
         retryCount: event.retryCount,
         nextRetryAt: event.nextRetryAt,
         occurredAt: event.occurredAt,
-        publishedAt: event.publishedAt,
+        processedAt: event.processedAt,
       };
     });
   }

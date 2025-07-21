@@ -33,4 +33,10 @@ export class EventStoreMock implements IEventsStore {
   ): Promise<void> {
     return Promise.resolve();
   }
+
+  public async markEventsAsFailed(
+    _eventIds: EventStoredDTO['eventId'][],
+  ): Promise<void> {
+    return Promise.resolve();
+  }
 }

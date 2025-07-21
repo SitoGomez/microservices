@@ -52,7 +52,7 @@ export class MikroOrmEventStore implements IEventsStore {
           { eventStatus: EventStatusEnum.PENDING },
           {
             $and: [
-              { eventStatus: EventStatusEnum.FAILED },
+              { eventStatus: EventStatusEnum.PENDING },
               { nextRetryAt: { $lte: currentDate } },
               { retryCount: { $lt: maxRetriesPerEvent } },
             ],
@@ -85,9 +85,40 @@ export class MikroOrmEventStore implements IEventsStore {
     this.eventStoreRepository.getEntityManager().persist(updatedEvents);
   }
 
+  public async markEventsAsFailed(
+    eventIds: EventStoredDTO['eventId'][],
+  ): Promise<void> {
+    if (eventIds.length === 0) {
+      return;
+    }
+
+    const eventsToMarkAsFailed = await this.getEventsByIds(eventIds);
+
+    const updatedEvents = eventsToMarkAsFailed.map((event) => {
+      event.retryCount++;
+      event.nextRetryAt = this.getNextRetryDate(event.retryCount);
+
+      if (event.retryCount >= 3) {
+        event.eventStatus = EventStatusEnum.FAILED;
+        event.nextRetryAt = undefined;
+      }
+
+      return event;
+    });
+
+    this.eventStoreRepository.getEntityManager().persist(updatedEvents);
+  }
+
   private getEventsByIds(
     eventIds: EventStoredDTO['eventId'][],
   ): Promise<EventStoreEntity[]> {
     return this.eventStoreRepository.find({ eventId: { $in: eventIds } });
+  }
+
+  //TODO: Extract max retries next retry date and this logic to a backoff system -> New class EventStored
+  private getNextRetryDate(retryCount: number): Date {
+    const delayInMilliseconds = Math.pow(5, retryCount) * 1000;
+    const currentDate = new Date(this.dateTimeService.now());
+    return new Date(currentDate.getTime() + delayInMilliseconds);
   }
 }

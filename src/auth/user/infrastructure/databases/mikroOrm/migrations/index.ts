@@ -6,6 +6,7 @@ import { Migration20250629123211_CreateProcessedCommandsTable } from './Migratio
 import { Migration20250702151011_AddCommandResponseColumnToCommandProcessedTable } from './Migration20250702151011_AddCommandResponseColumnToCommandProcessedTable';
 import { Migration20250705071011_AddOutboxTables } from './Migration20250705071011_AddOutboxTables';
 import { Migration20250721071112_AddProcessedAtToOutboxTables } from './Migration20250721071112_AddProcessedAtToOutboxTables';
+import { Migration20250721071213_RemovePublishedAtFromToOutboxTables } from './Migration20250721071213_RemovePublishedAtFromToOutboxTables';
 
 export const authMigrations = [
   Migration20250611103928_CreateUsersTable,
@@ -16,4 +17,5 @@ export const authMigrations = [
   Migration20250702151011_AddCommandResponseColumnToCommandProcessedTable,
   Migration20250705071011_AddOutboxTables,
   Migration20250721071112_AddProcessedAtToOutboxTables,
+  Migration20250721071213_RemovePublishedAtFromToOutboxTables,
 ];
