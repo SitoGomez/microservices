@@ -22,6 +22,10 @@ export class MessageRelayProcess implements IMessageRelay {
       return;
     }
 
-    return this.eventBus.publish(eventsToProcess);
+    await this.eventBus.publish(eventsToProcess);
+
+    await this.eventStore.markEventsAsProcessed(
+      eventsToProcess.map((event) => event.eventId),
+    );
   }
 }

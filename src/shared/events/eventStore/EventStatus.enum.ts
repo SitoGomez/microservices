@@ -1,5 +1,5 @@
 export const EventStatusEnum = {
   PENDING: 1,
-  PUBLISHED: 2,
+  PROCESSED: 2,
   FAILED: 3,
 };

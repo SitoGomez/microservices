@@ -27,4 +27,10 @@ export class EventStoreMock implements IEventsStore {
   public async getNextEventsToProcess(): Promise<EventStoredDTO[]> {
     return Promise.resolve(this.setToReturn);
   }
+
+  public async markEventsAsProcessed(
+    _eventIds: EventStoredDTO['eventId'][],
+  ): Promise<void> {
+    return Promise.resolve();
+  }
 }

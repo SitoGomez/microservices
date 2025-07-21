@@ -29,6 +29,9 @@ export class EventStoreEntity {
   @Property({ type: types.datetime, nullable: true })
   public publishedAt?: Date;
 
+  @Property({ type: types.datetime, nullable: true })
+  public processedAt?: Date;
+
   public constructor(
     eventId: string,
     eventType: string,
@@ -39,6 +42,7 @@ export class EventStoreEntity {
     retryCount?: number,
     nextRetryAt?: Date,
     publishedAt?: Date,
+    processedAt?: Date,
   ) {
     this.eventId = eventId;
     this.eventType = eventType;
@@ -49,5 +53,6 @@ export class EventStoreEntity {
     this.nextRetryAt = nextRetryAt;
     this.publishedAt = publishedAt;
     this.occurredAt = occurredAt;
+    this.processedAt = processedAt;
   }
 }

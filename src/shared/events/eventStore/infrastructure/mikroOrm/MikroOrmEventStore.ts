@@ -64,4 +64,30 @@ export class MikroOrmEventStore implements IEventsStore {
       pendingEventsOrFailedEventsToBeProcessed,
     );
   }
+
+  public async markEventsAsProcessed(
+    eventIds: EventStoredDTO['eventId'][],
+  ): Promise<void> {
+    if (eventIds.length === 0) {
+      return;
+    }
+
+    const eventsToMarkAsProcessed = await this.getEventsByIds(eventIds);
+
+    const currentDate = new Date(this.dateTimeService.now());
+
+    const updatedEvents = eventsToMarkAsProcessed.map((event) => {
+      event.eventStatus = EventStatusEnum.PROCESSED;
+      event.processedAt = currentDate;
+      return event;
+    });
+
+    this.eventStoreRepository.getEntityManager().persist(updatedEvents);
+  }
+
+  private getEventsByIds(
+    eventIds: EventStoredDTO['eventId'][],
+  ): Promise<EventStoreEntity[]> {
+    return this.eventStoreRepository.find({ eventId: { $in: eventIds } });
+  }
 }
