@@ -10,7 +10,7 @@ import { IMessageRelay } from './IMessageRelay';
 export class MessageRelayProcess implements IMessageRelay {
   public constructor(
     private readonly eventStore: IEventsStore,
-    private readonly messageBrokerPublisher: IEventBus,
+    private readonly eventBus: IEventBus,
     private readonly logger: ILogger,
   ) {}
 
@@ -22,6 +22,6 @@ export class MessageRelayProcess implements IMessageRelay {
       return;
     }
 
-    return this.messageBrokerPublisher.publish(eventsToProcess);
+    return this.eventBus.publish(eventsToProcess);
   }
 }
