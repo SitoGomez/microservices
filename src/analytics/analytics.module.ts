@@ -24,11 +24,8 @@ import {
   PROCESSED_COMMAND_SERVICE,
 } from '../shared/commandBus/IProcessedCommandService';
 import { TransactionalCommandBus } from '../shared/commandBus/TransactionalCommandBus';
-import { EVENT_BUS, IEventBus } from '../shared/events/eventBus/IEventBus';
-import { FromDomainToRabbitMQIntegrationEventMapper } from '../shared/events/eventBus/infrastructure/FromDomainToRabbitMQIntegrationEventMapper';
 import { MikroOrmProcessedEventService } from '../shared/events/eventBus/infrastructure/mikroOrm/MikroOrmEventProcessedService';
 import { RabbitMQConnection } from '../shared/events/eventBus/infrastructure/rabbitMQ/RabbitMQConnection';
-import { RabbitMQPublisherEventBus } from '../shared/events/eventBus/infrastructure/rabbitMQ/RabbitMQPublisherEventBus';
 import { PROCESSED_EVENT_SERVICE } from '../shared/events/eventBus/IProcessedEventService';
 import { ILogger, LOGGER } from '../shared/logger/ILogger';
 import { WinstonLogger } from '../shared/logger/WinstonLogger';
@@ -111,34 +108,6 @@ import { GenerateTopHundredActiveUsersReportScheduler } from './user-activity/in
       },
       inject: [ConfigService, LOGGER],
     },
-    {
-      provide: FromDomainToRabbitMQIntegrationEventMapper,
-      useFactory: (): FromDomainToRabbitMQIntegrationEventMapper => {
-        return new FromDomainToRabbitMQIntegrationEventMapper('analytics');
-      },
-    },
-    {
-      provide: EVENT_BUS,
-      useFactory: (
-        configService: ConfigService,
-        rabbitMQConnection: RabbitMQConnection,
-        fromDomainToIntegrationEventMapper: FromDomainToRabbitMQIntegrationEventMapper,
-        logger: ILogger,
-      ): RabbitMQPublisherEventBus => {
-        return new RabbitMQPublisherEventBus(
-          configService.get<string>('ANALYTICS_RABBITMQ_EXCHANGE')!,
-          rabbitMQConnection,
-          fromDomainToIntegrationEventMapper,
-          logger,
-        );
-      },
-      inject: [
-        ConfigService,
-        RabbitMQConnection,
-        FromDomainToRabbitMQIntegrationEventMapper,
-        LOGGER,
-      ],
-    },
     RabbitMQRecordUserRegistrationMessageHandler,
     RecordUserRegistrationUseCase,
     {
@@ -178,7 +147,6 @@ export class AnalyticsModule implements OnModuleInit, OnApplicationShutdown {
     @Inject(QUERY_BUS) private readonly queryBus: InMemoryQueryBus,
     private readonly recordUserRegistrationUseCase: RecordUserRegistrationUseCase,
     private readonly generateTopHundredActiveUsersReportUseCase: GenerateTopHundredActiveUsersReportUseCase,
-    @Inject(EVENT_BUS) private readonly eventBus: IEventBus,
     private readonly rabbitMQRecordUserRegistrationMessageHandler: RabbitMQRecordUserRegistrationMessageHandler,
     private readonly rabbitMQConnection: RabbitMQConnection,
   ) {}
@@ -210,7 +178,6 @@ export class AnalyticsModule implements OnModuleInit, OnApplicationShutdown {
      * 3. Close the RabbitMQ connection
      */
     await this.rabbitMQRecordUserRegistrationMessageHandler.close();
-    await this.eventBus.close();
     await this.rabbitMQConnection.close();
   }
 }

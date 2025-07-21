@@ -31,9 +31,8 @@ import {
   IDateTimeService,
 } from '../shared/dateTimeService/domain/IDateTimeService';
 import { EVENT_BUS, IEventBus } from '../shared/events/eventBus/IEventBus';
-import { FromDomainToRabbitMQIntegrationEventMapper } from '../shared/events/eventBus/infrastructure/FromDomainToRabbitMQIntegrationEventMapper';
 import { RabbitMQConnection } from '../shared/events/eventBus/infrastructure/rabbitMQ/RabbitMQConnection';
-import { RabbitMQPublisherEventBus } from '../shared/events/eventBus/infrastructure/rabbitMQ/RabbitMQPublisherEventBus';
+import { RabbitMQEventBus } from '../shared/events/eventBus/infrastructure/rabbitMQ/RabbitMQEventBus';
 import {
   EVENTS_STORE,
   IEventsStore,
@@ -41,11 +40,6 @@ import {
 import { FromMikroOrmEventStoreEntityToEventStoreDTOEventMapper } from '../shared/events/eventStore/infrastructure/FromMikroOrmEventStoreEntityToEventStoreDTOEventMapper';
 import { EventStoreEntity } from '../shared/events/eventStore/infrastructure/mikroOrm/entities/EventsStore.entity';
 import { MikroOrmEventStore } from '../shared/events/eventStore/infrastructure/mikroOrm/MikroOrmEventStore';
-import {
-  IMessageBrokerPublisher,
-  MESSAGE_BROKER_PUBLISHER,
-} from '../shared/events/messageBrokerPublisher/IMessageBrokerPublisher';
-import { RabbitMQMessageBrokerPublisher } from '../shared/events/messageBrokerPublisher/infrastructure/RabbitMQMessageBrokerPublisher';
 import { MESSAGE_RELAY } from '../shared/events/messageRelay/IMessageRelay';
 import { FromIntegrationEventToRabbitMQEventMapper } from '../shared/events/messageRelay/infrastructure/FromIntegrationEventToRabbitMQEventMapper';
 import { ProcessNextEventsScheduler } from '../shared/events/messageRelay/infrastructure/schedulers/ProcessNextEventsScheduler';
@@ -116,6 +110,28 @@ import { BCryptPasswordHasher } from './user/infrastructure/hashers/BCryptPasswo
       inject: [LOGGER, getMikroORMToken('auth'), PROCESSED_COMMAND_SERVICE],
     },
     {
+      provide: EVENT_BUS,
+      useFactory: (
+        rabbitMQConnection: RabbitMQConnection,
+        configService: ConfigService,
+        fromIntegrationEventToRabbitMQEventMapper: FromIntegrationEventToRabbitMQEventMapper,
+        logger: ILogger,
+      ): RabbitMQEventBus => {
+        return new RabbitMQEventBus(
+          rabbitMQConnection,
+          configService.get<string>('AUTH_RABBITMQ_EXCHANGE')!,
+          fromIntegrationEventToRabbitMQEventMapper,
+          logger,
+        );
+      },
+      inject: [
+        RabbitMQConnection,
+        ConfigService,
+        FromIntegrationEventToRabbitMQEventMapper,
+        LOGGER,
+      ],
+    },
+    {
       provide: RabbitMQConnection,
       useFactory: (
         configService: ConfigService,
@@ -124,34 +140,6 @@ import { BCryptPasswordHasher } from './user/infrastructure/hashers/BCryptPasswo
         return new RabbitMQConnection(configService, logger);
       },
       inject: [ConfigService, LOGGER],
-    },
-    {
-      provide: FromDomainToRabbitMQIntegrationEventMapper,
-      useFactory: (): FromDomainToRabbitMQIntegrationEventMapper => {
-        return new FromDomainToRabbitMQIntegrationEventMapper('auth');
-      },
-    },
-    {
-      provide: EVENT_BUS,
-      useFactory: (
-        configService: ConfigService,
-        rabbitMQConnection: RabbitMQConnection,
-        fromDomainToIntegrationEventMapper: FromDomainToRabbitMQIntegrationEventMapper,
-        logger: ILogger,
-      ): RabbitMQPublisherEventBus => {
-        return new RabbitMQPublisherEventBus(
-          configService.get<string>('AUTH_RABBITMQ_EXCHANGE')!,
-          rabbitMQConnection,
-          fromDomainToIntegrationEventMapper,
-          logger,
-        );
-      },
-      inject: [
-        ConfigService,
-        RabbitMQConnection,
-        FromDomainToRabbitMQIntegrationEventMapper,
-        LOGGER,
-      ],
     },
     FromMikroOrmEventStoreEntityToEventStoreDTOEventMapper,
     {
@@ -210,39 +198,14 @@ import { BCryptPasswordHasher } from './user/infrastructure/hashers/BCryptPasswo
       provide: MESSAGE_RELAY,
       useFactory: (
         eventStore: IEventsStore,
-        messageBrokerPublisher: IMessageBrokerPublisher,
+        eventBus: IEventBus,
         logger: ILogger,
       ): MessageRelayProcess => {
-        return new MessageRelayProcess(
-          eventStore,
-          messageBrokerPublisher,
-          logger,
-        );
+        return new MessageRelayProcess(eventStore, eventBus, logger);
       },
-      inject: [EVENTS_STORE, MESSAGE_BROKER_PUBLISHER, LOGGER],
+      inject: [EVENTS_STORE, EVENT_BUS, LOGGER],
     },
-    {
-      provide: MESSAGE_BROKER_PUBLISHER,
-      useFactory: (
-        rabbitMQConnection: RabbitMQConnection,
-        configService: ConfigService,
-        fromIntegrationEventToRabbitMQEventMapper: FromIntegrationEventToRabbitMQEventMapper,
-        logger: ILogger,
-      ): RabbitMQMessageBrokerPublisher => {
-        return new RabbitMQMessageBrokerPublisher(
-          rabbitMQConnection,
-          configService.get<string>('AUTH_RABBITMQ_EXCHANGE')!,
-          fromIntegrationEventToRabbitMQEventMapper,
-          logger,
-        );
-      },
-      inject: [
-        RabbitMQConnection,
-        ConfigService,
-        FromIntegrationEventToRabbitMQEventMapper,
-        LOGGER,
-      ],
-    },
+
     ProcessNextEventsScheduler,
     RegisterUserUseCase,
     MikroOrmUserMapper,
@@ -258,8 +221,6 @@ export class AuthModule
     private readonly registerUserUseCase: RegisterUserUseCase,
     private readonly loginUserUseCase: LoginUserUseCase,
     @Inject(EVENT_BUS) private readonly eventBus: IEventBus,
-    @Inject(MESSAGE_BROKER_PUBLISHER)
-    private readonly messageBrokerPublisher: IMessageBrokerPublisher,
     private readonly rabbitMQConnection: RabbitMQConnection,
   ) {}
 
@@ -288,7 +249,7 @@ export class AuthModule
      * 3. Close the RabbitMQ connection
      */
     await this.eventBus.close();
-    await this.messageBrokerPublisher.close();
+    await this.eventBus.close();
     await this.rabbitMQConnection.close();
   }
 }

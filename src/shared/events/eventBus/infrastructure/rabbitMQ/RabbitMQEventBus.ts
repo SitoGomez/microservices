@@ -2,32 +2,31 @@ import { Injectable } from '@nestjs/common';
 import { Envelope, Publisher } from 'rabbitmq-client';
 
 import { ILogger } from '../../../../logger/ILogger';
-import { DomainEvent } from '../../../DomainEvent';
+import { EventStoredDTO } from '../../../eventStore/EventStoredDTO';
+import { FromIntegrationEventToRabbitMQEventMapper } from '../../../messageRelay/infrastructure/FromIntegrationEventToRabbitMQEventMapper';
 import { IEventBus } from '../../IEventBus';
-import { FromDomainToRabbitMQIntegrationEventMapper } from '../FromDomainToRabbitMQIntegrationEventMapper';
 
 import { RabbitMQConnection } from './RabbitMQConnection';
 
 @Injectable()
-export class RabbitMQPublisherEventBus implements IEventBus {
+export class RabbitMQEventBus implements IEventBus {
   private publisher: Publisher | null = null;
 
   public constructor(
-    private readonly boundedContextExchange: string,
     private readonly connection: RabbitMQConnection,
-    private readonly fromDomainToIntegrationEventMapper: FromDomainToRabbitMQIntegrationEventMapper,
+    private readonly boundedContextExchange: string,
+    private readonly fromIntegrationEventToRabbitMQEventMapper: FromIntegrationEventToRabbitMQEventMapper,
     private readonly logger: ILogger,
   ) {}
 
-  public async dispatch(events: DomainEvent[]): Promise<void> {
-    const publisher = await this.getPublisher();
+  public async publish(events: EventStoredDTO[]): Promise<void> {
+    const publisher: Publisher = await this.getPublisher();
 
-    const integrationEvents = events.map((event) =>
-      this.fromDomainToIntegrationEventMapper.map(event),
-    );
+    const rabbitMQEvents =
+      this.fromIntegrationEventToRabbitMQEventMapper.map(events);
 
     await Promise.all(
-      integrationEvents.map((event) =>
+      rabbitMQEvents.map((event) =>
         publisher.send(
           {
             contentType: 'application/json',

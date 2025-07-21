@@ -6,10 +6,6 @@ import {
   IDateTimeService,
 } from '../../../../shared/dateTimeService/domain/IDateTimeService';
 import {
-  EVENT_BUS,
-  IEventBus,
-} from '../../../../shared/events/eventBus/IEventBus';
-import {
   EVENTS_STORE,
   IEventsStore,
 } from '../../../../shared/events/eventStore/IEventsStore';
@@ -25,7 +21,6 @@ export class RegisterUserUseCase
 {
   public constructor(
     @Inject(USER_REPOSITORY) private readonly userRepository: IUserRepository,
-    @Inject(EVENT_BUS) private readonly eventBus: IEventBus,
     @Inject(EVENTS_STORE) private readonly eventsStore: IEventsStore,
     @Inject(DATE_TIME_SERVICE)
     private readonly dateTimeService: IDateTimeService,
@@ -50,6 +45,5 @@ export class RegisterUserUseCase
     const events = registeredUser.releaseEvents();
 
     await this.eventsStore.save(events);
-    await this.eventBus.dispatch(events);
   }
 }

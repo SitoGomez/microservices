@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
 import { ILogger } from '../../logger/ILogger';
+import { IEventBus } from '../eventBus/IEventBus';
 import { IEventsStore } from '../eventStore/IEventsStore';
-import { IMessageBrokerPublisher } from '../messageBrokerPublisher/IMessageBrokerPublisher';
 
 import { IMessageRelay } from './IMessageRelay';
 
@@ -10,7 +10,7 @@ import { IMessageRelay } from './IMessageRelay';
 export class MessageRelayProcess implements IMessageRelay {
   public constructor(
     private readonly eventStore: IEventsStore,
-    private readonly messageBrokerPublisher: IMessageBrokerPublisher,
+    private readonly messageBrokerPublisher: IEventBus,
     private readonly logger: ILogger,
   ) {}
 

@@ -2,10 +2,6 @@ import { Inject, Injectable } from '@nestjs/common';
 
 import { ICommandHandler } from '../../../../shared/commandBus/ICommandHandler';
 import {
-  EVENT_BUS,
-  IEventBus,
-} from '../../../../shared/events/eventBus/IEventBus';
-import {
   EVENTS_STORE,
   IEventsStore,
 } from '../../../../shared/events/eventStore/IEventsStore';
@@ -28,7 +24,6 @@ export class LoginUserUseCase
 {
   public constructor(
     @Inject(USER_REPOSITORY) private readonly userRepository: IUserRepository,
-    @Inject(EVENT_BUS) private readonly eventBus: IEventBus,
     @Inject(EVENTS_STORE) private readonly eventsStore: IEventsStore,
     @Inject(PASSWORD_HASHER) private readonly passwordHasher: IPasswordHasher,
     @Inject(ACCESS_TOKEN_MANAGER)
@@ -62,7 +57,6 @@ export class LoginUserUseCase
     );
 
     await this.eventsStore.save([userLoggedEvent]);
-    await this.eventBus.dispatch([userLoggedEvent]);
 
     //TODO: FIX THIS, commands should not return a response
     return {

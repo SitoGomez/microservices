@@ -1,7 +1,7 @@
-import { DomainEvent } from '../DomainEvent';
+import { EventStoredDTO } from '../eventStore/EventStoredDTO';
 
 export interface IEventBus {
-  dispatch(events: DomainEvent[]): Promise<void>;
+  publish(event: EventStoredDTO[]): Promise<void>;
   close(): Promise<void>;
 }
 

@@ -1,5 +1,4 @@
 import { InMemoryDateTimeService } from '../../../../shared/dateTimeService/infrastructure/doubles/InMemoryDateTimeService';
-import { EventBusMock } from '../../../../shared/events/eventBus/infrastructure/testing/EventBusMock';
 import { EventStoreMock } from '../../../../shared/events/eventStore/infrastructure/testing/EventStoreMock';
 import { UserRegistered } from '../../domain/events/UserRegistered.event';
 import { PasswordHasherMock } from '../../infrastructure/tests/mocks/PasswordHasherMock';
@@ -10,14 +9,12 @@ import { RegisterUserUseCase } from './RegisterUser.usecase';
 
 describe('Given a RegisterUserCommand', () => {
   const userRepository = new UserRepositoryMock();
-  const eventBus = new EventBusMock();
   const eventStore = new EventStoreMock();
   const dateTimeService = new InMemoryDateTimeService();
   const passwordHasher = new PasswordHasherMock();
 
   const useCase = new RegisterUserUseCase(
     userRepository,
-    eventBus,
     eventStore,
     dateTimeService,
     passwordHasher,
@@ -39,7 +36,6 @@ describe('Given a RegisterUserCommand', () => {
 
   afterEach(() => {
     userRepository.clean();
-    eventBus.clean();
     eventStore.clean();
     dateTimeService.clean();
     passwordHasher.clean();
@@ -71,13 +67,6 @@ describe('Given a RegisterUserCommand', () => {
 
       expect(eventStore.getStored()).toHaveLength(1);
       expect(eventStore.getStored()[0]).toBeInstanceOf(UserRegistered);
-    });
-
-    it('should dispatch an UserWasRegisteredEvent', async () => {
-      await useCase.execute(VALID_COMMAND);
-
-      expect(eventBus.getDispatchedEvents()).toHaveLength(1);
-      expect(eventBus.getDispatchedEvents()[0]).toBeInstanceOf(UserRegistered);
     });
   });
 });

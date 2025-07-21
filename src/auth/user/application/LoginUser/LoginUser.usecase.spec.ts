@@ -1,5 +1,4 @@
 import { InMemoryDateTimeService } from '../../../../shared/dateTimeService/infrastructure/doubles/InMemoryDateTimeService';
-import { EventBusMock } from '../../../../shared/events/eventBus/infrastructure/testing/EventBusMock';
 import { EventStoreMock } from '../../../../shared/events/eventStore/infrastructure/testing/EventStoreMock';
 import { UserByEmailNotFoundError } from '../../domain/errors/UserByEmailNotFound.error';
 import { WrongUserCredentialsError } from '../../domain/errors/WrongUserCredentials.error';
@@ -14,7 +13,6 @@ import { LoginUserUseCase } from './LoginUser.usecase';
 
 describe('Given an LoginUserCommand', () => {
   const userRepository = new UserRepositoryMock();
-  const eventBus = new EventBusMock();
   const eventStore = new EventStoreMock();
   const dateTimeService = new InMemoryDateTimeService();
   const passwordHasher = new PasswordHasherMock();
@@ -22,7 +20,6 @@ describe('Given an LoginUserCommand', () => {
 
   const useCase = new LoginUserUseCase(
     userRepository,
-    eventBus,
     eventStore,
     passwordHasher,
     accessTokenManagerMock,
@@ -52,7 +49,6 @@ describe('Given an LoginUserCommand', () => {
 
   afterEach(() => {
     userRepository.clean();
-    eventBus.clean();
     eventStore.clean();
     dateTimeService.clean();
     passwordHasher.clean();
@@ -112,13 +108,6 @@ describe('Given an LoginUserCommand', () => {
 
       expect(eventStore.getStored()).toHaveLength(1);
       expect(eventStore.getStored()[0]).toBeInstanceOf(UserLogged);
-    });
-
-    it('then an event should be dispatched', async () => {
-      await useCase.execute(VALID_COMMAND);
-
-      expect(eventBus.getDispatchedEvents()).toHaveLength(1);
-      expect(eventBus.getDispatchedEvents()[0]).toBeInstanceOf(UserLogged);
     });
   });
 });
