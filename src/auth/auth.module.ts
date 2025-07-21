@@ -165,7 +165,7 @@ import { BCryptPasswordHasher } from './user/infrastructure/hashers/BCryptPasswo
          * IMPORTANT: We need to use a scoped EntityManager here
          * because event store is used in a cronjob
          */
-        const scopedEntityManager = em.fork();
+        const scopedEntityManager = em.fork({ useContext: true });
 
         return new MikroOrmEventStore(
           scopedEntityManager.getRepository(EventStoreEntity),
