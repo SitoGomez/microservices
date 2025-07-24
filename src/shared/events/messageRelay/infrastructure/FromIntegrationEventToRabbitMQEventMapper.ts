@@ -25,7 +25,7 @@ export class FromIntegrationEventToRabbitMQEventMapper {
 
       return {
         eventId: event.eventId,
-        eventType: event.eventType,
+        eventType: `${this.boundedContext}.${event.eventType}`,
         eventVersion: event.eventVersion,
         occurredAtTimestamp: new Date(event.occurredAt).getTime(),
         entityId: data.entityId,
