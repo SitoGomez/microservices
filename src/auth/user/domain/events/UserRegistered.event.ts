@@ -8,11 +8,13 @@ export interface IUserWasRegisteredEventData {
 
 export class UserRegistered extends DomainEvent<IUserWasRegisteredEventData> {
   private static readonly eventType = 'UserRegistered';
+  public readonly userId: string;
+  public readonly email: string;
 
   private constructor(
-    public readonly causationId: string,
-    public readonly userId: string,
-    public readonly email: string,
+    causationId: string,
+    userId: string,
+    email: string,
     public readonly createdAt: Date,
   ) {
     super({

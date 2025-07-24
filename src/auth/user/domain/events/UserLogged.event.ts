@@ -7,12 +7,10 @@ export interface IUserLoggedData {
 
 export class UserLogged extends DomainEvent<IUserLoggedData> {
   private static readonly eventType = 'UserLogged';
+  public readonly userId: string;
+  public readonly email: string;
 
-  private constructor(
-    public readonly causationId: string,
-    public readonly userId: string,
-    public readonly email: string,
-  ) {
+  private constructor(causationId: string, userId: string, email: string) {
     super({
       eventType: UserLogged.eventType,
       data: {

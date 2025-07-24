@@ -26,8 +26,8 @@ export class UserRepositoryMock implements IUserRepository {
   }
 
   public findByEmail(_: string): Promise<User | null> {
-    return this.toReturn
-      ? Promise.resolve(this.toReturn[0])
+    return this.toReturn && this.toReturn.length > 0
+      ? Promise.resolve(this.toReturn[0]!)
       : Promise.resolve(null);
   }
 }

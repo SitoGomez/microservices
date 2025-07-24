@@ -51,13 +51,15 @@ describe('Given a RegisterUserCommand', () => {
       await useCase.execute(VALID_COMMAND);
 
       expect(userRepository.stored()).toHaveLength(1);
-      expect(userRepository.stored()[0].getUserId()).toEqual(VALID_USER_ID);
-      expect(userRepository.stored()[0].getEmail()).toEqual(VALID_USER_EMAIL);
-      expect(userRepository.stored()[0].getPassword()).toEqual(HASHED_PASSWORD);
-      expect(userRepository.stored()[0].getCreatedAt()).toEqual(
+      expect(userRepository.stored()[0]!.getUserId()).toEqual(VALID_USER_ID);
+      expect(userRepository.stored()[0]!.getEmail()).toEqual(VALID_USER_EMAIL);
+      expect(userRepository.stored()[0]!.getPassword()).toEqual(
+        HASHED_PASSWORD,
+      );
+      expect(userRepository.stored()[0]!.getCreatedAt()).toEqual(
         new Date(VALID_TIMESTAMP_IN_MS),
       );
-      expect(userRepository.stored()[0].getUpdatedAt()).toEqual(
+      expect(userRepository.stored()[0]!.getUpdatedAt()).toEqual(
         new Date(VALID_TIMESTAMP_IN_MS),
       );
     });

@@ -29,13 +29,13 @@ describe('Given a RecordUserRegistrationCommand', () => {
       await useCase.execute(VALID_COMMAND);
 
       expect(userActivityReadLayer.getStored()).toHaveLength(1);
-      expect(userActivityReadLayer.getStored()[0].userId).toEqual(
+      expect(userActivityReadLayer.getStored()[0]!.userId).toEqual(
         VALID_USER_ID,
       );
-      expect(userActivityReadLayer.getStored()[0].email).toEqual(
+      expect(userActivityReadLayer.getStored()[0]!.email).toEqual(
         VALID_USER_EMAIL,
       );
-      expect(userActivityReadLayer.getStored()[0].createdAt).toEqual(
+      expect(userActivityReadLayer.getStored()[0]!.createdAt).toEqual(
         VALID_REGISTRATION_DATE,
       );
     });
