@@ -7,12 +7,8 @@ import { ILogger, LOGGER } from '../../../../shared/logger/ILogger';
 import { GenerateTopHundredActiveUsersReportReadModel } from '../../application/GenerateTopHundredActiveUsersReport/GenerateTopHundredActiveUsersReportReadModel';
 import { IUsersReportGenerator } from '../../application/GenerateTopHundredActiveUsersReport/IUsersReportGenerator';
 
-import type { CsvWriter } from 'csv-writer/src/lib/csv-writer';
-import type { ObjectMap } from 'csv-writer/src/lib/lang/object';
-
 @Injectable()
 export class CSVUserReportGenerator implements IUsersReportGenerator {
-  private readonly csvWriter: CsvWriter<ObjectMap<any>>;
   private readonly csvHeaders = [
     { id: 'userId', title: 'UserId' },
     { id: 'email', title: 'Email' },
@@ -20,10 +16,12 @@ export class CSVUserReportGenerator implements IUsersReportGenerator {
     { id: 'lastLoginAt', title: 'LastLoginAt' },
     { id: 'loginCount', title: 'LoginCount' },
   ];
+
   private readonly ROOT_DIRECTORY = 'reports';
   private readonly OUTPUT_FILE_PATH = `${this.ROOT_DIRECTORY}/top_hundred_active_users.csv`;
 
-  @Inject(LOGGER) private readonly logger: ILogger;
+  private readonly csvWriter: ReturnType<typeof createObjectCsvWriter>;
+  private readonly logger: ILogger;
 
   public constructor(@Inject(LOGGER) logger: ILogger) {
     this.logger = logger;
@@ -37,8 +35,6 @@ export class CSVUserReportGenerator implements IUsersReportGenerator {
   public async generateTopHundredActiveUsersReport(
     users: GenerateTopHundredActiveUsersReportReadModel[],
   ): Promise<void> {
-    console.table(users);
-
     await fs.mkdir(this.ROOT_DIRECTORY, { recursive: true });
 
     await this.csvWriter.writeRecords(users);
