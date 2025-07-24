@@ -1,3 +1,4 @@
+import { MikroORM, RequestContext } from '@mikro-orm/core';
 import { Injectable } from '@nestjs/common';
 
 import { ILogger } from '../logger/ILogger';
@@ -10,9 +11,11 @@ import { IQueryHandler } from './IQueryHandler';
 @Injectable()
 export class InMemoryQueryBus implements IQueryBus {
   private readonly logger: ILogger;
+  private readonly mikroOrm: MikroORM;
 
-  public constructor(logger: ILogger) {
+  public constructor(logger: ILogger, mikroOrm: MikroORM) {
     this.logger = logger;
+    this.mikroOrm = mikroOrm;
   }
 
   private handlers = new Map<string, IQueryHandler<BaseQuery, any>>();
@@ -39,6 +42,25 @@ export class InMemoryQueryBus implements IQueryBus {
       throw new NoHandlerForQueryError(queryName);
     }
 
+    const existingEM = RequestContext.getEntityManager();
+
+    if (existingEM) {
+      return this.executeQuery<T, TResult>(queryName, queryId, handler, query);
+    }
+
+    const emFork = this.mikroOrm.em.fork({ useContext: true });
+
+    return RequestContext.create(emFork, async () => {
+      return this.executeQuery<T, TResult>(queryName, queryId, handler, query);
+    });
+  }
+
+  private executeQuery<T extends BaseQuery, TResult = void>(
+    queryName: string,
+    queryId: string,
+    handler: IQueryHandler<T, TResult>,
+    query: T,
+  ): Promise<TResult> {
     this.logger.info(`Executing query: ${queryName} with id: ${queryId}`);
     return handler.execute(query);
   }

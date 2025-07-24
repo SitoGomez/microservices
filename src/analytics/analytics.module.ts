@@ -93,10 +93,10 @@ import { GenerateTopHundredActiveUsersReportScheduler } from './user-activity/in
     },
     {
       provide: QUERY_BUS,
-      useFactory: (logger: ILogger): InMemoryQueryBus => {
-        return new InMemoryQueryBus(logger);
+      useFactory: (logger: ILogger, mikroOrm: MikroORM): InMemoryQueryBus => {
+        return new InMemoryQueryBus(logger, mikroOrm);
       },
-      inject: [LOGGER],
+      inject: [LOGGER, getMikroORMToken('analytics')],
     },
     {
       provide: RabbitMQConnection,
