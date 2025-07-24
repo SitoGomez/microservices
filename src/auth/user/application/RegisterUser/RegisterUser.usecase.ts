@@ -19,13 +19,22 @@ import { RegisterUserCommand } from './RegisterUser.command';
 export class RegisterUserUseCase
   implements ICommandHandler<RegisterUserCommand>
 {
+  private readonly userRepository: IUserRepository;
+  private readonly eventsStore: IEventsStore;
+  private readonly dateTimeService: IDateTimeService;
+  private readonly passwordHasher: IPasswordHasher;
+
   public constructor(
-    @Inject(USER_REPOSITORY) private readonly userRepository: IUserRepository,
-    @Inject(EVENTS_STORE) private readonly eventsStore: IEventsStore,
-    @Inject(DATE_TIME_SERVICE)
-    private readonly dateTimeService: IDateTimeService,
-    @Inject(PASSWORD_HASHER) private readonly passwordHasher: IPasswordHasher,
-  ) {}
+    @Inject(USER_REPOSITORY) userRepository: IUserRepository,
+    @Inject(EVENTS_STORE) eventsStore: IEventsStore,
+    @Inject(DATE_TIME_SERVICE) dateTimeService: IDateTimeService,
+    @Inject(PASSWORD_HASHER) passwordHasher: IPasswordHasher,
+  ) {
+    this.userRepository = userRepository;
+    this.eventsStore = eventsStore;
+    this.dateTimeService = dateTimeService;
+    this.passwordHasher = passwordHasher;
+  }
 
   public async execute(
     registerUserCommand: RegisterUserCommand,

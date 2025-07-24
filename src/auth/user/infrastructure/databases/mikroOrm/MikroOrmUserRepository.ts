@@ -11,11 +11,15 @@ import { MikroOrmUserMapper } from './MikroOrmUserMapper';
 @Injectable()
 export class MikroOrmUserRepository implements IUserRepository {
   private readonly userRepository: EntityRepository<UserEntity>;
+  private readonly userMapper: MikroOrmUserMapper;
+  private readonly em: EntityManager;
 
   public constructor(
-    private readonly userMapper: MikroOrmUserMapper,
-    @InjectEntityManager('auth') private readonly em: EntityManager,
+    userMapper: MikroOrmUserMapper,
+    @InjectEntityManager('auth') em: EntityManager,
   ) {
+    this.userMapper = userMapper;
+    this.em = em;
     this.userRepository = this.em.getRepository(UserEntity);
   }
 

@@ -7,11 +7,16 @@ import { ILogger, LOGGER } from '../../../../logger/ILogger';
 @Injectable()
 export class RabbitMQConnection {
   private connection: Connection | null;
+  private readonly configService: ConfigService;
+  private readonly logger: ILogger;
 
   public constructor(
-    private readonly configService: ConfigService,
-    @Inject(LOGGER) private readonly logger: ILogger,
-  ) {}
+    configService: ConfigService,
+    @Inject(LOGGER) logger: ILogger,
+  ) {
+    this.configService = configService;
+    this.logger = logger;
+  }
 
   public async connect(): Promise<Connection> {
     if (!this.connection) {

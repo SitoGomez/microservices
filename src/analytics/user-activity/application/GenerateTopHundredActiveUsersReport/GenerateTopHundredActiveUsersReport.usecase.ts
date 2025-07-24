@@ -15,12 +15,18 @@ import {
 export class GenerateTopHundredActiveUsersReportUseCase
   implements IQueryHandler<GenerateTopHundredActiveUsersReportQuery, void>
 {
+  private readonly userActivityReadLayer: IUserActivityReadLayer;
+  private readonly usersReportGenerator: IUsersReportGenerator;
+
   public constructor(
     @Inject(USER_ACTIVITY_READ_LAYER)
-    private readonly userActivityReadLayer: IUserActivityReadLayer,
+    userActivityReadLayer: IUserActivityReadLayer,
     @Inject(USERS_REPORT_GENERATOR)
-    private readonly usersReportGenerator: IUsersReportGenerator,
-  ) {}
+    usersReportGenerator: IUsersReportGenerator,
+  ) {
+    this.userActivityReadLayer = userActivityReadLayer;
+    this.usersReportGenerator = usersReportGenerator;
+  }
 
   public async execute(
     _query: GenerateTopHundredActiveUsersReportQuery,

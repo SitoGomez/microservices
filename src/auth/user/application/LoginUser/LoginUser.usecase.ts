@@ -22,13 +22,23 @@ import { LoginUserResponse } from './LoginUserResponse.type';
 export class LoginUserUseCase
   implements ICommandHandler<LoginUserCommand, LoginUserResponse>
 {
+  private readonly userRepository: IUserRepository;
+  private readonly eventsStore: IEventsStore;
+  private readonly passwordHasher: IPasswordHasher;
+  private readonly accessTokenManager: IAccessTokenManager;
+
   public constructor(
-    @Inject(USER_REPOSITORY) private readonly userRepository: IUserRepository,
-    @Inject(EVENTS_STORE) private readonly eventsStore: IEventsStore,
-    @Inject(PASSWORD_HASHER) private readonly passwordHasher: IPasswordHasher,
+    @Inject(USER_REPOSITORY) userRepository: IUserRepository,
+    @Inject(EVENTS_STORE) eventsStore: IEventsStore,
+    @Inject(PASSWORD_HASHER) passwordHasher: IPasswordHasher,
     @Inject(ACCESS_TOKEN_MANAGER)
-    private readonly accessTokenManager: IAccessTokenManager,
-  ) {}
+    accessTokenManager: IAccessTokenManager,
+  ) {
+    this.userRepository = userRepository;
+    this.eventsStore = eventsStore;
+    this.passwordHasher = passwordHasher;
+    this.accessTokenManager = accessTokenManager;
+  }
 
   public async execute(
     loginUserCommand: LoginUserCommand,

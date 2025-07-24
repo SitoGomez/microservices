@@ -215,14 +215,28 @@ import { BCryptPasswordHasher } from './user/infrastructure/hashers/BCryptPasswo
 export class AuthModule
   implements OnModuleInit, OnApplicationShutdown, NestModule
 {
+  private readonly orm: MikroORM;
+  private readonly commandBus: TransactionalCommandBus;
+  private readonly registerUserUseCase: RegisterUserUseCase;
+  private readonly loginUserUseCase: LoginUserUseCase;
+  private readonly eventBus: IEventBus;
+  private readonly rabbitMQConnection: RabbitMQConnection;
+
   public constructor(
-    @InjectMikroORM('auth') private readonly orm: MikroORM,
-    @Inject(COMMAND_BUS) private readonly commandBus: TransactionalCommandBus,
-    private readonly registerUserUseCase: RegisterUserUseCase,
-    private readonly loginUserUseCase: LoginUserUseCase,
-    @Inject(EVENT_BUS) private readonly eventBus: IEventBus,
-    private readonly rabbitMQConnection: RabbitMQConnection,
-  ) {}
+    @InjectMikroORM('auth') orm: MikroORM,
+    @Inject(COMMAND_BUS) commandBus: TransactionalCommandBus,
+    registerUserUseCase: RegisterUserUseCase,
+    loginUserUseCase: LoginUserUseCase,
+    @Inject(EVENT_BUS) eventBus: IEventBus,
+    rabbitMQConnection: RabbitMQConnection,
+  ) {
+    this.orm = orm;
+    this.commandBus = commandBus;
+    this.registerUserUseCase = registerUserUseCase;
+    this.loginUserUseCase = loginUserUseCase;
+    this.eventBus = eventBus;
+    this.rabbitMQConnection = rabbitMQConnection;
+  }
 
   public configure(consumer: MiddlewareConsumer): void {
     consumer

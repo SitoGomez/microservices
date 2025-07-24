@@ -10,9 +10,13 @@ import { ProcessedCommandEntity } from './entities/ProcessedCommands.entity';
 export class MikroOrmProcessedCommandService
   implements IProcessedCommandService
 {
+  private readonly processedCommandRepository: EntityRepository<ProcessedCommandEntity>;
+
   public constructor(
-    private readonly processedCommandRepository: EntityRepository<ProcessedCommandEntity>,
-  ) {}
+    processedCommandRepository: EntityRepository<ProcessedCommandEntity>,
+  ) {
+    this.processedCommandRepository = processedCommandRepository;
+  }
 
   public async save(
     commandId: string,

@@ -9,7 +9,11 @@ import { IQueryHandler } from './IQueryHandler';
 
 @Injectable()
 export class InMemoryQueryBus implements IQueryBus {
-  public constructor(private readonly logger: ILogger) {}
+  private readonly logger: ILogger;
+
+  public constructor(logger: ILogger) {
+    this.logger = logger;
+  }
 
   private handlers = new Map<string, IQueryHandler<BaseQuery, any>>();
 

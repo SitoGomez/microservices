@@ -23,7 +23,11 @@ export class CSVUserReportGenerator implements IUsersReportGenerator {
   private readonly ROOT_DIRECTORY = 'reports';
   private readonly OUTPUT_FILE_PATH = `${this.ROOT_DIRECTORY}/top_hundred_active_users.csv`;
 
-  public constructor(@Inject(LOGGER) private readonly logger: ILogger) {
+  @Inject(LOGGER) private readonly logger: ILogger;
+
+  public constructor(@Inject(LOGGER) logger: ILogger) {
+    this.logger = logger;
+
     this.csvWriter = createObjectCsvWriter({
       path: this.OUTPUT_FILE_PATH,
       header: this.csvHeaders,

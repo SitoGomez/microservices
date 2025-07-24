@@ -11,10 +11,8 @@ import { UserActivityEntity } from './entities/UserActivity.entity';
 export class MikroOrmUserActivityReadLayer implements IUserActivityReadLayer {
   private readonly userActivityRepository: EntityRepository<UserActivityEntity>;
 
-  public constructor(
-    @InjectEntityManager('analytics') private readonly em: EntityManager,
-  ) {
-    this.userActivityRepository = this.em.getRepository(UserActivityEntity);
+  public constructor(@InjectEntityManager('analytics') em: EntityManager) {
+    this.userActivityRepository = em.getRepository(UserActivityEntity);
   }
 
   public async saveUserRegistration(

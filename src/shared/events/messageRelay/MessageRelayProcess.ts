@@ -8,11 +8,19 @@ import { IMessageRelay } from './IMessageRelay';
 
 @Injectable()
 export class MessageRelayProcess implements IMessageRelay {
+  private readonly eventStore: IEventsStore;
+  private readonly eventBus: IEventBus;
+  private readonly logger: ILogger;
+
   public constructor(
-    private readonly eventStore: IEventsStore,
-    private readonly eventBus: IEventBus,
-    private readonly logger: ILogger,
-  ) {}
+    eventStore: IEventsStore,
+    eventBus: IEventBus,
+    logger: ILogger,
+  ) {
+    this.eventStore = eventStore;
+    this.eventBus = eventBus;
+    this.logger = logger;
+  }
 
   public async processEvents(): Promise<void> {
     const eventsToProcess = await this.eventStore.getNextEventsToProcess();

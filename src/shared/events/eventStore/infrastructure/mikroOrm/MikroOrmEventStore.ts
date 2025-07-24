@@ -14,12 +14,21 @@ import { FromMikroOrmEventStoreEntityToEventStoreDTOEventMapper } from '../FromM
 import { EventStoreEntity } from './entities/EventsStore.entity';
 
 export class MikroOrmEventStore implements IEventsStore {
+  private readonly eventStoreRepository: EntityRepository<EventStoreEntity>;
+  private readonly fromMikroOrmEventStoreEntityToEventStoreDTOEventMapper: FromMikroOrmEventStoreEntityToEventStoreDTOEventMapper;
+  private readonly dateTimeService: IDateTimeService;
+
   public constructor(
-    private readonly eventStoreRepository: EntityRepository<EventStoreEntity>,
-    private readonly fromMikroOrmEventStoreEntityToEventStoreDTOEventMapper: FromMikroOrmEventStoreEntityToEventStoreDTOEventMapper,
+    eventStoreRepository: EntityRepository<EventStoreEntity>,
+    fromMikroOrmEventStoreEntityToEventStoreDTOEventMapper: FromMikroOrmEventStoreEntityToEventStoreDTOEventMapper,
     @Inject(DATE_TIME_SERVICE)
-    private readonly dateTimeService: IDateTimeService,
-  ) {}
+    dateTimeService: IDateTimeService,
+  ) {
+    this.eventStoreRepository = eventStoreRepository;
+    this.fromMikroOrmEventStoreEntityToEventStoreDTOEventMapper =
+      fromMikroOrmEventStoreEntityToEventStoreDTOEventMapper;
+    this.dateTimeService = dateTimeService;
+  }
 
   public async save(events: DomainEvent[]): Promise<void> {
     const NEW_EVENT_STATUS = EventStatusEnum.PENDING;

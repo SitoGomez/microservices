@@ -11,13 +11,23 @@ import { RabbitMQConnection } from './RabbitMQConnection';
 @Injectable()
 export class RabbitMQEventBus implements IEventBus {
   private publisher: Publisher | null = null;
+  private readonly connection: RabbitMQConnection;
+  private readonly boundedContextExchange: string;
+  private readonly fromIntegrationEventToRabbitMQEventMapper: FromIntegrationEventToRabbitMQEventMapper;
+  private readonly logger: ILogger;
 
   public constructor(
-    private readonly connection: RabbitMQConnection,
-    private readonly boundedContextExchange: string,
-    private readonly fromIntegrationEventToRabbitMQEventMapper: FromIntegrationEventToRabbitMQEventMapper,
-    private readonly logger: ILogger,
-  ) {}
+    connection: RabbitMQConnection,
+    boundedContextExchange: string,
+    fromIntegrationEventToRabbitMQEventMapper: FromIntegrationEventToRabbitMQEventMapper,
+    logger: ILogger,
+  ) {
+    this.connection = connection;
+    this.boundedContextExchange = boundedContextExchange;
+    this.fromIntegrationEventToRabbitMQEventMapper =
+      fromIntegrationEventToRabbitMQEventMapper;
+    this.logger = logger;
+  }
 
   public async publish(events: EventStoredDTO[]): Promise<void> {
     const publisher: Publisher = await this.getPublisher();

@@ -6,9 +6,13 @@ import { IProcessedEventService } from '../../IProcessedEventService';
 
 @Injectable()
 export class MikroOrmProcessedEventService implements IProcessedEventService {
+  private readonly processedEventRepository: EntityRepository<ProcessedEventEntity>;
+
   public constructor(
-    private readonly processedEventRepository: EntityRepository<ProcessedEventEntity>,
-  ) {}
+    processedEventRepository: EntityRepository<ProcessedEventEntity>,
+  ) {
+    this.processedEventRepository = processedEventRepository;
+  }
 
   public async save(eventId: string, eventType: string): Promise<void> {
     const processedEvent = new ProcessedEventEntity(eventId, eventType);

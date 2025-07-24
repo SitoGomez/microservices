@@ -5,7 +5,11 @@ import { EventStoreEntity } from '../../eventStore/infrastructure/mikroOrm/entit
 
 @Injectable()
 export class FromIntegrationEventToRabbitMQEventMapper {
-  public constructor(private readonly boundedContext: string) {}
+  private readonly boundedContext: string;
+
+  public constructor(boundedContext: string) {
+    this.boundedContext = boundedContext;
+  }
 
   public map(events: EventStoreEntity[]): RabbitMQIntegrationEvent[] {
     return events.map((event) => {

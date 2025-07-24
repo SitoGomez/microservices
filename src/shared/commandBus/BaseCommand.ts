@@ -1,3 +1,7 @@
 export abstract class BaseCommand {
-  public constructor(public readonly id: string) {}
+  public readonly id: string;
+
+  public constructor(id: string) {
+    this.id = id;
+  }
 }

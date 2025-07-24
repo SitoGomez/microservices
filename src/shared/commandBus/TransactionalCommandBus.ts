@@ -13,11 +13,19 @@ import { ProcessedCommandResponseType } from './ProcessedCommandResponse.type';
 
 @Injectable()
 export class TransactionalCommandBus implements ICommandBus {
+  private readonly logger: ILogger;
+  private readonly mikroOrm: MikroORM;
+  private readonly processedCommandService: IProcessedCommandService;
+
   public constructor(
-    private readonly logger: ILogger,
-    private readonly mikroOrm: MikroORM,
-    private readonly processedCommandService: IProcessedCommandService,
-  ) {}
+    logger: ILogger,
+    mikroOrm: MikroORM,
+    processedCommandService: IProcessedCommandService,
+  ) {
+    this.logger = logger;
+    this.mikroOrm = mikroOrm;
+    this.processedCommandService = processedCommandService;
+  }
 
   private registeredCommandHandlers = new Map<
     string,

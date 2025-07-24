@@ -6,10 +6,16 @@ import { IMessageRelay, MESSAGE_RELAY } from '../../IMessageRelay';
 
 @Injectable()
 export class ProcessNextEventsScheduler {
+  private readonly logger: ILogger;
+  private readonly messageRelay: IMessageRelay;
+
   public constructor(
-    @Inject(LOGGER) private readonly logger: ILogger,
-    @Inject(MESSAGE_RELAY) private readonly messageRelay: IMessageRelay,
-  ) {}
+    @Inject(LOGGER) logger: ILogger,
+    @Inject(MESSAGE_RELAY) messageRelay: IMessageRelay,
+  ) {
+    this.logger = logger;
+    this.messageRelay = messageRelay;
+  }
 
   @Cron(CronExpression.EVERY_10_SECONDS)
   public async execute(): Promise<void> {

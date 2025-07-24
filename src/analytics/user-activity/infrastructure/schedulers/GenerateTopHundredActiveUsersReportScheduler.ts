@@ -7,10 +7,16 @@ import { GenerateTopHundredActiveUsersReportQuery } from '../../application/Gene
 
 @Injectable()
 export class GenerateTopHundredActiveUsersReportScheduler {
+  private readonly logger: ILogger;
+  private readonly queryBus: IQueryBus;
+
   public constructor(
-    @Inject(LOGGER) private readonly logger: ILogger,
-    @Inject(QUERY_BUS) private readonly queryBus: IQueryBus,
-  ) {}
+    @Inject(LOGGER) logger: ILogger,
+    @Inject(QUERY_BUS) queryBus: IQueryBus,
+  ) {
+    this.logger = logger;
+    this.queryBus = queryBus;
+  }
 
   @Cron(CronExpression.EVERY_DAY_AT_4AM)
   public async execute(): Promise<void> {

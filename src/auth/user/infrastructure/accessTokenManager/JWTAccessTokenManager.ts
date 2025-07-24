@@ -10,8 +10,11 @@ import { User } from '../../domain/User';
 @Injectable()
 export class JWTAccessTokenManager implements IAccessTokenManager {
   private static readonly ONE_DAY_IN_SECONDS = 24 * 60 * 60;
+  private readonly jwtService: JwtService;
 
-  public constructor(private readonly jwtService: JwtService) {}
+  public constructor(jwtService: JwtService) {
+    this.jwtService = jwtService;
+  }
 
   public async generateAccessTokenFromUser(user: User): Promise<string> {
     const payload: AccessTokenData = {

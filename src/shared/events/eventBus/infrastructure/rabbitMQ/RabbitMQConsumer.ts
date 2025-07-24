@@ -14,14 +14,25 @@ export abstract class RabbitMQConsumer<
   TCommand extends BaseCommand,
 > {
   protected consumer: Consumer | null;
+  private readonly rabbitMQConnection: RabbitMQConnection;
+  private readonly commandBus: ICommandBus;
+  private readonly logger: ILogger;
+  private readonly mikroOrm: MikroORM;
+  private readonly processedEventService: IProcessedEventService;
 
   protected constructor(
-    private readonly rabbitMQConnection: RabbitMQConnection,
-    private readonly commandBus: ICommandBus,
-    private readonly logger: ILogger,
-    private readonly mikroOrm: MikroORM,
-    private readonly processedEventService: IProcessedEventService,
-  ) {}
+    rabbitMQConnection: RabbitMQConnection,
+    commandBus: ICommandBus,
+    logger: ILogger,
+    mikroOrm: MikroORM,
+    processedEventService: IProcessedEventService,
+  ) {
+    this.rabbitMQConnection = rabbitMQConnection;
+    this.commandBus = commandBus;
+    this.logger = logger;
+    this.mikroOrm = mikroOrm;
+    this.processedEventService = processedEventService;
+  }
 
   protected abstract fromRabbitMQIntegrationEventToCommand(
     event: RabbitMQIntegrationEvent<TEventData>,

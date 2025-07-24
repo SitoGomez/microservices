@@ -20,9 +20,11 @@ import { LoginUserControllerOutputDto } from './LoginUserControllerOutput.dto';
 
 @Controller()
 export class LoginUserController {
-  public constructor(
-    @Inject(COMMAND_BUS) private readonly commandBus: ICommandBus,
-  ) {}
+  private readonly commandBus: ICommandBus;
+
+  public constructor(@Inject(COMMAND_BUS) commandBus: ICommandBus) {
+    this.commandBus = commandBus;
+  }
 
   @Post('/users/login')
   @HttpCode(HttpStatus.OK)

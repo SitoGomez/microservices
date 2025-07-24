@@ -10,12 +10,13 @@ export class UserRegistered extends DomainEvent<IUserWasRegisteredEventData> {
   private static readonly eventType = 'UserRegistered';
   public readonly userId: string;
   public readonly email: string;
+  public readonly createdAt: Date;
 
   private constructor(
     causationId: string,
     userId: string,
     email: string,
-    public readonly createdAt: Date,
+    createdAt: Date,
   ) {
     super({
       eventType: UserRegistered.eventType,

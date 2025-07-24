@@ -141,15 +141,33 @@ import { GenerateTopHundredActiveUsersReportScheduler } from './user-activity/in
   ],
 })
 export class AnalyticsModule implements OnModuleInit, OnApplicationShutdown {
+  private readonly orm: MikroORM;
+  private readonly commandBus: TransactionalCommandBus;
+  private readonly queryBus: InMemoryQueryBus;
+  private readonly recordUserRegistrationUseCase: RecordUserRegistrationUseCase;
+  private readonly generateTopHundredActiveUsersReportUseCase: GenerateTopHundredActiveUsersReportUseCase;
+  private readonly rabbitMQRecordUserRegistrationMessageHandler: RabbitMQRecordUserRegistrationMessageHandler;
+  private readonly rabbitMQConnection: RabbitMQConnection;
+
   public constructor(
-    @InjectMikroORM('analytics') private readonly orm: MikroORM,
-    @Inject(COMMAND_BUS) private readonly commandBus: TransactionalCommandBus,
-    @Inject(QUERY_BUS) private readonly queryBus: InMemoryQueryBus,
-    private readonly recordUserRegistrationUseCase: RecordUserRegistrationUseCase,
-    private readonly generateTopHundredActiveUsersReportUseCase: GenerateTopHundredActiveUsersReportUseCase,
-    private readonly rabbitMQRecordUserRegistrationMessageHandler: RabbitMQRecordUserRegistrationMessageHandler,
-    private readonly rabbitMQConnection: RabbitMQConnection,
-  ) {}
+    @InjectMikroORM('analytics') orm: MikroORM,
+    @Inject(COMMAND_BUS) commandBus: TransactionalCommandBus,
+    @Inject(QUERY_BUS) queryBus: InMemoryQueryBus,
+    recordUserRegistrationUseCase: RecordUserRegistrationUseCase,
+    generateTopHundredActiveUsersReportUseCase: GenerateTopHundredActiveUsersReportUseCase,
+    rabbitMQRecordUserRegistrationMessageHandler: RabbitMQRecordUserRegistrationMessageHandler,
+    rabbitMQConnection: RabbitMQConnection,
+  ) {
+    this.orm = orm;
+    this.commandBus = commandBus;
+    this.queryBus = queryBus;
+    this.recordUserRegistrationUseCase = recordUserRegistrationUseCase;
+    this.generateTopHundredActiveUsersReportUseCase =
+      generateTopHundredActiveUsersReportUseCase;
+    this.rabbitMQRecordUserRegistrationMessageHandler =
+      rabbitMQRecordUserRegistrationMessageHandler;
+    this.rabbitMQConnection = rabbitMQConnection;
+  }
 
   public async onModuleInit(): Promise<void> {
     await this.orm.getMigrator().up();

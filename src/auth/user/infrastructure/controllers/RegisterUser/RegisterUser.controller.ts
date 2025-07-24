@@ -18,9 +18,11 @@ import { RegisterUserControllerDto } from './RegisterUserController.dto';
 
 @Controller()
 export class RegisterUserController {
-  public constructor(
-    @Inject(COMMAND_BUS) private readonly commandBus: ICommandBus,
-  ) {}
+  private readonly commandBus: ICommandBus;
+
+  public constructor(@Inject(COMMAND_BUS) commandBus: ICommandBus) {
+    this.commandBus = commandBus;
+  }
 
   @Post('/users/register')
   @HttpCode(HttpStatus.CREATED)
