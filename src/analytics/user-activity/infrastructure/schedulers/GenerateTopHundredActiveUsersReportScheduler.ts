@@ -18,7 +18,7 @@ export class GenerateTopHundredActiveUsersReportScheduler {
     this.queryBus = queryBus;
   }
 
-  @Cron(CronExpression.EVERY_DAY_AT_4AM)
+  @Cron(CronExpression.EVERY_30_SECONDS)
   public async execute(): Promise<void> {
     this.logger.info(
       'Executing GenerateTopHundredActiveUsersReportScheduler...',
