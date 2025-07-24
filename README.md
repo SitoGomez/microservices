@@ -35,8 +35,12 @@
 - [ ] Prevent loss of events/commands on app or RabbitMQ restart
 - [ ] Implement multiservice coordination mechanism (e.g., SAGA)
 - [ ] Normalize tables https://franiglesias.github.io/db-normalization/
+- [ ] Free commands executed after 24hours to have those id's available
 
 ---
+
+## 🔠 Typescript
+- [ ] Remove classes parameters with non erasable syntax
 
 ## 🧪 Testing & Validation
 - [ ] Add K6 for performance testing
