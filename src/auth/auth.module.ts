@@ -18,6 +18,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import * as colorette from 'colorette';
 
+import { CleanCommandsProcessedProcess } from '../shared/commandBus/CleanCommandsProcessedProcess';
 import { COMMAND_BUS } from '../shared/commandBus/ICommandBus';
 import { ProcessedCommandEntity } from '../shared/commandBus/infrastructure/mikroOrm/entities/ProcessedCommands.entity';
 import { MikroOrmProcessedCommandService } from '../shared/commandBus/infrastructure/mikroOrm/MikroOrmCommandProcessedService';
@@ -25,6 +26,7 @@ import {
   IProcessedCommandService,
   PROCESSED_COMMAND_SERVICE,
 } from '../shared/commandBus/IProcessedCommandService';
+import { CleanCommandsProcessedScheduler } from '../shared/commandBus/schedulers/CleanCommandsProcessedScheduler';
 import { TransactionalCommandBus } from '../shared/commandBus/TransactionalCommandBus';
 import {
   DATE_TIME_SERVICE,
@@ -207,6 +209,8 @@ import { BCryptPasswordHasher } from './user/infrastructure/hashers/BCryptPasswo
     },
 
     ProcessNextEventsScheduler,
+    CleanCommandsProcessedProcess,
+    CleanCommandsProcessedScheduler,
     RegisterUserUseCase,
     MikroOrmUserMapper,
     LoginUserUseCase,

@@ -16,6 +16,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ScheduleModule } from '@nestjs/schedule';
 import * as colorette from 'colorette';
 
+import { CleanCommandsProcessedProcess } from '../shared/commandBus/CleanCommandsProcessedProcess';
 import { COMMAND_BUS } from '../shared/commandBus/ICommandBus';
 import { ProcessedCommandEntity } from '../shared/commandBus/infrastructure/mikroOrm/entities/ProcessedCommands.entity';
 import { MikroOrmProcessedCommandService } from '../shared/commandBus/infrastructure/mikroOrm/MikroOrmCommandProcessedService';
@@ -23,6 +24,7 @@ import {
   IProcessedCommandService,
   PROCESSED_COMMAND_SERVICE,
 } from '../shared/commandBus/IProcessedCommandService';
+import { CleanCommandsProcessedScheduler } from '../shared/commandBus/schedulers/CleanCommandsProcessedScheduler';
 import { TransactionalCommandBus } from '../shared/commandBus/TransactionalCommandBus';
 import { MikroOrmProcessedEventService } from '../shared/events/eventBus/infrastructure/mikroOrm/MikroOrmEventProcessedService';
 import { RabbitMQConnection } from '../shared/events/eventBus/infrastructure/rabbitMQ/RabbitMQConnection';
@@ -138,6 +140,8 @@ import { GenerateTopHundredActiveUsersReportScheduler } from './user-activity/in
       },
       inject: [getEntityManagerToken('analytics')],
     },
+    CleanCommandsProcessedProcess,
+    CleanCommandsProcessedScheduler,
   ],
 })
 export class AnalyticsModule implements OnModuleInit, OnApplicationShutdown {

@@ -10,6 +10,7 @@ export interface IProcessedCommandService {
     commandId: string,
     commandName: string,
   ): Promise<ProcessedCommandResponseType | undefined>;
+  deleteOlderThan(date: Date): Promise<void>;
 }
 
 export const PROCESSED_COMMAND_SERVICE = Symbol('ProcessedCommandService');

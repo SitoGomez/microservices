@@ -43,4 +43,10 @@ export class MikroOrmProcessedCommandService
 
     return result ? result : undefined;
   }
+
+  public async deleteOlderThan(date: Date): Promise<void> {
+    await this.processedCommandRepository.nativeDelete({
+      processedAt: { $lt: date },
+    });
+  }
 }
