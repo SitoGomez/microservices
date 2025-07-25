@@ -40,7 +40,7 @@
 ---
 
 ## 🔠 Typescript
-- [ ] Remove classes parameters with non erasable syntax
+- [x] Remove classes parameters with non erasable syntax
 
 ## 🧪 Testing & Validation
 - [ ] Add K6 for performance testing
@@ -62,7 +62,7 @@
   - [x] Save commands to DB
 - [ ] Create query bus
   - [ ] Implement tracing
-  - [x] Save queries to DB
+  - [] Save queries to DB
 
 ---
 
