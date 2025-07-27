@@ -21,13 +21,13 @@ import * as colorette from 'colorette';
 import { CleanCommandsProcessedProcess } from '../shared/commandBus/CleanCommandsProcessedProcess';
 import { COMMAND_BUS } from '../shared/commandBus/ICommandBus';
 import { ProcessedCommandEntity } from '../shared/commandBus/infrastructure/mikroOrm/entities/ProcessedCommands.entity';
+import { MikroOrmCommandBus } from '../shared/commandBus/infrastructure/mikroOrm/MikroOrmCommandBus';
 import { MikroOrmProcessedCommandService } from '../shared/commandBus/infrastructure/mikroOrm/MikroOrmCommandProcessedService';
 import {
   IProcessedCommandService,
   PROCESSED_COMMAND_SERVICE,
 } from '../shared/commandBus/IProcessedCommandService';
 import { CleanCommandsProcessedScheduler } from '../shared/commandBus/schedulers/CleanCommandsProcessedScheduler';
-import { TransactionalCommandBus } from '../shared/commandBus/TransactionalCommandBus';
 import {
   DATE_TIME_SERVICE,
   IDateTimeService,
@@ -102,8 +102,8 @@ import { BCryptPasswordHasher } from './user/infrastructure/hashers/BCryptPasswo
         logger: ILogger,
         mikroOrm: MikroORM,
         processedCommandService: IProcessedCommandService,
-      ): TransactionalCommandBus => {
-        return new TransactionalCommandBus(
+      ): MikroOrmCommandBus => {
+        return new MikroOrmCommandBus(
           logger,
           mikroOrm,
           processedCommandService,
@@ -220,7 +220,7 @@ export class AuthModule
   implements OnModuleInit, OnApplicationShutdown, NestModule
 {
   private readonly orm: MikroORM;
-  private readonly commandBus: TransactionalCommandBus;
+  private readonly commandBus: MikroOrmCommandBus;
   private readonly registerUserUseCase: RegisterUserUseCase;
   private readonly loginUserUseCase: LoginUserUseCase;
   private readonly eventBus: IEventBus;
@@ -228,7 +228,7 @@ export class AuthModule
 
   public constructor(
     @InjectMikroORM('auth') orm: MikroORM,
-    @Inject(COMMAND_BUS) commandBus: TransactionalCommandBus,
+    @Inject(COMMAND_BUS) commandBus: MikroOrmCommandBus,
     registerUserUseCase: RegisterUserUseCase,
     loginUserUseCase: LoginUserUseCase,
     @Inject(EVENT_BUS) eventBus: IEventBus,

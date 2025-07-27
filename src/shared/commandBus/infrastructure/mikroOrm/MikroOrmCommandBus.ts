@@ -2,17 +2,16 @@ import { EntityManager, RequestContext } from '@mikro-orm/core';
 import { MikroORM } from '@mikro-orm/postgresql';
 import { Injectable } from '@nestjs/common';
 
-import { ILogger } from '../logger/ILogger';
-
-import { BaseCommand } from './BaseCommand';
-import { NoHandlerForCommandError } from './errors/NoHandlerForCommand.error';
-import { ICommandBus } from './ICommandBus';
-import { ICommandHandler } from './ICommandHandler';
-import { IProcessedCommandService } from './IProcessedCommandService';
-import { ProcessedCommandResponseType } from './ProcessedCommandResponse.type';
+import { ILogger } from '../../../logger/ILogger';
+import { BaseCommand } from '../../BaseCommand';
+import { NoHandlerForCommandError } from '../../errors/NoHandlerForCommand.error';
+import { ICommandBus } from '../../ICommandBus';
+import { ICommandHandler } from '../../ICommandHandler';
+import { IProcessedCommandService } from '../../IProcessedCommandService';
+import { ProcessedCommandResponseType } from '../../ProcessedCommandResponse.type';
 
 @Injectable()
-export class TransactionalCommandBus implements ICommandBus {
+export class MikroOrmCommandBus implements ICommandBus {
   private readonly logger: ILogger;
   private readonly mikroOrm: MikroORM;
   private readonly processedCommandService: IProcessedCommandService;

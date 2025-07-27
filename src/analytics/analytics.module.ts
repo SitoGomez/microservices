@@ -19,19 +19,19 @@ import * as colorette from 'colorette';
 import { CleanCommandsProcessedProcess } from '../shared/commandBus/CleanCommandsProcessedProcess';
 import { COMMAND_BUS } from '../shared/commandBus/ICommandBus';
 import { ProcessedCommandEntity } from '../shared/commandBus/infrastructure/mikroOrm/entities/ProcessedCommands.entity';
+import { MikroOrmCommandBus } from '../shared/commandBus/infrastructure/mikroOrm/MikroOrmCommandBus';
 import { MikroOrmProcessedCommandService } from '../shared/commandBus/infrastructure/mikroOrm/MikroOrmCommandProcessedService';
 import {
   IProcessedCommandService,
   PROCESSED_COMMAND_SERVICE,
 } from '../shared/commandBus/IProcessedCommandService';
 import { CleanCommandsProcessedScheduler } from '../shared/commandBus/schedulers/CleanCommandsProcessedScheduler';
-import { TransactionalCommandBus } from '../shared/commandBus/TransactionalCommandBus';
 import { MikroOrmProcessedEventService } from '../shared/events/eventBus/infrastructure/mikroOrm/MikroOrmEventProcessedService';
 import { RabbitMQConnection } from '../shared/events/eventBus/infrastructure/rabbitMQ/RabbitMQConnection';
 import { PROCESSED_EVENT_SERVICE } from '../shared/events/eventBus/IProcessedEventService';
 import { ILogger, LOGGER } from '../shared/logger/ILogger';
 import { WinstonLogger } from '../shared/logger/WinstonLogger';
-import { InMemoryQueryBus } from '../shared/queryBus/InMemoryQueryBus';
+import { MikroOrmQueryBus } from '../shared/queryBus/infrastructure/mikroOrm/MikroOrmQueryBus';
 import { QUERY_BUS } from '../shared/queryBus/IQueryBus';
 import { SharedModule } from '../shared/shared.module';
 
@@ -80,8 +80,8 @@ import { GenerateTopHundredActiveUsersReportScheduler } from './user-activity/in
         logger: ILogger,
         mikroORM: MikroORM,
         processedCommandService: IProcessedCommandService,
-      ): TransactionalCommandBus => {
-        return new TransactionalCommandBus(
+      ): MikroOrmCommandBus => {
+        return new MikroOrmCommandBus(
           logger,
           mikroORM,
           processedCommandService,
@@ -95,8 +95,8 @@ import { GenerateTopHundredActiveUsersReportScheduler } from './user-activity/in
     },
     {
       provide: QUERY_BUS,
-      useFactory: (logger: ILogger, mikroOrm: MikroORM): InMemoryQueryBus => {
-        return new InMemoryQueryBus(logger, mikroOrm);
+      useFactory: (logger: ILogger, mikroOrm: MikroORM): MikroOrmQueryBus => {
+        return new MikroOrmQueryBus(logger, mikroOrm);
       },
       inject: [LOGGER, getMikroORMToken('analytics')],
     },
@@ -146,8 +146,8 @@ import { GenerateTopHundredActiveUsersReportScheduler } from './user-activity/in
 })
 export class AnalyticsModule implements OnModuleInit, OnApplicationShutdown {
   private readonly orm: MikroORM;
-  private readonly commandBus: TransactionalCommandBus;
-  private readonly queryBus: InMemoryQueryBus;
+  private readonly commandBus: MikroOrmCommandBus;
+  private readonly queryBus: MikroOrmQueryBus;
   private readonly recordUserRegistrationUseCase: RecordUserRegistrationUseCase;
   private readonly generateTopHundredActiveUsersReportUseCase: GenerateTopHundredActiveUsersReportUseCase;
   private readonly rabbitMQRecordUserRegistrationMessageHandler: RabbitMQRecordUserRegistrationMessageHandler;
@@ -155,8 +155,8 @@ export class AnalyticsModule implements OnModuleInit, OnApplicationShutdown {
 
   public constructor(
     @InjectMikroORM('analytics') orm: MikroORM,
-    @Inject(COMMAND_BUS) commandBus: TransactionalCommandBus,
-    @Inject(QUERY_BUS) queryBus: InMemoryQueryBus,
+    @Inject(COMMAND_BUS) commandBus: MikroOrmCommandBus,
+    @Inject(QUERY_BUS) queryBus: MikroOrmQueryBus,
     recordUserRegistrationUseCase: RecordUserRegistrationUseCase,
     generateTopHundredActiveUsersReportUseCase: GenerateTopHundredActiveUsersReportUseCase,
     rabbitMQRecordUserRegistrationMessageHandler: RabbitMQRecordUserRegistrationMessageHandler,

@@ -1,15 +1,14 @@
 import { MikroORM, RequestContext } from '@mikro-orm/core';
 import { Injectable } from '@nestjs/common';
 
-import { ILogger } from '../logger/ILogger';
-
-import { BaseQuery } from './BaseQuery';
-import { NoHandlerForQueryError } from './errors/NoHandlerForQuery.error';
-import { IQueryBus } from './IQueryBus';
-import { IQueryHandler } from './IQueryHandler';
+import { ILogger } from '../../../logger/ILogger';
+import { BaseQuery } from '../../BaseQuery';
+import { NoHandlerForQueryError } from '../../errors/NoHandlerForQuery.error';
+import { IQueryBus } from '../../IQueryBus';
+import { IQueryHandler } from '../../IQueryHandler';
 
 @Injectable()
-export class InMemoryQueryBus implements IQueryBus {
+export class MikroOrmQueryBus implements IQueryBus {
   private readonly logger: ILogger;
   private readonly mikroOrm: MikroORM;
 
