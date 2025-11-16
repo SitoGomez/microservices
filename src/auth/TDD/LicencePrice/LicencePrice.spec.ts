@@ -36,4 +36,16 @@ describe('Given a company purchasing licenses', () => {
       expect(licencePriceCalculator.calculateTotal()).toBe(717);
     });
   });
+
+  describe('When there are ten licences purchased', () => {
+    it('Then the total should be 2990', () => {
+      const NUMBER_OF_PURCHASED_LICENSES = 10;
+
+      const licencePriceCalculator = new LicencePriceCalculator(
+        NUMBER_OF_PURCHASED_LICENSES,
+      );
+
+      expect(licencePriceCalculator.calculateTotal()).toBe(2990);
+    });
+  });
 });
