@@ -10,11 +10,10 @@ export class LicencePriceCalculator {
   }
 
   private calculatePricePerLicense(): number {
-    if (this.numberOfPurchasedLicenses === 3) {
-      return 239;
-    }
-
-    if (this.numberOfPurchasedLicenses === 10) {
+    if (
+      this.numberOfPurchasedLicenses >= 3 &&
+      this.numberOfPurchasedLicenses <= 10
+    ) {
       return 239;
     }
 
