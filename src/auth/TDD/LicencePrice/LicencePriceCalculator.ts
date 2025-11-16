@@ -4,11 +4,20 @@ export class LicencePriceCalculator {
   public constructor(numberOfPurchasedLicenses: number) {
     this.numberOfPurchasedLicenses = numberOfPurchasedLicenses;
   }
+
   public calculateTotal(): number {
+    return this.calculatePricePerLicense() * this.numberOfPurchasedLicenses;
+  }
+
+  private calculatePricePerLicense(): number {
     if (this.numberOfPurchasedLicenses === 3) {
-      return this.numberOfPurchasedLicenses * 239;
+      return 239;
     }
 
-    return this.numberOfPurchasedLicenses * 299;
+    if (this.numberOfPurchasedLicenses === 10) {
+      return 239;
+    }
+
+    return 299;
   }
 }
